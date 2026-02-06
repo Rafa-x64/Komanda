@@ -105,7 +105,7 @@ komanda-project/
 2 Instalación
 ```bash
 # Clona el repo
-git clone [https://github.com/tu-usuario/komanda.git](https://github.com/tu-usuario/komanda.git)
+git clone https://github.com/Rafa-x64/Komanda.git
 
 # Instala dependencias con pnpm
 pnpm install
