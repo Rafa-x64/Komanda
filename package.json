@@ -1,0 +1,12 @@
+{
+  "name": "komanda-project",
+  "scripts": {
+    "dev:web": "pnpm --filter komanda-web dev",
+    "dev:api": "pnpm --filter komanda-api dev",
+    "dev:php": "php -S localhost:8000 -t ./Komanda-api/src/",
+    "komanda": "concurrently -n \"WEB,API,PHP\" -c \"cyan,green,magenta\" \"pnpm dev:web\" \"pnpm dev:api\" \"pnpm dev:php\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
