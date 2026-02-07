@@ -4,7 +4,7 @@ import cors from 'cors';
 const app = express();
 const PORT = 3000;
 
-app.use(cors());k
+app.use(cors());
 // Middleware para JSON (Vital para las comandas del restaurante)
 app.use(express.json());
 

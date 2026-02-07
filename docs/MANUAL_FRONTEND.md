@@ -2,117 +2,117 @@
 
 > "Aquí convertimos JSONs fríos en experiencias calientes y deliciosas."
 
-## 1. Estructura de un Módulo Nuevo
+Este manual te guiará para crear interfaces en Vue 3 que consuman datos tanto del **Node Core** como del **PHP Core**.
+
+---
+
+## 📌 Tabla de Contenidos
+
+1.  [Estructura de un Módulo](#1-estructura-de-un-módulo)
+2.  [Creando una Vista (Kitchen Monitor)](#2-creando-una-vista-kitchen-monitor)
+3.  [Consumiendo el Backend Híbrido](#3-consumiendo-el-backend-híbrido)
+4.  [Estilos & UI Kit](#4-estilos--ui-kit)
+
+---
+
+## 1. Estructura de un Módulo
 
 Igual que en el Backend, creamos una carpeta en `src/modules/` para mantener el orden.
 
 ```bash
-/src/modules/promotions/
-├── components/          # Botones, Tarjetas, Modales específicos de Promociones
-│   ├── PromotionCard.vue
-│   └── ApplyDiscountModal.vue
-├── views/               # Páginas completas (Rutas)
-│   ├── PromotionsList.vue
-│   └── CreatePromotion.vue
-├── store.ts             # Pinia Store (Estado global del módulo)
-└── routes.ts            # Defines las rutas de Vue Router
+/src/modules/kitchen/
+├── components/          # Widgets (Tarjetas, Gráficos)
+├── views/               # Vistas Completas (KitchenMonitor.vue)
+└── routes.ts            # Rutas de este módulo
 ```
 
-## 2. Creando una Vista (Paso a Paso)
+---
 
-### A. Define la Ruta
+## 2. Creando una Vista (Kitchen Monitor)
 
-En `router/index.ts` (o `modules/promotions/routes.ts`), registra tu vista.
-
-```typescript
-{
-  path: '/promotions',
-  name: 'PromotionsList',
-  component: () => import('@/modules/promotions/views/PromotionsList.vue')
-}
-```
-
-### B. Crea el Store (Pinia)
-
-Maneja el estado y las llamadas a la API.
-
-```typescript
-// store.ts
-import { defineStore } from "pinia";
-import api from "@/core/api"; // Axios instance pre-configurada
-
-export const usePromotionsStore = defineStore("promotions", {
-  state: () => ({
-    list: [],
-    loading: false,
-  }),
-  actions: {
-    async fetchPromotions() {
-      this.loading = true;
-      try {
-        const { data } = await api.get("/promotions");
-        this.list = data;
-      } finally {
-        this.loading = false;
-      }
-    },
-  },
-});
-```
-
-### C. Crea la Vista (Vue SFC)
-
-Usa **Composition API** (`<script setup>`) siempre.
+Usamos **Composition API** (`<script setup>`) exclusivo. Es más limpio y fácil de tipar.
 
 ```vue
-<!-- views/PromotionsList.vue -->
+<!-- views/KitchenMonitor.vue -->
 <script setup lang="ts">
-import { onMounted } from "vue";
-import { usePromotionsStore } from "../store";
-import PromotionCard from "../components/PromotionCard.vue";
+import { ref, onMounted } from "vue";
 
-const store = usePromotionsStore();
+// 1. Estado Reactivo
+const status = ref(null);
+const loading = ref(true);
 
-onMounted(() => {
-  store.fetchPromotions();
-});
+// ... lógica de fetch aquí ...
 </script>
 
 <template>
-  <div class="promotions-layout">
-    <h1>Promociones Activas</h1>
-    <div v-if="store.loading">Cargando...</div>
-    <div v-else class="grid">
-      <PromotionCard
-        v-for="promo in store.list"
-        :key="promo.id"
-        :data="promo"
-      />
-    </div>
+  <div class="p-4">
+    <h1 class="text-2xl font-bold">Monitor de Cocina 🍳</h1>
+    <!-- Tu HTML con clases de Tailwind/Bootstrap -->
   </div>
 </template>
 ```
 
-## 3. Estilos (Tailwind CSS)
+---
 
-Usa clases utilitarias para la estructura (`flex`, `grid`, `p-4`) y componentes base para la consistencia.
+## 3. Consumiendo el Backend Híbrido
 
-```html
-<!-- ✅ BIEN -->
-<button class="btn-primary">Guardar</button>
+Aquí está el truco. Tienes dos fuentes de verdad:
 
-<!-- ❌ MAL (No reinventes la rueda) -->
-<button style="background: blue; padding: 10px;">Guardar</button>
+### A. Consumir Node.js (Puerto 3000)
+
+Para lógica de negocio, usuarios, estados en tiempo real.
+
+```typescript
+// URL Base: http://localhost:3000/api/v1/...
+const fetchNodeData = async () => {
+  const res = await fetch("http://localhost:3000/api/v1/kitchen/status");
+  const json = await res.json();
+  return json.data;
+};
 ```
 
-## 4. Conexión con Backend
+### B. Consumir PHP (Puerto 8000)
 
-Usa siempre la instancia de `api` configurada en `core/api`. Ya maneja:
+Para reportes, estadísticas complejas, PDFs.
 
-- Tokens de autenticación (Headers).
-- Manejo de errores global (Toasts).
-- Base URL variable según entorno.
+```typescript
+// URL Base: http://localhost:8000/api/...
+const fetchPhpData = async () => {
+  // Apunta directo al archivo .php
+  const res = await fetch("http://localhost:8000/api/stats.php");
+  const json = await res.json();
+  return json.data;
+};
+```
+
+### C. Ejemplo de Integración Completa (`onMounted`)
+
+```typescript
+onMounted(async () => {
+  try {
+    const [nodeData, phpData] = await Promise.all([
+      fetchNodeData(),
+      fetchPhpData(),
+    ]);
+
+    console.log("Sistema:", nodeData);
+    console.log("Reporte:", phpData);
+  } catch (e) {
+    console.error("Error conectando a los servidores", e);
+  }
+});
+```
 
 ---
 
-> **Tip:** Usa `pnpm dev:web` si solo vas a tocar CSS o componentes, para que Vite vuele.
+## 4. Estilos & UI Kit
+
+No escribas CSS puro si no es necesario. Usa las clases de utilidad.
+
+- ✅ `class="btn btn-primary"` (Bootstrap)
+- ✅ `class="p-4 bg-white rounded shadow"` (Tailwind)
+- ❌ `style="border: 1px solid red"` (CSS Inline - Evitar)
+
+---
+
+> **Tip:** Recuerda que para que esto funcione, los scripts de PHP deben tener el header `Access-Control-Allow-Origin: *`. Si ves un error de CORS en la consola, es culpa del Backend, no tuya.

@@ -2,98 +2,133 @@
 
 > "Aquí forjamos la lógica que mueve los engranajes. Si el backend falla, el restaurante cierra."
 
-## 1. Estructura de un Módulo Nuevo
+Este manual describe cómo trabajar en el **Núcleo Híbrido** de KOMANDA: una fusión de **Node.js (TypeScript)** para velocidad y **PHP** para reportes/legacy.
 
-Para crear un nuevo módulo (ej. `promotions`), crea la carpeta en `modules/` siguiendo esta estructura sagrada:
+---
+
+## 📌 Tabla de Contenidos
+
+1.  [Arquitectura Híbrida (Hybrid Core)](#1-arquitectura-híbrida-hybrid-core)
+2.  [Estructura de Carpetas](#2-estructura-de-carpetas)
+3.  [Endpoint Tipo A: Node.js (Real-Time/Logic)](#3-endpoint-tipo-a-nodejs-real-timelogic)
+4.  [Endpoint Tipo B: PHP (Reports/Calculations)](#4-endpoint-tipo-b-php-reportscalculations)
+5.  [Base de Datos & Migraciones](#5-base-de-datos--migraciones)
+
+---
+
+## 1. Arquitectura Híbrida (Hybrid Core)
+
+KOMANDA corre dos servidores en paralelo dentro del mismo contenedor/máquina:
+
+- **Node.js (Puerto 3000):** Maneja WebSockets, la lógica del POS, Kitchen Display System y todo lo que requiere alta concurrencia.
+- **PHP (Puerto 8000):** Se usa como un "Script Runner" para generar PDFs, Excel, reportes contables complejos o lógica que es más fácil de mantener en PHP.
+
+### ⚠️ Regla de Oro: CORS
+
+Para que el Frontend (Puerto 5173) pueda hablar con ambos backends, SIEMPRE debes configurar los headers de CORS correctamente.
+
+---
+
+## 2. Estructura de Carpetas
 
 ```bash
-/src/modules/promotions/
-├── promotions.controller.ts  # Recibe HTTP, valida DTOs, llama servicios
-├── promotions.service.ts     # Orquesta la lógica de negocio
-├── promotions.model.ts       # Definición de tabla (Entity)
-└── dtos/                     # Data Transfer Objects (Input Validation)
-    ├── create-promotion.dto.ts
-    └── update-promotion.dto.ts
+/src
+├── index.ts                # Entry Point de Node (Express)
+├── api/                    # 📂 Scripts de PHP (Endpoints sueltos)
+│   └── stats.php           # Ejemplo: http://localhost:8000/api/stats.php
+│
+└── modules/                # 📂 Módulos de Node (Estructura DDD)
+    └── kitchen/
+        ├── kitchen.controller.ts
+        ├── kitchen.service.ts
+        └── kitchen.routes.ts
 ```
 
-## 2. Creando un Endpoint (Paso a Paso)
+---
 
-### A. Define el DTO (Input)
+## 3. Endpoint Tipo A: Node.js (Real-Time/Logic)
 
-Primero, define qué datos esperas recibir. Usa `zod` o `class-validator`.
+Usa esto para el día a día: Crear comandas, actualizar estados, login, etc.
 
-```typescript
-// dtos/create-promotion.dto.ts
-export class CreatePromotionDto {
-  name: string;
-  discountPercentage: number;
-  startDate: Date;
-}
-```
+### Paso 1: Crea el Controlador
 
-### B. Crea el Servicio (Lógica)
-
-Aquí va la magia. Validaciones de negocio y llamadas a DB.
+Archivo: `src/modules/kitchen/kitchen.controller.ts`
 
 ```typescript
-// promotions.service.ts
-export class PromotionsService {
-  async create(data: CreatePromotionDto) {
-    if (data.discountPercentage > 100) {
-      throw new Error("No regales el restaurante, crack.");
-    }
-    return await PromotionModel.save(data);
-  }
-}
-```
+import { Request, Response } from "express";
 
-### C. Crea el Controlador (HTTP)
-
-Conecta la ruta con el servicio.
-
-```typescript
-// promotions.controller.ts
-export const createPromotion = async (req: Request, res: Response) => {
-  try {
-    const result = await promotionsService.create(req.body);
-    res.status(201).json({ status: "success", data: result });
-  } catch (error) {
-    res.status(400).json({ status: "fail", message: error.message });
-  }
+export const getKitchenStatus = (req: Request, res: Response) => {
+  // Lógica de negocio aquí (o llamar a un Service)
+  res.status(200).json({
+    status: "success",
+    data: {
+      is_open: true,
+      pending_orders: 5,
+    },
+  });
 };
 ```
 
-### D. Registra la Ruta
+### Paso 2: Registra la Ruta
 
-Ve a `modules/index.ts` (o tu router principal) y añade la ruta.
+Archivo: `src/index.ts`
 
 ```typescript
-router.post("/promotions", createPromotion);
+import { getKitchenStatus } from "./modules/kitchen/kitchen.controller";
+
+// ... configuración de express ...
+
+// Rutas versionadas
+app.get("/api/v1/kitchen/status", getKitchenStatus);
 ```
 
-## 3. Base de Datos & Migraciones
+---
 
-Usamos **PostgreSQL**. Si cambias un modelo, **DEBES** crear una migración.
+## 4. Endpoint Tipo B: PHP (Reports/Calculations)
+
+Usa esto para "Dirty Jobs": Scripts rápidos, cálculos matemáticos pesados, generación de archivos.
+
+### Paso 1: Crea el Script
+
+Archivo: `src/api/reporte_diario.php`
+
+```php
+<?php
+// 1. Headers OBLIGATORIOS (CORS + JSON)
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json; charset=UTF-8");
+
+// 2. Tu Lógica (Conexión a BD, Cálculos, etc)
+$data = [
+    "date" => date("Y-m-d"),
+    "total_sales" => 1500.50,
+    "generated_by" => "PHP Core"
+];
+
+// 3. Respuesta JSend
+echo json_encode([
+    "status" => "success",
+    "data" => $data
+]);
+```
+
+### Paso 2: Pruébalo
+
+No necesitas registrar rutas. PHP sirve el archivo tal cual.
+URL: `http://localhost:8000/api/reporte_diario.php`
+
+---
+
+## 5. Base de Datos & Migraciones
+
+Aunque uses PHP para leer, **Node.js (TypeORM/Prisma)** es el dueño del esquema de la base de datos.
 
 ```bash
-# Crear migración
-pnpm typeorm migration:create -n AddPromotionsTable
+# Crear migración (Desde Node)
+pnpm typeorm migration:create -n AddSalesTable
 
 # Correr migraciones
 pnpm typeorm migration:run
 ```
 
-## 4. Testing
-
-No subas código sin probar. Al menos un test unitario para el servicio.
-
-```typescript
-// promotions.service.test.ts
-test("should throw error if discount > 100", async () => {
-  await expect(service.create({ discountPercentage: 101 })).rejects.toThrow();
-});
-```
-
----
-
-> **Tip:** Usa `pnpm dev:api` para levantar solo el backend y ver los logs limpios.
+> **Nota:** PHP debe conectarse a la misma DB (Postgres) usando `PDO` o `pg_connect` con las credenciales del `.env`.

@@ -7,10 +7,10 @@ header("Content-Type: application/json; charset=UTF-8");
 // 2. Simulación de "Lógica de Negocio Pesada"
 // Aquí conectarías a Postgres, harías queries locos, etc.
 $metrics = [
-    "total_orders" => 145,
+    "total_orders" => 120,
     "avg_prep_time" => "12m 30s",
     "top_dish" => "Hamburguesa Doble Queso",
-    "efficiency_score" => 98.5k
+    "efficiency_score" => 98.5
 ];
 
 // 3. Respuesta JSON Limpia (Estándar JSend)
