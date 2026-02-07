@@ -1,10 +1,16 @@
 import express from 'express';
+import cors from 'cors';
 
 const app = express();
 const PORT = 3000;
 
+app.use(cors());
 // Middleware para JSON (Vital para las comandas del restaurante)
 app.use(express.json());
+
+import { getKitchenStatus } from './modules/kitchen/kitchen.controller';
+
+app.get('/api/v1/kitchen/status', getKitchenStatus);
 
 app.get('/', (req, res) => {
   res.json({

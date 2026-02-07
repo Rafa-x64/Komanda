@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import KitchenStatus from './modules/kitchen/views/KitchenStatus.vue'
 </script>
 
 <template>
-  <HelloWorld></HelloWorld>
+  <KitchenStatus />
 </template>
 
 <style scoped></style>
