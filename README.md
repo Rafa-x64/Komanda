@@ -73,24 +73,7 @@ El inventario es el corazón logístico. Aquí aplicamos **Back-flushing**:
 
 Mantenemos una simetría entre Front y Back para que no te pierdas en el limbo de las carpetas.
 
-```text
-komanda-project/
-├── 📂 .vscode/                 # Prettier, ESLint y configs compartidas
-├── 📂 docs/                    # Documentación, diagramas y guías
-├── 📂 Komanda-api/             # Backend (Node/TS & PHP)
-│   ├── 📂 src/
-│   │   ├── 📂 config/          # DB & Env configs
-│   │   ├── 📂 shared/          # Loggers, Middlewares, Types genéricos
-│   │   └── 📂 modules/         # <--- AQUÍ ESTÁ LA MAGIA 🪄 (Inventory, Sales, Kitchen...)
-│   └── package.json
-│
-└── 📂 Komanda-web/             # Frontend (Vue 3 + Vite + Tailwind)
-    ├── 📂 src/
-    │   ├── 📂 core/            # Componentes UI base y hooks globales
-    │   ├── 📂 modules/         # <--- ESPEJO DEL BACKEND 🪞 (User interfaces por dominio)
-    │   └── App.vue
-    └── package.json
-```
+#### Link al documento de estructura: [STRUCTURE.md](./docs/STRUCTURE.md)
 
 ---
 
