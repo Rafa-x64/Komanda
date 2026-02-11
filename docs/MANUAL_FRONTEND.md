@@ -10,8 +10,9 @@ Este manual te guiará para crear interfaces en Vue 3 que consuman datos tanto d
 
 1.  [Estructura de un Módulo](#1-estructura-de-un-módulo)
 2.  [Creando una Vista (Kitchen Monitor)](#2-creando-una-vista-kitchen-monitor)
-3.  [Consumiendo el Backend Híbrido](#3-consumiendo-el-backend-híbrido)
-4.  [Estilos & UI Kit](#4-estilos--ui-kit)
+3.  [Configurando la Ruta (Router)](#3-configurando-la-ruta-router)
+4.  [Consumiendo el Backend Híbrido](#4-consumiendo-el-backend-híbrido)
+5.  [Estilos & UI Kit](#5-estilos--ui-kit)
 
 ---
 
@@ -54,7 +55,27 @@ const loading = ref(true);
 
 ---
 
-## 3. Consumiendo el Backend Híbrido
+## 3. Configurando la Ruta (Router)
+
+Para que tu nueva vista sea accesible, debes registrarla en el `router`.
+
+**⚠️ Importante:** En `src/router/index.ts`, usa **rutas relativas** (`../modules/...`) en lugar de alias (`@/modules/...`) para evitar problemas de resolución en ciertos entornos o IDEs.
+
+```typescript
+// src/router/index.ts
+{
+  path: '/nueva-vista',
+  name: 'nueva-vista',
+  // ✅ Correcto: Usa dos puntos para subir de nivel
+  component: () => import('../modules/landing/views/LandingView.vue')
+  // ❌ Incorrecto: No uses @ aquí
+  // component: () => import('@/modules/landing/views/LandingView.vue')
+}
+```
+
+---
+
+## 4. Consumiendo el Backend Híbrido
 
 Aquí está el truco. Tienes dos fuentes de verdad:
 
@@ -105,7 +126,7 @@ onMounted(async () => {
 
 ---
 
-## 4. Estilos & UI Kit
+## 5. Estilos & UI Kit
 
 No escribas CSS puro si no es necesario. Usa las clases de utilidad.
 

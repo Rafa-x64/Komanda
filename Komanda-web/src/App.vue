@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import KitchenStatus from './modules/kitchen/views/KitchenStatus.vue'
+import { RouterView } from 'vue-router';
 </script>
 
 <template>
-  <KitchenStatus />
+  <RouterView />
 </template>
 
 <style scoped></style>
