@@ -1,60 +1,107 @@
 <script setup lang='ts'>
 import { ref } from 'vue';
-import { Facebook, Instagram, Mail, Linkedin, Twitter, PhoneCall } from 'lucide-vue-next';
+import { Menu, X, Instagram, Linkedin, Twitter } from 'lucide-vue-next';
+
+const isMenuOpen = ref(false);
+
+const toggleMenu = () => {
+    isMenuOpen.value = !isMenuOpen.value;
+};
 </script>
+
 <template>
-    <header class="d-flex flex-column py-4">
-        <div class="row d-flex flex-row justify-content-center align-items-between">
-            <div class="col-4 d-flex flex-row gap-4 justify-content-start align-items-center my-2">
-                <Facebook :size="22" class="AppHeader-icon" />
-                <Instagram :size="22" class="AppHeader-icon" />
-                <Mail :size="22" class="AppHeader-icon" />
-                <Linkedin :size="22" class="AppHeader-icon" />
-                <Twitter :size="22" class="AppHeader-icon" />
-            </div>
-            <div class="col-7">
-                <div class="row">
-                    <div class="col-6 d-flex flex-row justify-content-center align-items-center gap-2">
-                        <PhoneCall :size="18" class="text-muted" />
-                        <p class="AppHeader-sm-text text-muted m-0 p-0">¿Tienes preguntas? Llama al 0412-555-55-55</p>
-                    </div>
-                    <div class="col-1 d-flex flex-row justify-content-center align-items-center">
-                        <h2 class="AppHeader-lg-slash text-muted m-0 p-0">/</h2>
-                    </div>
-                    <div class="col-5 d-flex flex-row justify-content-center align-items-center gap-2">
-                        <Mail :size="18" class="text-muted" />
-                        <p class="AppHeader-sm-text text-muted m-0 p-0">¿Necesitas ayuda? Mandanos un correo</p>
+    <header class="app-header sticky-top">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <!-- Brand / Logo -->
+                <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="#">
+                    <span class="text-korange">KOMANDA</span>
+                </a>
+
+                <!-- Mobile Toggle -->
+                <button class="navbar-toggler border-0" type="button" @click="toggleMenu"
+                    aria-label="Toggle navigation">
+                    <component :is="isMenuOpen ? X : Menu" :size="28" class="text-korange" />
+                </button>
+
+                <!-- Navbar Links -->
+                <div class="collapse navbar-collapse" :class="{ 'show': isMenuOpen }">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-4">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">Inicio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#features">Características</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#about">Nosotros</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#contact">Contacto</a>
+                        </li>
+                    </ul>
+
+                    <!-- Social / Contact Actions -->
+                    <div class="d-flex align-items-center gap-3 social-icons mt-3 mt-lg-0">
+                        <a href="#" class="icon-link">
+                            <Instagram :size="20" />
+                        </a>
+                        <a href="#" class="icon-link">
+                            <Twitter :size="20" />
+                        </a>
+                        <a href="#" class="icon-link">
+                            <Linkedin :size="20" />
+                        </a>
+                        <button class="btn btn-korange btn-sm rounded-pill px-4">
+                            Empezar
+                        </button>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row d-flex flex-row justify-content-center align-items-center">
-            <div class="col-10 my-3" style="border-top: 2px solid #595C5F"></div>
-        </div>
-        <div class="row px-5">
-            <div class="col-3 justify-self-center">
-
-            </div>
-            <div class="col-9 d-flex flex-row justify-content-end align-items-center px-3 m-0">
-                <ul class="d-flex flex-row list list-inline decoration-none gap-4">
-                    <li class="list-inline-item">Inicio</li>
-                    <li class="list-inline-item">Acerca de Nosotros</li>
-                    <li class="list-inline-item">Contacto</li>
-                </ul>
-            </div>
-        </div>
+        </nav>
     </header>
 </template>
+
 <style scoped>
-.AppHeader-sm-text{
-    font-size: 14px;
+.app-header {
+    background-color: var(--bg-body);
+    transition: background-color var(--transition-speed);
+    border-bottom: 1px solid var(--border-color);
 }
-.AppHeader-lg-slash{
-    font-weight: 200;
+
+.navbar-brand {
+    font-size: 1.5rem;
+    color: var(--text-primary);
 }
-.AppHeader-icon:hover{
-    transition: all 0.3s ease-in-out;
+
+.nav-link {
+    color: var(--text-secondary);
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover,
+.nav-link.active {
     color: var(--KOrange);
-    transform: scale(1.2);
+}
+
+.icon-link {
+    color: var(--text-secondary);
+    transition: color 0.2s ease;
+}
+
+.icon-link:hover {
+    color: var(--KOrange);
+}
+
+.btn-korange{
+    color: var(--text-primary)
+}
+
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        background-color: var(--bg-body);
+        padding: 1rem 0;
+    }
 }
 </style>

@@ -1,46 +1,32 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* Brand Colors */
+  --KOrange: #FD7E14;
+  --KOrange-hover: #e36d0d;
+  --KOrange-light: #fff0e3;
+  
+  /* Light Theme Variables (Default) */
+  --bg-body: #ffffff;
+  --bg-surface: #f8f9fa;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --text-inverse: #ffffff;
+  --border-color: #dee2e6;
+  
+  /* Interactive */
+  --transition-speed: 0.3s;
+  
+  color-scheme: light;
+  color: var(--text-primary);
+  background-color: var(--bg-body);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  /*colores*/
-  --KOrange: #FD7E14;
-  --bg-dark: #595C5F;
-  --bg-light: #F9F9F9
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-[class^="row"], [class^="col"], [class^="container"]{
-  padding: 0;
-  margin: 0;
-}
-
-[class^="row"]{
-  margin-left: 0;
-  margin-right: 0;
-  border: 1px solid red;
-}
-
-[class^="col"]{
-  border: 1px solid blue;
-}
-
-[class^="container"]{
-  border: 1px solid green;
 }
 
 body {
@@ -48,6 +34,9 @@ body {
   overflow-x: hidden;
   width: 100%;
   min-height: 100vh;
+  background-color: var(--bg-body);
+  color: var(--text-primary);
+  transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
 #app {
@@ -56,9 +45,37 @@ body {
   padding: 0;
 }
 
-@media (prefers-color-scheme: light) {
+/* Utilities */
+.text-korange { color: var(--KOrange) !important; }
+.bg-korange { background-color: var(--KOrange) !important; }
+.btn-korange {
+  background-color: var(--KOrange);
+  color: white;
+  border: none;
+  transition: all var(--transition-speed);
+}
+.btn-korange:hover {
+  background-color: var(--KOrange-hover);
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Dark Theme Overrides */
+@media (prefers-color-scheme: dark) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    color-scheme: dark;
+    
+    /* Dark Theme Variables */
+    --bg-body: #1a1b1e;
+    --bg-surface: #25262b;
+    --text-primary: #e9ecef;
+    --text-secondary: #adb5bd;
+    --border-color: #373a40;
   }
+}
+
+/* Reset for bootstrap grid/layout helpers if needed */
+[class^="row"], [class^="col"], [class^="container"] {
+  padding: 0;
+  margin: 0;
 }
