@@ -28,6 +28,7 @@ komanda-project/
 │   │   │   │   ├── *.model.ts      # Modelos de datos
 │   │   │   │   └── ...
 │   │   │   ├── 📂 kitchen/     # Gestión de cocina y comandas
+│   │   │   ├── 📂 realtime/    # WebSockets y sincronización en tiempo real
 │   │   │   └── 📂 sales/       # Gestión de ventas y transacciones
 │   │   ├── 📂 shared/          # Código compartido y utilidades transversales
 │   │   │   ├── 📂 database/    # Configuración de base de datos y migraciones
@@ -47,7 +48,9 @@ komanda-project/
 │   │   ├── 📂 modules/         # Módulos de Frontend (Vistas y lógica por dominio)
 │   │   │   ├── 📂 inventory/   # Interfaz de gestión de inventario
 │   │   │   ├── 📂 kitchen/     # Interfaz de cocina (Pantalla de comandas)
+│   │   │   ├── 📂 landing/     # Página de aterrizaje y marketing
 │   │   │   ├── 📂 pos/         # Punto de Venta (Terminal de cobro)
+│   │   │   ├── 📂 realtime/    # Gestión de sockets en el cliente
 │   │   │   └── 📂 reports/     # Dashboards y visualización de datos
 │   │   ├── App.vue             # Componente raíz de la aplicación
 │   │   ├── main.ts             # Punto de entrada, montaje de Vue y plugins

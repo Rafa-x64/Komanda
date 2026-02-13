@@ -31,6 +31,19 @@ Se ha creado la "Constitución" del proyecto para estandarizar el desarrollo:
 - **PHP Fixes:** Corrección de headers `Content-Type` y `Access-Control-Allow-Origin` en scripts PHP.
 - **Guías de Instalación:** Verificación y enlazado de guías para Debian, Ubuntu y Windows.
 
+## [v0.0.2] - 2026-02-11
+
+### 🚀 Novedades (Features)
+
+- **Landing Page Responsiva:** Se ha implementado la página de aterrizaje completa en `src/modules/landing`.
+  - **Componentes:** `HeroSection`, `FeaturesSection`, `AboutSection`, `ContactSection`, `AppHeader`, `AppFooter`.
+  - **UI/UX:** Diseño moderno con animaciones de entrada, efectos hover y glassmorphism.
+  - **Tema KOrange:** Integración de la identidad visual "KOrange" con soporte nativo para **Modo Oscuro** y **Claro**.
+- **Sistema de Diseño Global:**
+  - Variables CSS para colores semánticos (`--KOrange`, `--bg-body`, `--text-primary`) en `style.css`.
+  - Configuración de tipografía `Inter` y utilidades de espaciado.
+- **Navegación Móvil:** Menú hamburguesa funcional en `AppHeader`.
+
 ---
 
 > "Gestionar un restaurante sin KOMANDA no es mala suerte, es una deficiencia operativa."
