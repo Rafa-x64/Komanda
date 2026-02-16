@@ -3,9 +3,7 @@ import { ref } from 'vue';
 
 </script>
 <template>
-    <div>
-        <h1>Crear Cuenta</h1>
-    </div>
+    hola mundo
 </template>
 <style scoped>
 

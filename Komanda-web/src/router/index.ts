@@ -14,10 +14,11 @@ const router = createRouter({
             component: () => import('../modules/kitchen/views/KitchenStatus.vue')
         },
         {
-            path: '/crear-cuenta',
-            name: 'sing-up',
+            path: '/singup',
+            name: 'singup',
             component: () => import('../modules/singup/views/SingUp.vue')
         }
+        //registrar singin
     ]
 });
 
