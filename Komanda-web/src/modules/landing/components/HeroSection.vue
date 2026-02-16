@@ -33,10 +33,10 @@ onMounted(() => {
                             deleita a tus clientes con una experiencia fluida.
                         </p>
                         <div class="d-flex gap-3 flex-wrap">
-                            <button class="btn btn-korange btn-lg rounded-pill px-5 d-flex align-items-center gap-2">
+                            <router-link to="/kitchen" class="btn btn-korange btn-lg rounded-pill px-5 d-flex align-items-center gap-2">
                                 Comenzar
                                 <ArrowRight :size="20" />
-                            </button>
+                            </router-link>
                         </div>
 
                         <div class="mt-5 d-flex gap-4 text-secondary small">

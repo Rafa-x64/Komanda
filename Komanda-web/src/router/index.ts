@@ -9,7 +9,7 @@ const router = createRouter({
             component: () => import('../modules/landing/views/LandingView.vue')
         },
         {
-            path: '/cocina',
+            path: '/kitchen',
             name: 'kitchen',
             component: () => import('../modules/kitchen/views/KitchenStatus.vue')
         }

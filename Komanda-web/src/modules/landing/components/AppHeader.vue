@@ -52,9 +52,9 @@ const toggleMenu = () => {
                         <a href="#" class="icon-link">
                             <Linkedin :size="20" />
                         </a>
-                        <button class="btn btn-korange btn-sm rounded-pill px-4">
-                            Empezar
-                        </button>
+                        <router-link to="/kitchen" class="btn btn-korange btn-sm rounded-pill px-4">
+                          Empezar
+                        </router-link>
                     </div>
                 </div>
             </div>
