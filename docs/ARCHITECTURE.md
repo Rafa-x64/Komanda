@@ -110,3 +110,23 @@ modules/inventory/
 1.  **DTOs (Data Transfer Objects):** Validan lo que entra (Zod/ClassValidator). Si el JSON está mal, explota aquí, no en la DB.
 2.  **Middlewares:** Autenticación y manejo de errores global. Nunca hagas `try-catch` para enviar un 500 manual en cada controlador.
 3.  **Domain Guard:** Validaciones de negocio (ej. "No puedes vender stock negativo"). Esto va en el Servicio/Dominio, NUNCA en el Front.
+
+---
+
+## 🚀 Backend Híbrido (Pragmatismo al Poder)
+
+Aunque el core de Komanda corre sobre **Node.js + Express**, permitimos el uso de **PHP** para casos específicos:
+
+- **Node.js**: Ideal para IO intensivo, WebSockets y lógica de orquestación.
+- **PHP**: Utilizado en `src/api/*.php` para cálculos pesados, reportes complejos y tareas donde el procesamiento síncrono de PHP sea más legible y eficiente.
+
+---
+
+## 🗄️ Estándares de Base de Datos
+
+Para que nuestras queries fluyan natural y mantener la consistencia:
+
+1. **Idioma**: Todo en **Inglés**.
+2. **Naming**: **snake_case** para tablas y columnas.
+3. **Pluralización**: Tablas siempre en **plural** (ej: `orders`, `products`).
+4. **Validación**: Nunca confíes en el frontend. Valida antes de insertar (Zod en Node, Form Requests en PHP).

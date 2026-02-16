@@ -1,80 +1,65 @@
 # Estructura del Proyecto Komanda
 
-Este documento define la estructura de directorios y archivos del proyecto `komanda-project`, explicando el propósito de cada componente.
+Este documento define la estructura de directorios y archivos del proyecto `Komanda`, explicando el propósito de cada componente. El proyecto está organizado como un **Monorepo** usando `pnpm workspaces`.
 
 ```text
 komanda-project/
 ├── 📂 .vscode/                 # Configuraciones del editor (VSCode)
-│   └── extensions.json         # Extensiones recomendadas para el proyecto
+├── 📂 docs/                    # Documentación técnica y de negocio
+│   ├── 📂 instalation-guides/  # Guías de despliegue (Windows, Linux)
+│   ├── ARCHITECTURE.md         # Documentación de la filosofía DDD-Lite
+│   ├── STRUCTURE.md            # Este archivo
+│   └── ...                     # Otros manuales y contratos
 │
-├── 📂 docs/                    # Documentación del proyecto
-│   ├── 📂 instalation-guides/  # Guías de instalación y configuración
-│   ├── API_CONTRACTS.md        # Definición de contratos de API
-│   ├── ARCHITECTURE.md         # Documentación de arquitectura del sistema
-│   ├── DOMAIN.md               # Definición del lenguaje de dominio
-│   ├── KOMANDA.md              # Visión general del producto Komanda
-│   ├── MANUAL_BACKEND.md       # Guía de desarrollo para el Backend
-│   ├── MANUAL_FRONTEND.md      # Guía de desarrollo para el Frontend
-│   └── ...                     # Otros archivos de documentación y licencias
-│
-├── 📂 Komanda-api/             # Backend API (Node.js + Express + TypeScript)
+├── 📂 Komanda-api/             # Backend Híbrido (Node.js/TS + PHP)
 │   ├── 📂 src/
-│   │   ├── 📂 api/             # Definición de rutas y endpoints HTTP base
-│   │   ├── 📂 config/          # Configuraciones globales (Variables de entorno, constantes)
-│   │   ├── 📂 modules/         # Módulos de dominio de negocio (Business Logic)
-│   │   │   ├── 📂 inventory/   # Gestión de inventario (Productos, Stock)
-│   │   │   │   ├── *.controller.ts # Controladores de entrada
-│   │   │   │   ├── *.service.ts    # Lógica de negocio
-│   │   │   │   ├── *.model.ts      # Modelos de datos
-│   │   │   │   └── ...
-│   │   │   ├── 📂 kitchen/     # Gestión de cocina y comandas
-│   │   │   ├── 📂 realtime/    # WebSockets y sincronización en tiempo real
-│   │   │   └── 📂 sales/       # Gestión de ventas y transacciones
-│   │   ├── 📂 shared/          # Código compartido y utilidades transversales
-│   │   │   ├── 📂 database/    # Configuración de base de datos y migraciones
-│   │   │   └── 📂 services/    # Servicios compartidos (Email, Storage, etc.)
-│   │   └── index.ts            # Punto de entrada de la aplicación API
-│   ├── package.json            # Dependencias y scripts del Backend
-│   └── tsconfig.json           # Configuración de TypeScript
+│   │   ├── 📂 api/             # Endpoints específicos (Ej: stats.php)
+│   │   ├── 📂 config/          # Variables de entorno y constantes
+│   │   ├── 📂 modules/         # Lógica de negocio (DDD-Lite)
+│   │   │   ├── 📂 inventory/   # Gestión de stock y productos
+│   │   │   ├── 📂 kitchen/     # Gestión de comandas
+│   │   │   └── ...
+│   │   ├── 📂 shared/          # Base de datos y utilidades comunes
+│   │   └── index.ts            # Punto de entrada Express
+│   ├── package.json            # Scripts de Node
+│   └── tsconfig.json           # Configuración TS
 │
-├── 📂 Komanda-web/             # Frontend Web App (Vue 3 + Vite + Tailwind)
-│   ├── 📂 public/              # Archivos estáticos públicos (favicon, robots.txt)
+├── 📂 Komanda-web/             # Frontend (Vue 3 + Vite + Bootstrap 5)
+│   ├── 📂 public/              # Assets estáticos directos
 │   ├── 📂 src/
-│   │   ├── 📂 assets/          # Recursos estáticos procesados (Imágenes, CSS global)
-│   │   ├── 📂 components/      # Componentes UI reutilizables globlales (Botones, Inputs)
-│   │   ├── 📂 core/            # Núcleo de la aplicación frontend
-│   │   │   ├── 📂 api/         # Clientes HTTP y configuración de Axios/Fetch
-│   │   │   └── 📂 hooks/       # Composables (Hooks) globales de Vue
-│   │   ├── 📂 modules/         # Módulos de Frontend (Vistas y lógica por dominio)
-│   │   │   ├── 📂 inventory/   # Interfaz de gestión de inventario
-│   │   │   ├── 📂 kitchen/     # Interfaz de cocina (Pantalla de comandas)
-│   │   │   ├── 📂 landing/     # Página de aterrizaje y marketing
-│   │   │   ├── 📂 pos/         # Punto de Venta (Terminal de cobro)
-│   │   │   ├── 📂 realtime/    # Gestión de sockets en el cliente
-│   │   │   └── 📂 reports/     # Dashboards y visualización de datos
-│   │   ├── App.vue             # Componente raíz de la aplicación
-│   │   ├── main.ts             # Punto de entrada, montaje de Vue y plugins
-│   │   └── style.css           # Estilos globales (Tailwind imports)
-│   ├── index.html              # Plantilla HTML principal
-│   ├── package.json            # Dependencias y scripts del Frontend
-│   ├── vite.config.ts          # Configuración de Vite (Build, Server, Plugins)
-│   └── ...                     # Configs de TS y herramientas
+│   │   ├── 📂 assets/          # Imágenes y CSS global
+│   │   ├── 📂 core/            # Configuración de API y hooks globales
+│   │   ├── 📂 modules/         # Vistas y lógica por dominio
+│   │   │   ├── 📂 kitchen/     # Pantalla de cocina
+│   │   │   ├── 📂 landing/     # Landing Page principal
+│   │   │   ├── 📂 singin/      # Autenticación (Login)
+│   │   │   └── ...
+│   │   ├── 📂 router/          # Configuración de Vue Router
+│   │   ├── App.vue             # Componente raíz
+│   │   ├── main.ts             # Inicialización de la App
+│   │   └── style.css           # Estilos globales y variables (KOrange)
+│   ├── index.html              # Entry point HTML
+│   └── package.json            # Dependencias (Bootstrap, Lucide, etc.)
 │
-├── .gitignore                  # Archivos ignorados por Git
-├── package.json                # Configuración del workspace (si aplica) o raíz
-└── README.md                   # Documentación general y "Landing page" del repo
+├── 📜 pnpm-workspace.yaml      # Configuración del Monorepo
+├── 📜 package.json             # Scripts globales (pnpm run komanda)
+└── 📜 README.md                # Presentación del proyecto
 ```
 
 ## Leyenda de Directorios Importantes
 
-### 📂 Komanda-api/src/modules
+### 📂 Backend (Komanda-api)
 
-Este directorio contiene la lógica de negocio dividida por dominios. Cada carpeta aquí representa una funcionalidad vertical del sistema (Inventory, Sales, Kitchen, etc.). Dentro de cada módulo encontrarás:
+Utilizamos un enfoque pragmático:
 
-- **Controllers**: Manejan las peticiones HTTP.
-- **Services**: Contienen la lógica de negocio pura.
-- **Models**: Definen la estructura de los datos.
+- **Node.js (Express)**: Gestiona el flujo principal, autenticación y tiempo real. Se sigue el patrón de nombres `*.controller.ts`, `*.service.ts` y `*.model.ts`.
+- **PHP**: Se utiliza para tareas específicas, reportes complejos o lógica pesada de cálculo donde PHP destaca por su sencillez en el manejo de datos. Ubicado en `src/api/`.
+- **Modules**: La lógica de negocio vive aquí, separada por dominios (Ventas, Inventario, Cocina).
 
-### 📂 Komanda-web/src/modules
+### 📂 Frontend (Komanda-web)
 
-Es el espejo del backend en el frontend. Cada carpeta aquí contiene las interfaces de usuario (Vistas) y la lógica de estado correspondiente a un dominio específico. Esto facilita la navegación y el mantenimiento del código al agrupar todo lo relacionado con una funcionalidad en un solo lugar.
+Basado en **Vue 3 (Composition API)**:
+
+- **Bootstrap 5**: Provee la base del diseño responsive y el sistema de grillas.
+- **Custom CSS**: Ubicado en `style.css`, define nuestra identidad visual (**KOrange**).
+- **Modules**: Es el espejo del backend en el frontend. Cada carpeta aquí contiene las interfaces de usuario (Vistas) y la lógica de estado correspondiente a un dominio específico. Esto facilita la navegación y el mantenimiento al agrupar todo lo relacionado con una funcionalidad.
