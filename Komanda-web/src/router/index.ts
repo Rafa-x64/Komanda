@@ -12,6 +12,11 @@ const router = createRouter({
             path: '/cocina',
             name: 'kitchen',
             component: () => import('../modules/kitchen/views/KitchenStatus.vue')
+        },
+        {
+            path: '/crear-cuenta',
+            name: 'sing-up',
+            component: () => import('../modules/singup/views/SingUp.vue')
         }
     ]
 });
