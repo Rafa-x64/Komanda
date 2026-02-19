@@ -4,6 +4,58 @@ Todas las actualizaciones notables documentadas en este archivo.
 
 El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
+## [v0.0.3] - 2026-02-18
+
+### 🗄️ Base de Datos (Breaking Change v2.1)
+
+- **Organización por Esquemas PostgreSQL:** Separación lógica en `core`, `inventario`, `menu`, `operaciones`, `finanzas`, `contabilidad`.
+
+- **Robustez Operativa (v2.1):**
+  - **Conversiones:** `compra_detalle` incluye `factor_conversion` y columna calculada `cantidad_inventario` para manejar unidades de compra vs consumo.
+  - **Descuentos y Propinas:** Campos financieros agregados a `pedidos` y `facturas`. Configuración de `propina_porcentaje` en restaurante.
+  - **Reservas:** Nueva tabla `operaciones.reservas` con estado y datos de cliente.
+  - **Imágenes:** Campo `imagen_url` en recetas para KDS/POS.
+  - **Mermas:** Tabla de registro de desperdicios y campo `merma_teorica_porcentaje` en ingredientes.
+- **Tablas Nuevas Clave:** `menu.categorias`, `contabilidad.libro_diario`.
+- **Correcciones de Dominio:** ENUMs alineados con `DOMAIN.md` (`estado_pedido`, `estado_cuenta`).
+- **Seguridad:** `password_hash` en usuarios. Auditoría completa (`created_at`/`updated_at`) con triggers.
+
+### 📚 Documentación
+
+- **[CAMBIOS_BD_v2.txt](./CAMBIOS_BD_v2.txt):** Resumen detallado de la versión 2.1.
+
+## [v0.0.1] - 2026-02-07
+
+### 🗄️ Base de Datos (Breaking Change)
+
+- **Organización por Esquemas PostgreSQL:** Todas las tablas migradas del schema `public` a 6 esquemas lógicos:
+  - `core` — Restaurante, usuarios, roles, métodos de pago, unidades de medida.
+  - `inventario` — Ingredientes, proveedores, compras, mermas, unidades de compra.
+  - `menu` — Categorías, recetas, ingredientes de receta.
+  - `operaciones` — Mesas, meseros, pedidos, facturas.
+  - `finanzas` — Caja, banco, egresos y movimientos.
+  - `contabilidad` — Libro diario (asientos contables).
+- **Tablas Nuevas:**
+  - `inventario.mermas` — Registro de desperdicios y pérdidas de inventario.
+  - `menu.categorias` — Categorías del menú (Entradas, Bebidas, Postres, etc.).
+  - `contabilidad.libro_diario` — Asientos contables simplificados para estados financieros.
+- **Autenticación:** Campo `password_hash` agregado a `core.usuarios`.
+- **ENUMs Corregidos:**
+  - `estado_pedido` alineado con `DOMAIN.md`: `pendiente → enviado → preparando → listo → entregado → anulado`.
+  - Nuevo `estado_cuenta`: `abierta → cuenta_pedida → pagada → cerrada`.
+  - Nuevo `tipo_merma`: `desperdicio, vencimiento, rotura, otro`.
+- **Columnas Nuevas:**
+  - `operaciones.pedido_detalle.notas` — Instrucciones para cocina ("Sin piña", "Extra queso").
+  - `operaciones.facturas` — `metodo_pago_id`, `usuario_id`, `cliente_nombre`, `cliente_identificacion`.
+  - `core.restaurante` — `direccion`, `telefono`, `email`, `moneda`, `zona_horaria`, `impuesto_porcentaje`, `logo_url`, `activo`.
+  - `menu.recetas.categoria_id` — FK a categorías de menú.
+- **Auditoría:** `created_at` / `updated_at` en todas las tablas relevantes + 10 triggers de auto-update.
+- **Precisión:** Campos financieros ampliados de `DECIMAL(10,2)` a `DECIMAL(12,2)`.
+
+### 📚 Documentación
+
+- **[CAMBIOS_BD_v2.txt](./CAMBIOS_BD_v2.txt):** Resumen detallado de todos los cambios de BD.
+
 ## [v0.0.1] - 2026-02-07
 
 ### 🚀 Novedades (Features)

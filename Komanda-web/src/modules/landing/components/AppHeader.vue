@@ -52,9 +52,8 @@ const toggleMenu = () => {
                         <a href="#" class="icon-link">
                             <Linkedin :size="20" />
                         </a>
-                        <router-link to="/kitchen" class="btn btn-korange btn-sm rounded-pill px-4">
-                          Empezar
-                        </router-link>
+                        <router-link to="/singin" class="btn btn-korange btn-sm rounded-pill px-4">Iniciar Sesion</router-link>
+                        <router-link to="/singup" class="btn btn-korange btn-sm rounded-pill px-4">Registrarse</router-link>
                     </div>
                 </div>
             </div>
@@ -94,7 +93,7 @@ const toggleMenu = () => {
     color: var(--KOrange);
 }
 
-.btn-korange{
+.btn-korange {
     color: var(--text-primary)
 }
 
