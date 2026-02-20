@@ -52,8 +52,8 @@ const toggleMenu = () => {
                         <a href="#" class="icon-link">
                             <Linkedin :size="20" />
                         </a>
-                        <router-link to="/singin" class="btn btn-korange btn-sm rounded-pill px-4">Iniciar Sesion</router-link>
-                        <router-link to="/singup" class="btn btn-korange btn-sm rounded-pill px-4">Registrarse</router-link>
+                        <router-link to="/singin" class="btn-outline-korange border-2 rounded-pill px-1 text-decoration-none">Iniciar Sesion</router-link>
+                        <router-link to="/singup" class="btn-korange border-2 rounded-pill px-1 text-decoration-none">Registrarse</router-link>
                     </div>
                 </div>
             </div>

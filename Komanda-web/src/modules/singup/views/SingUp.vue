@@ -1,54 +1,77 @@
 <script setup lang='ts'>
 import { ref } from 'vue';
+import AdminForm from '../components/AdminForm.vue';
+import RestaurantForm from '../components/RestaurantForm.vue';
 
 </script>
 <template>
-    <div class="background-wrapper">
-        <div class="container-fluid content-layer d-flex flex-column justify-content-center align-items-center">
-            <div class="row w-75 p-1 d-md-none">
-                <!--para movil-->
-                <div class="col-12">Col 1</div>
-                <div class="col-12">Col 2</div>
-            </div>
-            <div class="row w-75 p-1 d-none d-md-flex">
-                <!--para pc y tablet-->
-                <div class="col-6">Col 1</div>
-                <div class="col-6">Col 2</div>
-            </div>
+    <div class="container-fluid d-flex justify-content-center align-items-center min-vh-100 p-0 m-0">
+        <div class="row w-100 w-md-75 g-3 p-2">
+            <RestaurantForm />
+            <AdminForm />
         </div>
     </div>
 </template>
-<style scoped>
-.background-wrapper {
-    position: relative;
-    min-height: 100vh;
-    overflow: hidden;
-}
-
-.background-wrapper::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: url(../../../assets/singin-singup-image.jpeg);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    filter: blur(5px);
-    transform: scale(1.1);
-    z-index: 0;
-}
-
-.content-layer {
-    position: relative;
-    z-index: 1;
+<style>
+[class^="container"] {
+    border: 1px solid black;
 }
 
 [class^="col"] {
     border: 1px solid blue;
-    background: rgba(255, 255, 255, 0.7);
 }
 
 [class^="row"] {
     border: 1px solid red;
+}
+
+@media(prefers-color-scheme: light){
+    .container-fluid,
+        .card,
+        .form {
+            background-color: var(--bg-body);
+        }
+    
+        .form-control {
+            background-color: var(--bg-surface);
+            transition: background-color 0.1s ease-in, box-shadow 0.1s ease-in, border var(--transition-speed) ease-in;
+            color: var(--text-primary);
+        }
+    
+        .form-control:hover {
+            border-color: var(--KOrange-hover)!important
+        }
+    
+        .form-control:focus {
+            background-color: var(--bg-body);
+            box-shadow: 0 0 0 0.25rem var(--KOrange-hover);
+            color: var(--text-primary);
+        }
+}
+
+@media(prefers-color-scheme: dark){
+    .container-fluid, .card, .form{
+        background-color: var(--bg-body);
+    }
+
+    .form-control{
+        background-color: var(--bg-surface);
+        transition: background-color 0.1s ease-in, box-shadow 0.1s ease-in, border var(--transition-speed) ease-in;
+        color: var(--text-primary);
+    }
+
+    .form-control:hover{
+        border-color: var(--KOrange-hover)
+    }
+
+    .form-control:focus{
+        background-color: var(--bg-body);
+        box-shadow: 0 0 0 0.25rem var(--KOrange-hover);
+        color: var(--text-primary);
+    }
+}
+
+@media(prefers-color-scheme: light){
+
 }
 </style>
