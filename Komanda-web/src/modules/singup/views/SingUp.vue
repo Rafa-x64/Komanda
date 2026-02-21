@@ -25,53 +25,93 @@ import RestaurantForm from '../components/RestaurantForm.vue';
     border: 1px solid red;
 }
 
-@media(prefers-color-scheme: light){
-    .container-fluid,
-        .card,
-        .form {
-            background-color: var(--bg-body);
-        }
-    
-        .form-control {
-            background-color: var(--bg-surface);
-            transition: background-color 0.1s ease-in, box-shadow 0.1s ease-in, border var(--transition-speed) ease-in;
-            color: var(--text-primary);
-        }
-    
-        .form-control:hover {
-            border-color: var(--KOrange-hover)!important
-        }
-    
-        .form-control:focus {
-            background-color: var(--bg-body);
-            box-shadow: 0 0 0 0.25rem var(--KOrange-hover);
-            color: var(--text-primary);
-        }
-}
+@media(prefers-color-scheme: light) {
 
-@media(prefers-color-scheme: dark){
-    .container-fluid, .card, .form{
+    .container-fluid,
+    .card,
+    .form {
         background-color: var(--bg-body);
     }
 
-    .form-control{
+    .form-control {
         background-color: var(--bg-surface);
         transition: background-color 0.1s ease-in, box-shadow 0.1s ease-in, border var(--transition-speed) ease-in;
         color: var(--text-primary);
     }
 
-    .form-control:hover{
-        border-color: var(--KOrange-hover)
+    .form-control:hover {
+        border-color: var(--KOrange-hover) !important
     }
 
-    .form-control:focus{
+    .form-control:focus {
         background-color: var(--bg-body);
         box-shadow: 0 0 0 0.25rem var(--KOrange-hover);
         color: var(--text-primary);
     }
 }
 
-@media(prefers-color-scheme: light){
+@media(prefers-color-scheme: dark) {
 
+    .container-fluid,
+    .card,
+    .form {
+        background-color: var(--bg-body);
+    }
+
+    .form-control {
+        background-color: var(--bg-surface);
+        transition: background-color 0.1s ease-in, box-shadow 0.1s ease-in, border var(--transition-speed) ease-in;
+        color: var(--text-primary);
+    }
+
+    .form-control:hover {
+        border-color: var(--KOrange-hover)
+    }
+
+    .form-control:focus {
+        background-color: var(--bg-body);
+        box-shadow: 0 0 0 0.25rem var(--KOrange-hover);
+        color: var(--text-primary);
+    }
+
+    .form-control::file-selector-button {
+        background-color: var(--KOrange);
+        color: white;
+        border: none;
+        border-inline-end-width: 1px;
+        border-inline-end-style: solid;
+        border-color: inherit;
+        padding: 0.375rem 0.75rem;
+        margin-inline-start: -0.75rem;
+        margin-inline-end: 0.75rem;
+        transition: all 0.2s ease-in-out;
+        cursor: pointer;
+    }
+
+    .form-control:hover::file-selector-button {
+        background-color: var(--KOrange-hover) !important;
+    }
+
+    .form-select {
+        background-color: var(--bg-surface);
+        transition: background-color 0.1s ease-in, box-shadow 0.1s ease-in, border var(--transition-speed) ease-in;
+        color: var(--text-primary);
+    }
+
+    .form-select:hover {
+        border-color: var(--KOrange-hover)
+    }
+
+    .form-select:focus {
+        background-color: var(--bg-body);
+        box-shadow: 0 0 0 0.25rem var(--KOrange-hover);
+        color: var(--text-primary);
+    }
+
+    label {
+        margin-top: 0.65rem;
+    }
 }
+
+@media(prefers-color-scheme: light) {}
 </style>

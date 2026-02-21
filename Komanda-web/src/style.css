@@ -1,5 +1,5 @@
 :root {
-  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Inter", system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
   font-synthesis: none;
@@ -8,35 +8,24 @@
   -moz-osx-font-smoothing: grayscale;
 
   /* Brand Colors (Inmutables) */
-    --KOrange: #FD7E14;
-    --KOrange-hover: #e36d0d;
-    --KOrange-light: #fff0e3;
-    --transition-speed: 0.25s;
-  
-    /* Tema Claro (Default) */
-    color-scheme: light;
-    --bg-body: #ffffff;
-    --bg-surface: #f8f9fa;
-    --text-main: #212529;
-    --text-muted: #6c757d;
-    --text-inverse: #ffffff;
-    --border-color: #dee2e6;
-  }
-  
-  /* 2. Tema Oscuro (Media Query y Atributo) */
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      color-scheme: dark;
-      --bg-body: #1a1b1e;
-      --bg-surface: #25262b;
-      --text-main: #e9ecef;
-      --text-muted: #adb5bd;
-      --border-color: #373a40;
-    }
-  }
-  
-  /* Forzar tema oscuro mediante JS si decides usar data-theme="dark" */
-  [data-theme="dark"] {
+  --KOrange: #fd7e14;
+  --KOrange-hover: #e36d0d;
+  --KOrange-light: #fff0e3;
+  --transition-speed: 0.25s;
+
+  /* Tema Claro (Default) */
+  color-scheme: light;
+  --bg-body: #ffffff;
+  --bg-surface: #f8f9fa;
+  --text-main: #212529;
+  --text-muted: #6c757d;
+  --text-inverse: #ffffff;
+  --border-color: #dee2e6;
+}
+
+/* 2. Tema Oscuro (Media Query y Atributo) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
     color-scheme: dark;
     --bg-body: #1a1b1e;
     --bg-surface: #25262b;
@@ -44,16 +33,29 @@
     --text-muted: #adb5bd;
     --border-color: #373a40;
   }
-  
-  /* 3. Estilos Base */
-  body {
-    margin: 0;
-    width: 100%;
-    min-height: 100vh;
-    background-color: var(--bg-body);
-    color: var(--text-main);
-    transition: background-color var(--transition-speed), color var(--transition-speed);
-  }
+}
+
+/* Forzar tema oscuro mediante JS si decides usar data-theme="dark" */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg-body: #1a1b1e;
+  --bg-surface: #25262b;
+  --text-main: #e9ecef;
+  --text-muted: #adb5bd;
+  --border-color: #373a40;
+}
+
+/* 3. Estilos Base */
+body {
+  margin: 0;
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  transition:
+    background-color var(--transition-speed),
+    color var(--transition-speed);
+}
 
 #app {
   width: 100%;
@@ -62,7 +64,9 @@
 }
 
 /* Utilities */
-.text-korange { color: var(--KOrange) !important; }
+.text-korange {
+  color: var(--KOrange) !important;
+}
 
 .text-primary-custom {
   color: var(--text-main) !important;
@@ -72,7 +76,9 @@
   color: var(--text-muted) !important;
 }
 
-.bg-korange { background-color: var(--KOrange) !important; }
+.bg-korange {
+  background-color: var(--KOrange) !important;
+}
 
 .btn-korange {
   background-color: var(--KOrange);
@@ -92,7 +98,8 @@
   transition: all var(--transition-speed) ease;
 }
 
-.btn-korange:hover, .btn-outline-korange:hover{
+.btn-korange:hover,
+.btn-outline-korange:hover {
   background-color: var(--KOrange-hover);
   color: white;
   transform: translateY(-2px);
@@ -103,7 +110,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    
+
     /* Dark Theme Variables */
     --bg-body: #1a1b1e;
     --bg-surface: #25262b;
@@ -114,7 +121,9 @@
 }
 
 /* Reset for bootstrap grid/layout helpers if needed */
-[class^="row"], [class^="col"], [class^="container"] {
+[class^="row"],
+[class^="col"],
+[class^="container"] {
   padding: 0;
   margin: 0;
 }
