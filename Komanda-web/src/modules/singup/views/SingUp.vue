@@ -1,14 +1,57 @@
 <script setup lang='ts'>
-import { ref } from 'vue';
+import { ref, computed, shallowRef } from 'vue';
 import AdminForm from '../components/AdminForm.vue';
 import RestaurantForm from '../components/RestaurantForm.vue';
 
+const formData = ref({
+    restaurant: {
+        name: '',
+        phone: '',
+        address: '',
+        email: '',
+        currency: '',
+        zone: '',
+        tax: '',
+        tip: '',
+        restaurantLogo: '',
+    },
+    admin: {
+        name: '',
+        userName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+    }
+});
+
+const currentStepIndex = ref(0);
+
+const steps = [RestaurantForm, AdminForm];
+
+const CurrentStepComponent = computed(() => steps[currentStepIndex.value]);
+
+const nextStep = () => {
+    if (currentStepIndex.value < steps.length - 1) {
+        currentStepIndex.value++;
+    }
+};
+
+const prevStep = () => {
+    if (currentStepIndex.value > 0) {
+        currentStepIndex.value--;
+    }
+};
+
+const submitWizard = () => { 
+    console.log("Enviando a la bd...", formData.value);
+}
 </script>
 <template>
     <div class="container-fluid d-flex justify-content-center align-items-center min-vh-100 p-0 m-0">
-        <div class="row w-100 w-md-75 g-3 p-2">
-            <RestaurantForm />
-            <AdminForm />
+        <div class="row w-100 w-md-75 g-3 p-2 d-flex justify-content-center">
+            <transition name="fade" mode="out-in">
+                <component :is="CurrentStepComponent" :form-data="formData" @next="nextStep" @prev="prevStep" @submit="submitWizard"/>
+            </transition>
         </div>
     </div>
 </template>
@@ -23,6 +66,17 @@ import RestaurantForm from '../components/RestaurantForm.vue';
 
 [class^="row"] {
     border: 1px solid red;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    transform: translateX(10px);
 }
 
 @media(prefers-color-scheme: light) {
