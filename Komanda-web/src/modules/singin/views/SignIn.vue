@@ -9,7 +9,7 @@ const formData = ref({
 });
 
 const handleSubmit = async () => {
-    try { 
+    try {
         const respuesta = await fetch("http://localhost:3000/api/v1/signin/login", {
             method: "POST",
             headers: {
@@ -29,7 +29,7 @@ const handleSubmit = async () => {
         alert("¡Inicio de sesión exitoso!");
         console.log("Éxito:", data);
         window.location.href = '/dashboard';
-    } catch (error) { 
+    } catch (error) {
         console.error("Error de conexión:", error);
         alert("No se pudo conectar con el servidor, revisa si está encendido.");
     }
