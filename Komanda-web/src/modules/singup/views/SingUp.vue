@@ -63,7 +63,7 @@ const submitWizard = async () => {
         alert("¡Restaurante y administrador registrados con éxito!");
         // Aquí podrías usar useRouter() para redirigir al Dashboard o Login
         console.log("Éxito:", data);
-        window.location.href = '/login'; // O usar vue-router
+        window.location.href = '/singin'; // O usar vue-router
     } catch (error) {
         console.error("Error de conexión:", error);
         alert("No se pudo conectar con el servidor, revisa si está encendido.");
