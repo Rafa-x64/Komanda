@@ -22,6 +22,11 @@ const router = createRouter({
             path: '/singin',
             name: 'singin',
             component: () => import('../modules/singin/views/SignIn.vue')
+        },
+        {
+            path: '/registro-ingredientes',
+            name: 'ingredientes',
+            component: () => import('../modules/recipe-ingredient-entry/views/RecipeCrudView.vue')
         }
     ]
 });
