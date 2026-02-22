@@ -17,8 +17,12 @@ const router = createRouter({
             path: '/singup',
             name: 'singup',
             component: () => import('../modules/singup/views/SingUp.vue')
+        },
+        {
+            path: '/singin',
+            name: 'singin',
+            component: () => import('../modules/singin/views/SignIn.vue')
         }
-        //registrar singin
     ]
 });
 

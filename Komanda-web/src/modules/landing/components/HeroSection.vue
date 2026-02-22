@@ -33,7 +33,8 @@ onMounted(() => {
                             deleita a tus clientes con una experiencia fluida.
                         </p>
                         <div class="d-flex gap-3 flex-wrap">
-                            <router-link to="/kitchen" class="btn btn-korange btn-lg rounded-pill px-5 d-flex align-items-center gap-2">
+                            <router-link to="/kitchen"
+                                class="btn btn-korange btn-lg rounded-pill px-5 d-flex align-items-center gap-2">
                                 Comenzar
                                 <ArrowRight :size="20" />
                             </router-link>
@@ -60,8 +61,8 @@ onMounted(() => {
                                         class="avatar bg-korange rounded-circle d-flex align-items-center justify-content-center text-white fw-bold">
                                         K</div>
                                     <div>
-                                        <h6 class="m-0 fw-bold text-primary-color">Orden #1234</h6>
-                                        <small class="text-muted">Hace 2 min</small>
+                                        <h6 class="m-0 fw-bold text-main">Orden #1234</h6>
+                                        <small class="text-secondary-custom">Hace 2 min</small>
                                     </div>
                                 </div>
                                 <span class="badge bg-success bg-opacity-10 text-success">En Preparación</span>
@@ -69,12 +70,12 @@ onMounted(() => {
                             <div class="border-bottom mb-3"></div>
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between mb-2">
-                                    <span class="text-primary-color">2x Hamburguesa Clásica</span>
-                                    <span class="fw-bold text-primary-color">$24.00</span>
+                                    <span class="text-main">2x Hamburguesa Clásica</span>
+                                    <span class="fw-bold text-main">$24.00</span>
                                 </div>
                                 <div class="d-flex justify-content-between">
-                                    <span class="text-primary-color">1x Papas Fritas Extra</span>
-                                    <span class="fw-bold text-primary-color">$5.00</span>
+                                    <span class="text-main">1x Papas Fritas Extra</span>
+                                    <span class="fw-bold text-main">$5.00</span>
                                 </div>
                             </div>
                         </div>
@@ -83,7 +84,7 @@ onMounted(() => {
                         <div class="visual-card float-card-1 p-3 rounded-3 shadow bg-surface">
                             <div class="d-flex align-items-center gap-2">
                                 <Globe :size="20" class="text-primary" />
-                                <span class="fw-bold text-primary-color">Pedidos Online</span>
+                                <span class="fw-bold text-main">Pedidos Online</span>
                             </div>
                         </div>
                     </div>
@@ -115,8 +116,8 @@ onMounted(() => {
     text-wrap: balance;
 }
 
-.text-primary-color {
-    color: var(--text-primary);
+.text-main {
+    color: var(--text-main);
 }
 
 /* Animations */

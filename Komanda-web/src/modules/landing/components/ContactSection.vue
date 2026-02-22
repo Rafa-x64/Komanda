@@ -9,8 +9,8 @@ import { Mail, MapPin, Phone, Send } from 'lucide-vue-next';
                 <!-- Text / Info -->
                 <div class="col-lg-5">
                     <span class="text-korange fw-bold text-uppercase tracking-wider small">Contáctanos</span>
-                    <h2 class="display-5 fw-bold mt-2 mb-4 text-primary-color">Hablemos de tu proyecto</h2>
-                    <p class="lead text-secondary mb-5">
+                    <h2 class="display-5 fw-bold mt-2 mb-4 text-main">Hablemos de tu proyecto</h2>
+                    <p class="lead text-secondary-custom mb-5">
                         ¿Listo para llevar tu restaurante al siguiente nivel? Nuestro equipo está listo para ayudarte a
                         empezar.
                     </p>
@@ -22,9 +22,9 @@ import { Mail, MapPin, Phone, Send } from 'lucide-vue-next';
                                 <Mail :size="20" />
                             </div>
                             <div>
-                                <h6 class="fw-bold text-primary-color mb-1">Email</h6>
-                                <p class="text-secondary m-0">hola@komanda.com</p>
-                                <p class="text-secondary m-0">soporte@komanda.com</p>
+                                <h6 class="fw-bold text-main mb-1">Email</h6>
+                                <p class="text-secondary-custom m-0">hola@komanda.com</p>
+                                <p class="text-secondary-custom m-0">soporte@komanda.com</p>
                             </div>
                         </div>
 
@@ -34,8 +34,8 @@ import { Mail, MapPin, Phone, Send } from 'lucide-vue-next';
                                 <Phone :size="20" />
                             </div>
                             <div>
-                                <h6 class="fw-bold text-primary-color mb-1">Teléfono</h6>
-                                <p class="text-secondary m-0">+58 412 555 5555</p>
+                                <h6 class="fw-bold text-main mb-1">Teléfono</h6>
+                                <p class="text-secondary-custom m-0">+58 412 555 5555</p>
                             </div>
                         </div>
 
@@ -45,8 +45,8 @@ import { Mail, MapPin, Phone, Send } from 'lucide-vue-next';
                                 <MapPin :size="20" />
                             </div>
                             <div>
-                                <h6 class="fw-bold text-primary-color mb-1">Oficina</h6>
-                                <p class="text-secondary m-0">Av. Principal de Las Mercedes, Caracas, Venezuela.</p>
+                                <h6 class="fw-bold text-main mb-1">Oficina</h6>
+                                <p class="text-secondary-custom m-0">Av. Principal de Las Mercedes, Caracas, Venezuela.</p>
                             </div>
                         </div>
                     </div>
@@ -55,7 +55,7 @@ import { Mail, MapPin, Phone, Send } from 'lucide-vue-next';
                 <!-- Contact Form -->
                 <div class="col-lg-6 offset-lg-1">
                     <div class="contact-card p-4 p-md-5 rounded-4 bg-surface shadow-lg border">
-                        <h4 class="fw-bold mb-4 text-primary-color">Envíanos un mensaje</h4>
+                        <h4 class="fw-bold mb-4 text-main">Envíanos un mensaje</h4>
                         <form @submit.prevent>
                             <div class="row g-3">
                                 <div class="col-md-6">
@@ -99,8 +99,8 @@ import { Mail, MapPin, Phone, Send } from 'lucide-vue-next';
     background-color: var(--bg-body);
 }
 
-.text-primary-color {
-    color: var(--text-primary);
+.text-main {
+    color: var(--text-main);
 }
 
 .tracking-wider {
@@ -125,16 +125,17 @@ import { Mail, MapPin, Phone, Send } from 'lucide-vue-next';
 .form-control {
     background-color: var(--bg-body);
     border-color: var(--border-color);
-    color: var(--text-primary);
+    color: var(--text-main);
 }
 
 .form-control:focus {
+    color: var(--text-muted);
     border-color: var(--KOrange);
     box-shadow: 0 0 0 0.25rem rgba(253, 126, 20, 0.25);
 }
 
 .form-floating label {
-    color: var(--text-secondary);
+    color: var(--text-secondary-custom);
 }
 
 /* Dark mode specific tweak not fully covered by vars */

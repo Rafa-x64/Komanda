@@ -18,7 +18,7 @@ const statistics = [
                         <div class="image-wrapper rounded-4 overflow-hidden shadow-lg">
                             <!-- Placeholder for a real image, using a gradient/pattern for now -->
                             <div
-                                class="placeholder-image bg-surface d-flex align-items-center justify-content-center text-secondary">
+                                class="placeholder-image bg-surface d-flex align-items-center justify-content-center text-secondary-custom">
                                 <span class="fs-1 fw-bold opacity-25">Equipo Komanda</span>
                             </div>
                         </div>
@@ -36,11 +36,11 @@ const statistics = [
                 <div class="col-lg-6 order-1 order-lg-2">
                     <span class="text-korange fw-bold text-uppercase tracking-wider small">Sobre Nosotros</span>
                     <h2 class="display-5 fw-bold mt-2 mb-4 texto-About">Empoderando a la gastronomía moderna</h2>
-                    <p class="lead text-secondary mb-4">
+                    <p class="lead text-secondary-custom mb-4">
                         Nuestra misión es democratizar la tecnología para restaurantes de todos los tamaños,
                         permitiéndoles competir y crecer en un mundo digital.
                     </p>
-                    <p class="text-secondary mb-5">
+                    <p class="text-secondary-custom mb-5">
                         Nacimos en una cocina real, entendiendo los dolores de cabeza diarios de chefs y gerentes. Por
                         eso, cada función de Komanda está diseñada para resolver un problema real, no para adornar.
                     </p>
@@ -52,8 +52,8 @@ const statistics = [
                                     <Target :size="24" />
                                 </div>
                                 <div>
-                                    <h6 class="fw-bold text-primary-color mb-1">Misión</h6>
-                                    <p class="small text-secondary m-0">Simplificar operaciones complejas.</p>
+                                    <h6 class="fw-bold text-main mb-1">Misión</h6>
+                                    <p class="small text-secondary-custom m-0">Simplificar operaciones complejas.</p>
                                 </div>
                             </div>
                         </div>
@@ -63,8 +63,8 @@ const statistics = [
                                     <ShieldCheck :size="24" />
                                 </div>
                                 <div>
-                                    <h6 class="fw-bold text-primary-color mb-1">Visión</h6>
-                                    <p class="small text-secondary m-0">Ser el estándar global de gestión.</p>
+                                    <h6 class="fw-bold text-main mb-1">Visión</h6>
+                                    <p class="small text-secondary-custom m-0">Ser el estándar global de gestión.</p>
                                 </div>
                             </div>
                         </div>
@@ -73,8 +73,8 @@ const statistics = [
                     <!-- Statistics -->
                     <div class="d-flex gap-5 border-top pt-4">
                         <div v-for="(stat, index) in statistics" :key="index">
-                            <h3 class="fw-bold text-primary-color m-0">{{ stat.number }}</h3>
-                            <small class="text-secondary">{{ stat.label }}</small>
+                            <h3 class="fw-bold text-main m-0">{{ stat.number }}</h3>
+                            <small class="text-secondary-custom">{{ stat.label }}</small>
                         </div>
                     </div>
                 </div>
@@ -88,8 +88,8 @@ const statistics = [
     background-color: var(--bg-surface);
 }
 
-.text-primary-color {
-    color: var(--text-primary);
+.text-main {
+    color: var(--text-main);
 }
 
 .tracking-wider {

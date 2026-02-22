@@ -70,11 +70,11 @@ const toggleMenu = () => {
 
 .navbar-brand {
     font-size: 1.5rem;
-    color: var(--text-primary);
+    color: var(--text-main);
 }
 
 .nav-link {
-    color: var(--text-secondary);
+    color: var(--text-muted);
     font-weight: 500;
     transition: color 0.2s ease;
 }
@@ -85,7 +85,7 @@ const toggleMenu = () => {
 }
 
 .icon-link {
-    color: var(--text-secondary);
+    color: var(--text-muted);
     transition: color 0.2s ease;
 }
 
@@ -94,7 +94,7 @@ const toggleMenu = () => {
 }
 
 .btn-korange {
-    color: var(--text-primary)
+    color: var(--text-main)
 }
 
 @media (max-width: 991.98px) {

@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { ref, computed, shallowRef } from 'vue';
+import { ref, computed } from 'vue';
 import AdminForm from '../components/AdminForm.vue';
 import RestaurantForm from '../components/RestaurantForm.vue';
 
@@ -42,32 +42,36 @@ const prevStep = () => {
     }
 };
 
-const submitWizard = () => { 
+const submitWizard = () => {
     console.log("Enviando a la bd...", formData.value);
 }
 </script>
 <template>
     <div class="container-fluid d-flex justify-content-center align-items-center min-vh-100 p-0 m-0">
-        <div class="row w-100 w-md-75 g-3 p-2 d-flex justify-content-center">
-            <transition name="fade" mode="out-in">
-                <component :is="CurrentStepComponent" :form-data="formData" @next="nextStep" @prev="prevStep" @submit="submitWizard"/>
-            </transition>
+        <!-- Wrapper principal de 75vh -->
+        <div class="row w-100 w-md-75 m-2 shadow-lg"
+            style="height: 75vh; border-radius: 0.5rem; overflow: hidden; max-width: 1200px; background-color: var(--bg-surface);">
+
+            <!-- Izquierda: Imagen Estática -->
+            <div class="col-6 d-none d-md-block p-0 m-0 h-100">
+                <img src="../../../assets/ImagenSingUp.jpeg" alt="SingUp" class="img-fluid w-100 h-100"
+                    style="object-fit: cover;">
+            </div>
+
+            <!-- Derecha: Area Escroleable de Formularios -->
+            <div class="col-12 col-md-6 p-0 m-0 h-100 formularios">
+                <transition name="fade" mode="out-in">
+                    <div :key="currentStepIndex" class="h-100 w-100">
+                        <component :is="CurrentStepComponent" :form-data="formData" @next="nextStep" @prev="prevStep"
+                            @submit="submitWizard" />
+                    </div>
+                </transition>
+            </div>
+
         </div>
     </div>
 </template>
 <style>
-[class^="container"] {
-    border: 1px solid black;
-}
-
-[class^="col"] {
-    border: 1px solid blue;
-}
-
-[class^="row"] {
-    border: 1px solid red;
-}
-
 .fade-enter-active,
 .fade-leave-active {
     transition: opacity 0.3s ease, transform 0.3s ease;
@@ -84,23 +88,7 @@ const submitWizard = () => {
     .container-fluid,
     .card,
     .form {
-        background-color: var(--bg-body);
-    }
-
-    .form-control {
-        background-color: var(--bg-surface);
-        transition: background-color 0.1s ease-in, box-shadow 0.1s ease-in, border var(--transition-speed) ease-in;
-        color: var(--text-primary);
-    }
-
-    .form-control:hover {
-        border-color: var(--KOrange-hover) !important
-    }
-
-    .form-control:focus {
-        background-color: var(--bg-body);
-        box-shadow: 0 0 0 0.25rem var(--KOrange-hover);
-        color: var(--text-primary);
+        background-color: var(--bg-surface) !important;
     }
 }
 
@@ -109,62 +97,41 @@ const submitWizard = () => {
     .container-fluid,
     .card,
     .form {
-        background-color: var(--bg-body);
+        background-color: var(--bg-body) !important;
     }
 
-    .form-control {
-        background-color: var(--bg-surface);
-        transition: background-color 0.1s ease-in, box-shadow 0.1s ease-in, border var(--transition-speed) ease-in;
-        color: var(--text-primary);
+    .card,
+    .form {
+        background-color: var(--bg-surface) !important;
     }
+}
 
-    .form-control:hover {
-        border-color: var(--KOrange-hover)
-    }
+.formularios {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
 
-    .form-control:focus {
-        background-color: var(--bg-body);
-        box-shadow: 0 0 0 0.25rem var(--KOrange-hover);
-        color: var(--text-primary);
-    }
+.formularios::-webkit-scrollbar {
+    width: 8px;
+}
 
-    .form-control::file-selector-button {
-        background-color: var(--KOrange);
-        color: white;
-        border: none;
-        border-inline-end-width: 1px;
-        border-inline-end-style: solid;
-        border-color: inherit;
-        padding: 0.375rem 0.75rem;
-        margin-inline-start: -0.75rem;
-        margin-inline-end: 0.75rem;
-        transition: all 0.2s ease-in-out;
-        cursor: pointer;
-    }
+.formularios::-webkit-scrollbar-track {
+    background: transparent;
+}
 
-    .form-control:hover::file-selector-button {
-        background-color: var(--KOrange-hover) !important;
-    }
+.formularios::-webkit-scrollbar-thumb {
+    background-color: var(--KOrange, #ff7a00);
+    /* Fallback si var no disponible en global scope local, idealmente usa var(--KOrange) u opacity */
+    border-radius: 20px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+}
 
-    .form-select {
-        background-color: var(--bg-surface);
-        transition: background-color 0.1s ease-in, box-shadow 0.1s ease-in, border var(--transition-speed) ease-in;
-        color: var(--text-primary);
-    }
-
-    .form-select:hover {
-        border-color: var(--KOrange-hover)
-    }
-
-    .form-select:focus {
-        background-color: var(--bg-body);
-        box-shadow: 0 0 0 0.25rem var(--KOrange-hover);
-        color: var(--text-primary);
-    }
-
-    label {
-        margin-top: 0.65rem;
-    }
+.formularios::-webkit-scrollbar-thumb:hover {
+    background-color: var(--KOrange-hover, #e06900);
 }
 
 @media(prefers-color-scheme: light) {}
