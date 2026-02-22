@@ -67,7 +67,7 @@ const handleBack = () => {
                 </button>
 
                 <button form="adminForm" type="submit"
-                    class="btn btn-korange text-white rounded-pill px-4 d-flex align-items-center">
+                    class="btn-outline-korange rounded-pill px-4 d-flex align-items-center">
                     Finalizar
                     <CheckIcon :size="20" class="ms-2" />
                 </button>

@@ -86,7 +86,7 @@ const handleFile = (event: Event) => {
             <div class="card-footer bg-transparent border-0 d-flex flex-row justify-content-center align-items-center">
                 <div class="d-flex justify-content-end mt-4">
                     <button type="submit"
-                        class="btn-outline-korange border-2 rounded-pill p-2 text-uppercase w-100 d-flex flex-row justify-content-center align-items-center">
+                        class="btn-outline-korange border-2 rounded-pill p-2 text-capitalize w-100 d-flex flex-row justify-content-center align-items-center">
                         <p class="m-0">siguiente</p>
                         <ChevronsRightIcon :size="20" />
                     </button>
