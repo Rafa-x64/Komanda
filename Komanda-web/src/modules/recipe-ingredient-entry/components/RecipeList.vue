@@ -27,7 +27,7 @@ const formatCurrency = (value: number) => {
 <template>
   <div class="recipe-list bg-surface p-4 p-md-5 rounded-4 shadow-sm border-0">
     <!-- Loading State -->
-    <div v-if="loading" class="text-center py-5 text-secondary">
+    <div v-if="loading" class="text-center py-5 text-secondary-custom">
       <div class="spinner-border text-korange mb-3" role="status">
         <span class="visually-hidden">Cargando...</span>
       </div>
@@ -35,7 +35,7 @@ const formatCurrency = (value: number) => {
     </div>
 
     <!-- Empty State -->
-    <div v-else-if="recipes.length === 0" class="text-center py-5 text-secondary rounded-4 my-3" style="border: 2px dashed var(--border-color)">
+    <div v-else-if="recipes.length === 0" class="text-center py-5 text-secondary-custom rounded-4 my-3" style="border: 2px dashed var(--border-color)">
       <div class="mb-3 opacity-50 fs-1">🍽️</div>
       <h5 class="fw-bold">Menú Vacío</h5>
       <p class="mb-0">Aún no se han configurado platillos. ¡Añade el primero!</p>
@@ -63,11 +63,11 @@ const formatCurrency = (value: number) => {
                   style="width: 48px; height: 48px; background-color: var(--bg-body)"
                 >
                   <img v-if="recipe.imagen_url" :src="recipe.imagen_url" alt="Img" class="w-100 h-100 object-fit-cover">
-                  <span v-else class="text-secondary fw-bold">{{ recipe.nombre.substring(0,2).toUpperCase() }}</span>
+                  <span v-else class="text-secondary-custom fw-bold">{{ recipe.nombre.substring(0,2).toUpperCase() }}</span>
                 </div>
                 <div>
-                  <h6 class="mb-0 text-primary fw-bold">{{ recipe.nombre }}</h6>
-                  <small class="text-secondary d-flex align-items-center gap-1 mt-1">
+                  <h6 class="mb-0 text-primary-custom fw-bold">{{ recipe.nombre }}</h6>
+                  <small class="text-secondary-custom d-flex align-items-center gap-1 mt-1">
                     <span class="badge rounded-pill bg-light text-dark border shadow-sm">
                       {{ recipe.ingredientes?.length || 0 }} hrs
                     </span>
@@ -76,10 +76,10 @@ const formatCurrency = (value: number) => {
                 </div>
               </div>
             </td>
-            <td class="text-secondary fw-medium">{{ getCategoriaNombre(recipe.categoria_id) }}</td>
+            <td class="text-secondary-custom fw-medium">{{ getCategoriaNombre(recipe.categoria_id) }}</td>
             <td>
               <div class="d-flex flex-column">
-                <small class="text-secondary line-through opacity-75">{{ formatCurrency(recipe.costo_produccion) }}</small>
+                <small class="text-secondary-custom line-through opacity-75">{{ formatCurrency(recipe.costo_produccion) }}</small>
                 <strong class="text-korange fs-6">{{ formatCurrency(recipe.precio_venta) }}</strong>
               </div>
             </td>
@@ -91,13 +91,13 @@ const formatCurrency = (value: number) => {
             <td class="text-center">
               <div class="d-inline-flex align-items-center gap-2">
                 <span class="status-dot" :class="recipe.activo ? 'bg-success' : 'bg-secondary'"></span>
-                <span class="small fw-bold text-secondary text-uppercase">{{ recipe.activo ? 'Activo' : 'Inactivo' }}</span>
+                <span class="small fw-bold text-secondary-custom text-uppercase">{{ recipe.activo ? 'Activo' : 'Inactivo' }}</span>
               </div>
             </td>
             <td class="text-end pe-4">
               <div class="action-buttons d-flex gap-2 justify-content-end opacity-75">
                 <button 
-                  class="btn btn-sm btn-action text-primary rounded-circle" 
+                  class="btn btn-sm btn-action text-primary-custom rounded-circle" 
                   @click="emit('edit', recipe)"
                   title="Editar Plato"
                 >
@@ -123,18 +123,18 @@ const formatCurrency = (value: number) => {
 .tracking-wider { letter-spacing: 1px; }
 
 .bg-surface { background-color: var(--bg-surface); }
-.text-primary { color: var(--text-primary) !important; }
-.text-secondary { color: var(--text-secondary) !important; }
+.text-primary-custom { color: var(--text-main) !important; }
+.text-secondary-custom { color: var(--text-muted) !important; }
 .text-korange { color: var(--KOrange) !important; }
 
 /* Custom table for dark/light mode */
 .custom-table {
-  color: var(--text-primary);
+  color: var(--text-main);
   border-collapse: separate;
   border-spacing: 0;
 }
 .custom-table th {
-  color: var(--text-secondary);
+  color: var(--text-muted);
   font-weight: 700;
   border-bottom: 2px solid var(--border-color) !important;
 }
@@ -194,7 +194,7 @@ const formatCurrency = (value: number) => {
 .text-danger { color: #fa5252 !important; }
 
 .bg-light { background-color: var(--bg-body) !important; }
-.text-dark { color: var(--text-primary) !important; }
+.text-dark { color: var(--text-main) !important; }
 
 /* In dark mode, outline buttons need slightly different hover colors to look good */
 @media (prefers-color-scheme: dark) {

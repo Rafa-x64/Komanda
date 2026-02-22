@@ -35,7 +35,7 @@ const fetchData = async () => {
 
     // Mockup Data para visualizar el CRUD
     await new Promise(r => setTimeout(r, 600)); // Simulate latency
-    
+
     categorias.value = [
       { id: 1, nombre: 'Entradas' },
       { id: 2, nombre: 'Platos Fuertes' },
@@ -128,7 +128,7 @@ const handleSubmit = async (recipe: Recipe) => {
       recipe.id = Date.now();
       recipes.value.push(recipe);
     }
-    
+
     showForm.value = false;
     editingRecipe.value = null;
   } catch (error) {
@@ -156,7 +156,7 @@ const handleCreateCategory = async (nombre: string) => {
     alert(`Categoría "${nombre}" creada exitosamente.`);
     // Since the dumb component is not v-model bound to the entire list, 
     // it just gets the newly updated props automatically.
-  } catch(e) {
+  } catch (e) {
     console.error('Error creating category', e);
   }
 };
@@ -165,28 +165,31 @@ const handleCreateCategory = async (nombre: string) => {
 <template>
   <div class="view-container py-4">
     <div class="container-fluid max-w-7xl">
-      
+
       <!-- Headings mimicking Landing Page -->
       <div class="row justify-content-center mb-5 mt-3">
         <div class="col-lg-10 text-center">
-            <span class="text-korange fw-bold text-uppercase tracking-wider small">Komanda Gestión</span>
-            <h2 class="display-5 fw-bold mt-2 mb-3 text-primary">Ingeniería del Menú</h2>
-            <p class="lead text-secondary">
-                Administra tus platillos, unifica la lista de ingredientes (BOM) y domina tus márgenes de ganancia.
-            </p>
+          <span class="text-korange fw-bold text-uppercase tracking-wider small">Komanda Gestión</span>
+          <h2 class="display-5 fw-bold mt-2 mb-3 text-primary-custom">Ingeniería del Menú</h2>
+          <p class="lead text-secondary-custom">
+            Administra tus platillos, unifica la lista de ingredientes (BOM) y domina tus márgenes de ganancia.
+          </p>
         </div>
       </div>
 
       <!-- Action Bar when NOT showing form -->
       <div v-if="!showForm" class="row mb-4 gx-3 justify-content-between align-items-center">
         <div class="col-md-5 order-2 order-md-1 mt-3 mt-md-0">
-           <div class="search-box position-relative">
-             <Search class="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary" :size="20"/>
-             <input v-model="searchQuery" type="text" class="form-control ps-5 py-2 rounded-pill custom-input" placeholder="Buscar plato por nombre...">
-           </div>
+          <div class="search-box position-relative">
+            <Search class="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary-custom" :size="20" />
+            <input v-model="searchQuery" type="text" class="form-control ps-5 py-2 rounded-pill custom-input"
+              placeholder="Buscar plato por nombre...">
+          </div>
         </div>
         <div class="col-md-auto text-end order-1 order-md-2">
-          <button class="btn btn-korange px-4 py-2 rounded-pill fw-bold d-inline-flex justify-content-center align-items-center gap-2 shadow-sm pulse-btn w-100" @click="handleCreateNew">
+          <button
+            class="btn-korange px-4 py-2 rounded-pill fw-bold d-inline-flex justify-content-center align-items-center gap-2 shadow-sm pulse-btn w-100"
+            @click="handleCreateNew">
             <PlusCircle :size="20" /> Nuevo Plato
           </button>
         </div>
@@ -197,27 +200,13 @@ const handleCreateCategory = async (nombre: string) => {
         <div class="col-12 z-index-1">
           <!-- Render Form if showForm is true -->
           <transition name="slide-fade" mode="out-in">
-            <RecipeForm 
-              v-if="showForm"
-              key="form"
-              :initial-data="editingRecipe"
-              :categorias="categorias"
-              :ingredientes-disponibles="ingredientesDisponibles"
-              @submit="handleSubmit"
-              @cancel="handleCancel"
-              @create-category="handleCreateCategory"
-            />
+            <RecipeForm v-if="showForm" key="form" :initial-data="editingRecipe" :categorias="categorias"
+              :ingredientes-disponibles="ingredientesDisponibles" @submit="handleSubmit" @cancel="handleCancel"
+              @create-category="handleCreateCategory" />
 
             <!-- Render List otherwise -->
-            <RecipeList 
-              v-else
-              key="list"
-              :recipes="filteredRecipes"
-              :categorias="categorias"
-              :loading="loading"
-              @edit="handleEdit"
-              @delete="handleDelete"
-            />
+            <RecipeList v-else key="list" :recipes="filteredRecipes" :categorias="categorias" :loading="loading"
+              @edit="handleEdit" @delete="handleDelete" />
           </transition>
         </div>
       </div>
@@ -235,16 +224,12 @@ const handleCreateCategory = async (nombre: string) => {
   max-width: 1200px;
 }
 
-.text-primary {
-  color: var(--text-primary) !important;
+.text-primary-custom {
+  color: var(--text-main) !important;
 }
 
-.text-secondary {
-  color: var(--text-secondary) !important;
-}
-
-.text-korange {
-  color: var(--KOrange) !important;
+.text-secondary-custom {
+  color: var(--text-muted) !important;
 }
 
 .tracking-wider {
@@ -254,33 +239,24 @@ const handleCreateCategory = async (nombre: string) => {
 /* Custom Search Input */
 .custom-input {
   background-color: var(--bg-surface);
-  color: var(--text-primary);
+  color: var(--text-main);
   border: 1px solid var(--border-color);
   transition: all var(--transition-speed);
 }
+
 .custom-input:focus {
-  background-color: var(--bg-surface);
+  background-color: var(--bg-body);
   border-color: var(--KOrange);
   box-shadow: 0 0 0 0.25rem rgba(253, 126, 20, 0.15);
 }
 
-.btn-korange {
-  background-color: var(--KOrange);
-  color: white;
-  border: none;
-  transition: all var(--transition-speed);
-}
-.btn-korange:hover {
-  background-color: #e36d0d;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(253, 126, 20, 0.2);
-}
 
 /* Animations */
 .slide-fade-enter-active,
 .slide-fade-leave-active {
   transition: all 0.4s ease;
 }
+
 .slide-fade-enter-from,
 .slide-fade-leave-to {
   transform: translateY(20px);

@@ -4,9 +4,9 @@
 <div class="modulo-ingredientes">
     <h2>Registro de Ingredientes</h2>
     <form @submit.prevent="validarRegistro" class="form-container">
-        <input v-model="ingrediente.nombre" type="text" placeholder="Nombre (Ej: Harina)" required>
-        <input v-model.number="ingrediente.cantidad" type="number" placeholder="Cantidad" required>
-        <button type="submit" class="btn-primary">Registrar</button>
+        <input v-model="ingrediente.nombre" type="text" class="form-control mb-3" placeholder="Nombre (Ej: Harina)" required>
+        <input v-model.number="ingrediente.cantidad" type="number" class="form-control mb-3" placeholder="Cantidad" required>
+        <button type="submit" class="btn btn-korange w-100">Registrar</button>
     </form>
 </div>
 </template>

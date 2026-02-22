@@ -203,7 +203,7 @@ const handleSubmit = () => {
       <span class="text-korange fw-bold text-uppercase tracking-wider small">
         {{ initialData ? 'Edición' : 'Creación' }} de Menú
       </span>
-      <h3 class="fw-bold mb-4 mt-2 text-primary">
+      <h3 class="fw-bold mb-4 mt-2 text-primary-custom">
         {{ initialData ? 'Edita tu plato maestro' : 'Diseña un nuevo plato' }}
       </h3>
 
@@ -238,7 +238,7 @@ const handleSubmit = () => {
         <div v-if="currentStep === 1" class="step-content" key="step1">
           <div class="row g-4">
             <div class="col-md-6">
-              <label class="form-label text-primary fw-bold">Nombre del Plato *</label>
+              <label class="form-label text-primary-custom fw-bold">Nombre del Plato *</label>
               <input 
                 v-model="form.nombre" 
                 type="text" 
@@ -250,7 +250,7 @@ const handleSubmit = () => {
             </div>
             
             <div class="col-md-6">
-              <label class="form-label text-primary fw-bold">Categoría *</label>
+              <label class="form-label text-primary-custom fw-bold">Categoría *</label>
               <div v-if="!isCreatingCategory" class="d-flex gap-2">
                 <select v-model="form.categoria_id" class="form-select custom-input rounded-3 py-2" required>
                   <option :value="null" disabled>Selecciona una categoría</option>
@@ -280,7 +280,7 @@ const handleSubmit = () => {
             </div>
 
             <div class="col-12">
-              <label class="form-label text-primary fw-bold">Descripción Corta</label>
+              <label class="form-label text-primary-custom fw-bold">Descripción Corta</label>
               <textarea 
                 v-model="form.descripcion" 
                 class="form-control custom-input rounded-3" 
@@ -290,9 +290,9 @@ const handleSubmit = () => {
             </div>
 
             <div class="col-12">
-              <label class="form-label text-primary fw-bold">URL Fotografía</label>
+              <label class="form-label text-primary-custom fw-bold">URL Fotografía</label>
               <div class="input-group">
-                <span class="input-group-text custom-input border-end-0 bg-transparent text-secondary">
+                <span class="input-group-text custom-input border-end-0 bg-transparent text-secondary-custom">
                   🔗
                 </span>
                 <input 
@@ -307,7 +307,7 @@ const handleSubmit = () => {
             <div class="col-12 mt-4">
               <div class="form-check form-switch py-3 px-4 rounded-4" style="background-color: var(--bg-body); border: 1px solid var(--border-color);">
                 <input v-model="form.activo" class="form-check-input ms-0 me-3 mt-1" type="checkbox" id="activoSwitch" style="transform: scale(1.2);">
-                <label class="form-check-label text-primary fw-bold pt-0" for="activoSwitch">
+                <label class="form-check-label text-primary-custom fw-bold pt-0" for="activoSwitch">
                   Hacer visible en el menú inmediatamente
                 </label>
               </div>
@@ -328,7 +328,7 @@ const handleSubmit = () => {
             
             <div class="row g-3 align-items-end">
               <div class="col-md-5">
-                <label class="form-label text-primary fw-bold small">Ingrediente Base</label>
+                <label class="form-label text-primary-custom fw-bold small">Ingrediente Base</label>
                 <div class="position-relative">
                   <input 
                     type="text" 
@@ -347,14 +347,14 @@ const handleSubmit = () => {
                     >
                       {{ ing.nombre }}
                     </li>
-                    <li v-if="filteredIngredientesDisponibles.length === 0" class="list-group-item text-secondary text-center">
+                    <li v-if="filteredIngredientesDisponibles.length === 0" class="list-group-item text-secondary-custom text-center">
                       No se encontraron ingredientes
                     </li>
                   </ul>
                 </div>
               </div>
               <div class="col-md-2">
-                <label class="form-label text-primary fw-bold small">Medida</label>
+                <label class="form-label text-primary-custom fw-bold small">Medida</label>
                 <select v-model="newIngredient.unidad" class="form-select custom-input py-2 rounded-3">
                   <option value="kg">Kilos</option>
                   <option value="litros">Litros</option>
@@ -363,7 +363,7 @@ const handleSubmit = () => {
                 </select>
               </div>
               <div class="col-md-3">
-                <label class="form-label text-primary fw-bold small">Cantidad</label>
+                <label class="form-label text-primary-custom fw-bold small">Cantidad</label>
                 <input v-model.number="newIngredient.cantidad" type="number" step="0.001" min="0" class="form-control custom-input py-2 rounded-3" placeholder="Ej. 1.5">
               </div>
               <div class="col-md-2 text-end">
@@ -378,31 +378,31 @@ const handleSubmit = () => {
             <table class="table table-hover custom-table align-middle mb-0">
               <thead style="background-color: transparent;">
                 <tr>
-                  <th class="ps-4 py-3 border-bottom border-0 text-secondary text-uppercase small tracking-wider">Ingrediente</th>
-                  <th class="py-3 border-bottom border-0 text-center text-secondary text-uppercase small tracking-wider">Medida</th>
-                  <th class="py-3 border-bottom border-0 text-center text-secondary text-uppercase small tracking-wider">Porción</th>
-                  <th class="pe-4 py-3 border-bottom border-0 text-end text-secondary text-uppercase small tracking-wider">Quitar</th>
+                  <th class="ps-4 py-3 border-bottom border-0 text-secondary-custom text-uppercase small tracking-wider">Ingrediente</th>
+                  <th class="py-3 border-bottom border-0 text-center text-secondary-custom text-uppercase small tracking-wider">Medida</th>
+                  <th class="py-3 border-bottom border-0 text-center text-secondary-custom text-uppercase small tracking-wider">Porción</th>
+                  <th class="pe-4 py-3 border-bottom border-0 text-end text-secondary-custom text-uppercase small tracking-wider">Quitar</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-if="form.ingredientes.length === 0">
-                  <td colspan="4" class="text-center text-secondary py-5 border-0">
+                  <td colspan="4" class="text-center text-secondary-custom py-5 border-0">
                     <div class="opacity-50 mb-2"><ClipboardList :size="32" /></div>
                     Ningún ingrediente ha sido asignado. <br>
                     <small>Este plato no descontará de inventario si se deja vacío.</small>
                   </td>
                 </tr>
                 <tr v-for="(ing, idx) in form.ingredientes" :key="idx" class="ingredient-row">
-                  <td class="text-primary fw-bold ps-2 ps-sm-4 py-2 py-sm-3 border-0">
-                    <div class="d-flex align-items-center gap-2 w-100" style="color: var(--text-primary) !important; opacity: 1;">
+                  <td class="text-primary-custom fw-bold ps-2 ps-sm-4 py-2 py-sm-3 border-0">
+                    <div class="d-flex align-items-center gap-2 w-100" style="color: var(--text-main) !important; opacity: 1;">
                        <span class="bullet-dot bg-korange flex-shrink-0"></span>
                        <span class="text-truncate" style="max-width: 150px;">{{ ing.nombre_ingrediente }}</span>
                     </div>
                   </td>
                   <td class="text-center small text-uppercase py-2 py-sm-3 border-0">
-                    <span class="badge rounded-pill px-2 px-sm-3 py-1 py-sm-2 border shadow-sm" style="background-color: var(--bg-body); color: var(--text-primary); border-color: var(--border-color) !important;">{{ ing.unidad }}</span>
+                    <span class="badge rounded-pill px-2 px-sm-3 py-1 py-sm-2 border shadow-sm" style="background-color: var(--bg-body); color: var(--text-main); border-color: var(--border-color) !important;">{{ ing.unidad }}</span>
                   </td>
-                  <td class="text-primary text-center fs-6 fs-sm-5 fw-bold py-2 py-sm-3 border-0" style="color: var(--text-primary) !important;">{{ ing.cantidad }}</td>
+                  <td class="text-primary-custom text-center fs-6 fs-sm-5 fw-bold py-2 py-sm-3 border-0" style="color: var(--text-main) !important;">{{ ing.cantidad }}</td>
                   <td class="text-end pe-2 pe-sm-4 py-2 py-sm-3 border-0">
                     <button type="button" class="btn btn-sm btn-outline-danger custom-radius p-2 mx-1 rounded-circle flex-center" @click="removeIngredient(idx)" title="Eliminar Insumo">
                       <X :size="14" />
@@ -421,7 +421,7 @@ const handleSubmit = () => {
           <div class="row g-4 justify-content-center">
             <div class="col-md-4">
               <div class="price-card p-4 rounded-4 text-center">
-                <label class="form-label text-secondary small fw-bold text-uppercase">Costo Producción</label>
+                <label class="form-label text-secondary-custom small fw-bold text-uppercase">Costo Producción</label>
                 <div class="input-group mt-2">
                   <span class="input-group-text custom-input fw-bold bg-transparent border-end-0">$</span>
                   <input 
@@ -452,7 +452,7 @@ const handleSubmit = () => {
 
             <div class="col-md-4">
               <div class="price-card p-4 rounded-4 text-center">
-                <label class="form-label text-secondary small fw-bold text-uppercase">Precio Sugerido (Opcional)</label>
+                <label class="form-label text-secondary-custom small fw-bold text-uppercase">Precio Sugerido (Opcional)</label>
                 <div class="input-group mt-2">
                   <span class="input-group-text custom-input fw-bold bg-transparent border-end-0">$</span>
                   <input 
@@ -466,11 +466,11 @@ const handleSubmit = () => {
 
             <div class="col-12 text-center mt-5">
               <div class="d-inline-flex flex-column align-items-center p-4 rounded-4 mb-2 shadow-sm" style="background-color: var(--bg-surface); border: 2px solid var(--border-color); min-width: 300px;">
-                <span class="text-secondary small fw-bold text-uppercase mb-2">Margen de Utilidad Proyectado</span>
+                <span class="text-secondary-custom small fw-bold text-uppercase mb-2">Margen de Utilidad Proyectado</span>
                 <div class="fs-1 fw-bold" :class="form.margen_utilidad >= 30 ? 'text-success' : (form.margen_utilidad > 0 ? 'text-warning' : 'text-danger')">
                   {{ form.margen_utilidad }}%
                 </div>
-                <small v-if="form.margen_utilidad < 30 && form.margen_utilidad > 0" class="text-secondary mt-2">Margen bajo. Sugerimos > 30%</small>
+                <small v-if="form.margen_utilidad < 30 && form.margen_utilidad > 0" class="text-secondary-custom mt-2">Margen bajo. Sugerimos > 30%</small>
               </div>
             </div>
           </div>
@@ -480,12 +480,12 @@ const handleSubmit = () => {
       <!-- Navigation Actions -->
       <div class="wizard-actions mt-5 pt-4 border-top d-flex flex-column flex-md-row justify-content-between align-items-center gap-3" style="border-color: var(--border-color) !important;">
         <div class="w-100 w-md-auto text-center text-md-start">
-          <button type="button" class="btn btn-outline-secondary rounded-pill px-4 text-secondary w-100 w-md-auto" @click="emit('cancel')">
+          <button type="button" class="btn btn-outline-secondary rounded-pill px-4 text-secondary-custom w-100 w-md-auto" @click="emit('cancel')">
             Cancelar
           </button>
         </div>
         <div class="d-flex flex-column flex-md-row gap-2 w-100 w-md-auto">
-          <button v-if="currentStep > 1" type="button" class="btn btn-surface rounded-pill nav-btn position-relative text-primary w-100 w-md-auto" style="background-color: var(--bg-body); border: 1px solid var(--border-color);" @click="prevStep">
+          <button v-if="currentStep > 1" type="button" class="btn btn-surface rounded-pill nav-btn position-relative text-primary-custom w-100 w-md-auto" style="background-color: var(--bg-body); border: 1px solid var(--border-color);" @click="prevStep">
             <ChevronLeft :size="18" class="position-absolute" style="left: 1.25rem; top: 50%; transform: translateY(-50%);" /> 
             <span>Atrás</span>
           </button>
@@ -512,8 +512,8 @@ const handleSubmit = () => {
   background-color: var(--bg-surface);
 }
 
-.text-primary { color: var(--text-primary) !important; }
-.text-secondary { color: var(--text-secondary) !important; }
+.text-primary-custom { color: var(--text-main) !important; }
+.text-secondary-custom { color: var(--text-muted) !important; }
 .text-success { color: #40c057 !important; }
 .text-warning { color: #fcc419 !important; }
 .text-danger { color: #fa5252 !important; }
@@ -521,20 +521,20 @@ const handleSubmit = () => {
 /* Custom Inputs matching Landing aesthetic */
 .custom-input {
   background-color: var(--bg-body);
-  color: var(--text-primary);
+  color: var(--text-main);
   border: 1px solid var(--border-color);
   transition: all var(--transition-speed);
 }
 
 .custom-input:focus {
   background-color: var(--bg-body);
-  color: var(--text-primary);
+  color: var(--text-main);
   border-color: var(--KOrange);
   box-shadow: 0 0 0 0.25rem rgba(253, 126, 20, 0.15);
 }
 
 .custom-input::placeholder {
-  color: var(--text-secondary);
+  color: var(--text-muted);
   opacity: 0.5;
 }
 
@@ -547,7 +547,7 @@ const handleSubmit = () => {
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   transition: color var(--transition-speed);
 }
 .step.active {
@@ -649,7 +649,7 @@ const handleSubmit = () => {
 /* Buttons */
 .btn-surface {
   background-color: var(--bg-body);
-  color: var(--text-primary);
+  color: var(--text-main);
   border: 1px solid var(--border-color);
   transition: all var(--transition-speed);
 }
@@ -676,7 +676,7 @@ const handleSubmit = () => {
 
 /* Tables */
 .custom-table {
-  color: var(--text-primary);
+  color: var(--text-main);
 }
 .custom-table tr:hover {
   background-color: var(--bg-surface);
@@ -691,7 +691,7 @@ const handleSubmit = () => {
 }
 .dropdown-item-custom {
   background-color: var(--bg-surface);
-  color: var(--text-primary);
+  color: var(--text-main);
   border-bottom: 1px solid var(--border-color);
   transition: background-color 0.2s;
 }
