@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { ChevronsRightIcon } from 'lucide-vue-next';
 const props = defineProps(['formData']);
-const emit = defineEmits(['next']);
+const emit = defineEmits(['next', 'submit']); // 'submit' declarado para bloquear fallthrough
 const handleNext = () => {
     emit('next');
 }

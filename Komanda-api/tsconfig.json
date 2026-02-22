@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true, // Para no usar "any" 
+    "experimentalDecorators": true, // ¡Muy importante para TypeORM!
+    "emitDecoratorMetadata": true,  // ¡Muy importante para TypeORM!
+    "outDir": "./dist",
+    "rootDir": "./src"
+    },
+    "include": ["src/**/*"]
+}

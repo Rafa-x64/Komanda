@@ -42,8 +42,32 @@ const prevStep = () => {
     }
 };
 
-const submitWizard = () => {
-    console.log("Enviando a la bd...", formData.value);
+const submitWizard = async () => {
+    try {
+        const respuesta = await fetch("http://localhost:3000/api/v1/signup/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData.value)
+        });
+
+        const data = await respuesta.json();
+
+        if (!respuesta.ok) {
+            alert(`Error al registrar: ${data.message || 'Verifica los datos'}`);
+            console.error("Detalles:", data.errors);
+            return;
+        }
+
+        alert("¡Restaurante y administrador registrados con éxito!");
+        // Aquí podrías usar useRouter() para redirigir al Dashboard o Login
+        console.log("Éxito:", data);
+        window.location.href = '/login'; // O usar vue-router
+    } catch (error) {
+        console.error("Error de conexión:", error);
+        alert("No se pudo conectar con el servidor, revisa si está encendido.");
+    }
 }
 </script>
 <template>

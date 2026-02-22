@@ -1,8 +1,8 @@
 <script setup lang='ts'>
 import { ref, onMounted } from 'vue';
 //1. estado reactivo (variables que cambian)
-const phpStats = ref(null);//datos de php
-const nodeStatus = ref(null);//datos de node
+const phpStats = ref<any>(null);//datos de php
+const nodeStatus = ref<any>(null);//datos de node
 const loading = ref(true);
 
 //2. funcion para pedir datos (conexion entre front y back)

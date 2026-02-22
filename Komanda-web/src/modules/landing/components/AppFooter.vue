@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { Facebook, Instagram, Linkedin, Twitter, Heart } from 'lucide-vue-next';
+import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-vue-next';
 </script>
 
 <template>
