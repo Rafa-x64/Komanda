@@ -1,42 +1,60 @@
 :root {
-  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Inter", system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  /* Brand Colors */
-  --KOrange: #FD7E14;
-  --KOrange-hover: #e36d0d;
-  --KOrange-light: #fff0e3;
-  
-  /* Light Theme Variables (Default) */
-  --bg-body: #ffffff;
-  --bg-surface: #f8f9fa;
-  --text-primary: #212529;
-  --text-secondary: #6c757d;
-  --text-inverse: #ffffff;
-  --border-color: #dee2e6;
-  
-  /* Interactive */
-  --transition-speed: 0.3s;
-  
-  color-scheme: light;
-  color: var(--text-primary);
-  background-color: var(--bg-body);
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Brand Colors (Inmutables) */
+  --KOrange: #fd7e14;
+  --KOrange-hover: #e36d0d;
+  --KOrange-light: #fff0e3;
+  --transition-speed: 0.25s;
+
+  /* Tema Claro (Default) */
+  color-scheme: light;
+  --bg-body: #ffffff;
+  --bg-surface: #f8f9fa;
+  --text-main: #212529;
+  --text-muted: #5a6068;
+  --text-inverse: #ffffff;
+  --border-color: #dee2e6;
 }
 
+/* 2. Tema Oscuro (Media Query y Atributo) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg-body: #1a1b1e;
+    --bg-surface: #25262b;
+    --text-main: #e9ecef;
+    --text-muted: #9ca3af;
+    --border-color: #373a40;
+  }
+}
+
+/* Forzar tema oscuro mediante JS si decides usar data-theme="dark" */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg-body: #1a1b1e;
+  --bg-surface: #25262b;
+  --text-main: #e9ecef;
+  --text-muted: #9ca3af;
+  --border-color: #373a40;
+}
+
+/* 3. Estilos Base */
 body {
   margin: 0;
-  overflow-x: hidden;
   width: 100%;
   min-height: 100vh;
   background-color: var(--bg-body);
-  color: var(--text-primary);
-  transition: background-color var(--transition-speed), color var(--transition-speed);
+  color: var(--text-main);
+  transition:
+    background-color var(--transition-speed),
+    color var(--transition-speed);
 }
 
 #app {
@@ -46,36 +64,105 @@ body {
 }
 
 /* Utilities */
-.text-korange { color: var(--KOrange) !important; }
-.bg-korange { background-color: var(--KOrange) !important; }
+.text-korange {
+  color: var(--KOrange) !important;
+}
+
+.text-primary-custom {
+  color: var(--text-main) !important;
+}
+
+.text-secondary-custom {
+  color: var(--text-muted) !important;
+}
+
+.bg-korange {
+  background-color: var(--KOrange) !important;
+}
+
 .btn-korange {
   background-color: var(--KOrange);
-  color: white;
+  color: white !important;
   border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
   transition: all var(--transition-speed);
 }
-.btn-korange:hover {
+
+.btn-outline-korange {
+  background-color: transparent;
+  color: white;
+  border: 2px solid var(--KOrange);
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  transition: all var(--transition-speed) ease;
+}
+
+.btn-korange:hover,
+.btn-outline-korange:hover {
   background-color: var(--KOrange-hover);
   color: white;
   transform: translateY(-2px);
+  cursor: pointer;
 }
 
-/* Dark Theme Overrides */
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    
-    /* Dark Theme Variables */
-    --bg-body: #1a1b1e;
-    --bg-surface: #25262b;
-    --text-primary: #e9ecef;
-    --text-secondary: #adb5bd;
-    --border-color: #373a40;
-  }
+/* Forms & Inputs base (Adapts automatically based on CSS Variables) */
+.form-control,
+.form-select {
+  background-color: var(--bg-surface) !important;
+  transition: background-color 0.1s ease-in, box-shadow 0.1s ease-in, border var(--transition-speed) ease-in;
+  color: var(--text-main) !important;
 }
 
-/* Reset for bootstrap grid/layout helpers if needed */
-[class^="row"], [class^="col"], [class^="container"] {
-  padding: 0;
-  margin: 0;
+.form-control:hover,
+.form-select:hover {
+  border-color: var(--KOrange-hover) !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--bg-body) !important;
+  box-shadow: 0 0 0 0.25rem var(--KOrange-hover);
+  color: var(--text-main) !important;
+  border-color: var(--KOrange-hover);
+}
+
+.form-control::placeholder{
+  color: var(--text-muted) !important;
+}
+
+/* 
+  Hack for Chrome/Webkit autofill 
+  Overrides the default pale blue/yellow autofill backgrounds 
+*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active{
+    -webkit-box-shadow: 0 0 0 30px var(--bg-surface) inset !important;
+    -webkit-text-fill-color: var(--text-main) !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Custom file input button styling */
+.form-control::file-selector-button {
+  background-color: var(--KOrange) !important;
+  color: white !important;
+  border: none;
+  border-inline-end-width: 1px;
+  border-inline-end-style: solid;
+  border-color: inherit;
+  padding: 0.375rem 0.75rem;
+  margin-inline-start: -0.75rem;
+  margin-inline-end: 0.75rem;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.form-control:hover::file-selector-button {
+  background-color: var(--KOrange-hover) !important;
+}
+
+label {
+  margin-top: 0.65rem;
 }
