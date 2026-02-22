@@ -17,6 +17,11 @@ const router = createRouter({
             path: '/singup',
             name: 'singup',
             component: () => import('../modules/singup/views/SingUp.vue')
+        },
+        {
+            path: '/registro-ingredientes',
+            name: 'ingredientes',
+            component: () => import('../modules/recipe-ingredient-entry/views/RecipeCrudView.vue')
         }
         //registrar singin
     ]
