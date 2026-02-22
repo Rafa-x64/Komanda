@@ -2,6 +2,9 @@
 import { ref, computed } from 'vue';
 import AdminForm from '../components/AdminForm.vue';
 import RestaurantForm from '../components/RestaurantForm.vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const formData = ref({
     restaurant: {
@@ -63,7 +66,7 @@ const submitWizard = async () => {
         alert("¡Restaurante y administrador registrados con éxito!");
         // Aquí podrías usar useRouter() para redirigir al Dashboard o Login
         console.log("Éxito:", data);
-        window.location.href = '/singin'; // O usar vue-router
+        router.push('/singin'); // O usar vue-router
     } catch (error) {
         console.error("Error de conexión:", error);
         alert("No se pudo conectar con el servidor, revisa si está encendido.");

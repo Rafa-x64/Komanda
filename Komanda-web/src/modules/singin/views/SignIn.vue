@@ -1,6 +1,9 @@
 <script setup lang='ts'>
 import { ref, computed } from 'vue';
 import { LogInIcon } from 'lucide-vue-next';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const formData = ref({
     username: '',
@@ -18,17 +21,22 @@ const handleSubmit = async () => {
             body: JSON.stringify(formData.value)
         });
 
-        const data = await respuesta.json();
+        const text = await respuesta.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            alert(`Error del servidor: ${respuesta.status}`);
+            return;
+        }
 
         if (!respuesta.ok) {
             alert(`Error al iniciar sesión: ${data.message || 'Verifica los datos'}`);
-            console.error("Detalles:", data.errors);
             return;
         }
 
         alert("¡Inicio de sesión exitoso!");
-        console.log("Éxito:", data);
-        window.location.href = '/dashboard';
+        router.push('/dashboard');
     } catch (error) {
         console.error("Error de conexión:", error);
         alert("No se pudo conectar con el servidor, revisa si está encendido.");
