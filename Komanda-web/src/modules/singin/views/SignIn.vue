@@ -1,15 +1,38 @@
 <script setup lang='ts'>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { LogInIcon } from 'lucide-vue-next';
 
 const formData = ref({
-    identifier: '',
+    username: '',
     password: '',
     restaurantName: '',
 });
 
-const handleSubmit = () => {
-    console.log('Iniciando sesión...', formData.value);
+const handleSubmit = async () => {
+    try { 
+        const respuesta = await fetch("http://localhost:3000/api/v1/signin/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData.value)
+        });
+
+        const data = await respuesta.json();
+
+        if (!respuesta.ok) {
+            alert(`Error al iniciar sesión: ${data.message || 'Verifica los datos'}`);
+            console.error("Detalles:", data.errors);
+            return;
+        }
+
+        alert("¡Inicio de sesión exitoso!");
+        console.log("Éxito:", data);
+        window.location.href = '/dashboard';
+    } catch (error) { 
+        console.error("Error de conexión:", error);
+        alert("No se pudo conectar con el servidor, revisa si está encendido.");
+    }
 };
 </script>
 <template>
@@ -33,7 +56,7 @@ const handleSubmit = () => {
                             <label for="identifier" class="form-label text-primary-custom">
                                 Usuario o Correo
                             </label>
-                            <input v-model="formData.identifier" type="text" name="identifier" id="identifier"
+                            <input v-model="formData.username" type="text" name="identifier" id="identifier"
                                 class="form-control" placeholder="nombre_usuario o correo@ejemplo.com" required>
                         </div>
                         <div class="mb-3">
