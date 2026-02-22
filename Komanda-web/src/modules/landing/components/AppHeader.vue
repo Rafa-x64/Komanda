@@ -52,8 +52,8 @@ const toggleMenu = () => {
                         <a href="#" class="icon-link">
                             <Linkedin :size="20" />
                         </a>
-                        <router-link to="/singin" class="btn btn-korange btn-sm rounded-pill px-4">Iniciar Sesion</router-link>
-                        <router-link to="/singup" class="btn btn-korange btn-sm rounded-pill px-4">Registrarse</router-link>
+                        <router-link to="/singin" class="btn-outline-korange border-2 rounded-pill px-1 text-decoration-none">Iniciar Sesion</router-link>
+                        <router-link to="/singup" class="btn-korange border-2 rounded-pill px-1 text-decoration-none">Registrarse</router-link>
                     </div>
                 </div>
             </div>
@@ -70,11 +70,11 @@ const toggleMenu = () => {
 
 .navbar-brand {
     font-size: 1.5rem;
-    color: var(--text-primary);
+    color: var(--text-main);
 }
 
 .nav-link {
-    color: var(--text-secondary);
+    color: var(--text-muted);
     font-weight: 500;
     transition: color 0.2s ease;
 }
@@ -85,7 +85,7 @@ const toggleMenu = () => {
 }
 
 .icon-link {
-    color: var(--text-secondary);
+    color: var(--text-muted);
     transition: color 0.2s ease;
 }
 
@@ -94,7 +94,7 @@ const toggleMenu = () => {
 }
 
 .btn-korange {
-    color: var(--text-primary)
+    color: var(--text-main)
 }
 
 @media (max-width: 991.98px) {
