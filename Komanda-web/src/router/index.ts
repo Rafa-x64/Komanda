@@ -14,6 +14,22 @@ const router = createRouter({
             component: () => import('../modules/kitchen/views/KitchenStatus.vue')
         },
         {
+            path: '/dashboard',
+            name: 'Admin-Dashboard',
+            component: () => import('../modules/dashboard/AdminDashboard.vue')
+        },
+
+        {
+            path: '/mesero-dashboard',
+            name: 'Mesero-Dashboard',
+            component: () => import('../modules/dashboard/MeseroDashboard.vue')
+        },
+         {
+            path: '/caja-dashboard',
+            name: 'Caja-Dashboard',
+            component: () => import('../modules/dashboard/CajaDashboard.vue')
+        },
+        {
             path: '/singup',
             name: 'singup',
             component: () => import('../modules/singup/views/SingUp.vue')
