@@ -1,5 +1,7 @@
 <template>
-  <div class="finance-container p-4">
+  <div class="d-flex w-100">
+    <Sidebar role="cajero" :userName="userName" />
+    <div class="finance-container p-4 main-content">
     <header class="row mb-4 align-items-center">
       <div class="col-12 col-md-6">
         <h2 class="fw-bold mb-1">Control de <span class="text-korange">Caja y Finanzas</span></h2>
@@ -89,11 +91,13 @@
         </div>
       </div>
     </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import Sidebar from '../../components/Sidebar.vue';
 
 const userName = "Luis Landaeta";
 const cajaAbierta = ref(true);
@@ -124,6 +128,14 @@ const registrarEgreso = () => {
 .finance-container {
   background-color: var(--bg-body);
   min-height: 100vh;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .main-content {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+  }
 }
 
 .bg-surface { background-color: var(--bg-surface) !important; }

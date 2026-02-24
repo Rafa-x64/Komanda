@@ -1,5 +1,7 @@
 <template>
-  <div class="waiter-wrapper p-4">
+  <div class="d-flex w-100">
+    <Sidebar role="mesero" :userName="userName" />
+    <div class="waiter-wrapper p-4 main-content">
     <header class="row mb-4 align-items-center">
       <div class="col-12 col-md-6">
         <h2 class="fw-bold mb-0 text-primary-custom">Atención de <span class="text-korange">Salón</span></h2>
@@ -98,11 +100,13 @@
         </div>
       </div>
     </div>
+      </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import Sidebar from '../../components/Sidebar.vue';
 
 const userName = "Luis Mesero";
 const currentTime = ref("");
@@ -139,6 +143,14 @@ onMounted(() => {
 .waiter-wrapper {
   background-color: var(--bg-body);
   min-height: 100vh;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .main-content {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+  }
 }
 
 .text-korange { color: var(--KOrange) !important; }

@@ -1,5 +1,7 @@
 <template>
-  <div class="kds-wrapper p-3">
+  <div class="d-flex w-100">
+    <Sidebar role="cocina" userName="Chef" />
+    <div class="kds-wrapper p-3 main-content">
     <div class="row mb-4 px-2">
       <div class="col-12">
         <div class="summary-card shadow-sm p-3">
@@ -60,11 +62,13 @@
         </div>
       </div>
     </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
+import Sidebar from '../../../components/Sidebar.vue';
 
 const pedidos = ref([
   {
@@ -108,6 +112,14 @@ const marcarComoListo = (id) => {
 .kds-wrapper {
   background-color: var(--bg-surface);
   min-height: 100vh;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .main-content {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+  }
 }
 
 .summary-card {

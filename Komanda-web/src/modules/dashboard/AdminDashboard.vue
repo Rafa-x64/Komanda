@@ -1,5 +1,7 @@
 <template>
-  <div class="admin-wrapper p-3 p-md-5">
+  <div class="d-flex w-100">
+    <Sidebar role="admin" :userName="userName" />
+    <div class="admin-wrapper p-3 p-md-5 main-content">
     
     <header class="row mb-5 align-items-center">
       <div class="col-12 col-md-8 text-center text-md-start">
@@ -147,11 +149,13 @@
         </div>
       </div>
     </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import Sidebar from '../../components/Sidebar.vue';
 
 const userName = ref("Luis");
 const currentDate = new Date().toLocaleDateString('es-ES', { 
@@ -168,6 +172,14 @@ const currentDate = new Date().toLocaleDateString('es-ES', {
   background-color: var(--bg-body);
   color: var(--text-primary);
   min-height: 100vh;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .main-content {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+  }
 }
 
 .card-custom {
