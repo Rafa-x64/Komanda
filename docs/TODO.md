@@ -1,5 +1,10 @@
 # 🚀 KOMANDA: Checklist Maestra de Desarrollo
 
+> [!TIP]
+> Mantén este documento actualizado marcando las casillas (`[x]`) a medida que avanzas en el desarrollo.
+
+---
+
 ## 🎨 FRONTEND (Vue 3 + Tailwind)
 
 ### 🏗️ Fase 1: Fundamentos y UI/UX
@@ -37,7 +42,7 @@
 - [ ] **Implementar validaciones en cliente**
   - [ ] Bloqueos preventivos y mensajes de error amigables.
 - [ ] **Pruebas E2E y usabilidad**
-  - [ ] Testear flujo crítico: Login -> Comanda -> Cocina -> Cobro.
+  - [ ] Testear flujo crítico: Login ➔ Comanda ➔ Cocina ➔ Cobro.
 - [ ] **Preparar build y artefactos**
   - [ ] Configuración de Vite optimizada para producción.
 
@@ -64,7 +69,7 @@
 - [ ] **API de Recetas y Costos**
   - [ ] Lógica para calcular costo dinámico de un plato (BOM).
 - [ ] **API de Comandas (Transaccional)**
-  - [ ] Endpoint `POST /order`: Verifica stock -> Crea Orden -> Reserva Stock.
+  - [ ] Endpoint `POST /order`: Verifica stock ➔ Crea Orden ➔ Reserva Stock.
 - [ ] **Lógica de Back-flushing (Cocina)**
   - [ ] Evento "Entregado": Resta inventario real y registra costo de venta.
 - [ ] **Módulo Contable Automático**
