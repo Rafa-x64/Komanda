@@ -1,3 +1,4 @@
+
 <template>
   <div class="d-flex w-100">
     <Sidebar role="cocina" userName="Chef" />
