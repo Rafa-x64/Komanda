@@ -24,7 +24,7 @@ const router = createRouter({
             name: 'Mesero-Dashboard',
             component: () => import('../modules/dashboard/MeseroDashboard.vue')
         },
-         {
+        {
             path: '/caja-dashboard',
             name: 'Caja-Dashboard',
             component: () => import('../modules/dashboard/CajaDashboard.vue')
@@ -40,8 +40,8 @@ const router = createRouter({
             component: () => import('../modules/singin/views/SignIn.vue')
         },
         {
-            path: '/registro-ingredientes',
-            name: 'ingredientes',
+            path: '/menu',
+            name: 'menu',
             component: () => import('../modules/recipe-ingredient-entry/views/RecipeCrudView.vue')
         }
     ]
