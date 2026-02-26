@@ -17,7 +17,7 @@
 
       <div class="row g-3 mb-4">
         <div class="col-6 col-lg-3">
-          <div class="card border-0 shadow-sm h-100 p-2 border-bottom border-primary border-4 card-kpi-custom">
+          <div class="card  shadow-sm h-100 p-2 border-bottom border-primary border-4 card-kpi-custom">
             <div class="card-body text-center">
               <h6 class="text-secondary-custom small fw-bold text-uppercase">Mis Pedidos</h6>
               <h2 class="fw-bold text-primary mb-0 text-primary-custom">5</h2>
@@ -25,7 +25,7 @@
           </div>
         </div>
         <div class="col-6 col-lg-3">
-          <div class="card border-0 shadow-sm h-100 p-2 border-bottom border-success border-4 card-kpi-custom">
+          <div class="card  shadow-sm h-100 p-2 border-bottom border-success border-4 card-kpi-custom">
             <div class="card-body text-center">
               <h6 class="text-secondary-custom small fw-bold text-uppercase">Propinas Est.</h6>
               <h2 class="fw-bold text-success mb-0">$42.15</h2>
@@ -33,7 +33,7 @@
           </div>
         </div>
         <div class="col-6 col-lg-3">
-          <div class="card border-0 shadow-sm h-100 p-2 border-bottom border-warning border-4 card-kpi-custom">
+          <div class="card  shadow-sm h-100 p-2 border-bottom border-warning border-4 card-kpi-custom">
             <div class="card-body text-center position-relative">
               <h6 class="text-secondary-custom small fw-bold text-uppercase">Entregar Pedido</h6>
               <h2 class="fw-bold text-warning mb-0">2</h2>
@@ -43,7 +43,7 @@
           </div>
         </div>
         <div class="col-6 col-lg-3">
-          <div class="card border-0 shadow-sm h-100 p-2 border-bottom border-danger border-4 card-kpi-custom">
+          <div class="card  shadow-sm h-100 p-2 border-bottom border-danger border-4 card-kpi-custom">
             <div class="card-body text-center">
               <h6 class="text-secondary-custom small fw-bold text-uppercase">Mesas Libres</h6>
               <h2 class="fw-bold text-danger mb-0">3</h2>
@@ -54,7 +54,7 @@
 
       <div class="row g-4">
         <div class="col-12 col-xl-8">
-          <div class="card border-0 shadow-sm p-4 h-100 bg-body-custom card-kpi-custom">
+          <div class="card  shadow-sm p-4 h-100 bg-body-custom card-kpi-custom">
             <div class="d-flex justify-content-between align-items-center mb-4">
               <h5 class="fw-bold mb-0 text-primary-custom">Mapa de Mesas</h5>
               <div class="d-flex gap-2">
@@ -84,7 +84,7 @@
         </div>
 
         <div class="col-12 col-xl-4">
-          <div class="card border-0 shadow-sm p-4 h-100 bg-body-custom card-kpi-custom">
+          <div class="card  shadow-sm p-4 h-100 bg-body-custom card-kpi-custom">
             <h5 class="fw-bold mb-4 text-primary-custom"><i class="bi bi-calendar-event me-2"></i>Próximas Reservas</h5>
             <div class="list-group list-group-flush">
               <div v-for="res in reservas" :key="res.id" class="list-group-item px-0 py-3 bg-transparent border-color">

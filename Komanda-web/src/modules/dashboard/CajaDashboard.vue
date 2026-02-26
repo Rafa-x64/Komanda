@@ -21,7 +21,7 @@
 
       <div class="row g-4 mb-5">
         <div class="col-12 col-md-4">
-          <div class="card kpi-finance border-0 shadow-sm border-start border-korange border-4">
+          <div class="card kpi-finance  shadow-sm border-start border-korange border-4">
             <div class="card-body">
               <h6 class="text-secondary-custom small fw-bold text-uppercase">Estado de Caja (Teórico)</h6>
               <h2 class="fw-bold mb-0 text-korange">${{ montoCaja.toLocaleString() }}</h2>
@@ -30,7 +30,7 @@
           </div>
         </div>
         <div class="col-12 col-md-4">
-          <div class="card kpi-finance border-0 shadow-sm">
+          <div class="card kpi-finance  shadow-sm">
             <div class="card-body">
               <h6 class="text-secondary-custom small fw-bold text-uppercase">Ventas del Turno</h6>
               <h2 class="fw-bold text-primary-custom mb-0">${{ ventasTurno.toLocaleString() }}</h2>
@@ -39,7 +39,7 @@
           </div>
         </div>
         <div class="col-12 col-md-4">
-          <div class="card kpi-finance border-0 shadow-sm">
+          <div class="card kpi-finance  shadow-sm">
             <div class="card-body">
               <h6 class="text-secondary-custom small fw-bold text-uppercase">Facturas Emitidas</h6>
               <h2 class="fw-bold text-primary-custom mb-0">{{ numFacturas }}</h2>
@@ -51,7 +51,7 @@
 
       <div class="row">
         <div class="col-12">
-          <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+          <div class="card  shadow-sm rounded-4 overflow-hidden">
             <div class="card-header bg-white py-3 border-bottom border-color">
               <h5 class="fw-bold mb-0">
                 <i class="bi bi-receipt-cutoff me-2 text-korange"></i>

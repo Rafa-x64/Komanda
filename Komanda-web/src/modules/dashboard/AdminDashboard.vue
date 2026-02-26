@@ -18,7 +18,7 @@
 
       <div class="row g-4 mb-5">
         <div class="col-12 col-md-6 col-xl-3">
-          <div class="card border-0 shadow-sm h-100 card-custom">
+          <div class="card  shadow-sm h-100 card-custom">
             <div class="card-body">
               <h6 class="text-secondary-custom small fw-bold mb-2 text-uppercase">Ventas del día</h6>
               <div class="d-flex align-items-baseline">
@@ -33,7 +33,7 @@
         </div>
 
         <div class="col-12 col-md-6 col-xl-3">
-          <div class="card border-0 shadow-sm h-100 card-custom">
+          <div class="card  shadow-sm h-100 card-custom">
             <div class="card-body">
               <h6 class="text-secondary-custom small fw-bold mb-2 text-uppercase">Margen de Utilidad</h6>
               <h3 class="fw-bold mb-1 text-primary-custom">34.2%</h3>
@@ -46,7 +46,7 @@
         </div>
 
         <div class="col-12 col-md-6 col-xl-3">
-          <div class="card border-0 shadow-sm h-100 card-custom">
+          <div class="card  shadow-sm h-100 card-custom">
             <div class="card-body">
               <h6 class="text-secondary-custom small fw-bold mb-2 text-uppercase">Top 3 Vendidos</h6>
               <ul class="list-unstyled mb-0 small">
@@ -62,7 +62,7 @@
         </div>
 
         <div class="col-12 col-md-6 col-xl-3">
-          <div class="card border-0 shadow-sm h-100 border-start border-danger border-4 card-custom">
+          <div class="card  shadow-sm h-100 border-start border-danger border-4 card-custom">
             <div class="card-body">
               <h6 class="text-danger small fw-bold mb-2 text-uppercase">Stock Crítico</h6>
               <h3 class="fw-bold text-danger mb-0">4 Insumos</h3>
@@ -74,7 +74,7 @@
 
       <div class="row g-4 mb-5">
         <div class="col-12 col-lg-8">
-          <div class="card border-0 shadow-sm p-4 h-100 card-custom">
+          <div class="card  shadow-sm p-4 h-100 card-custom">
             <div class="d-flex justify-content-between align-items-center mb-4">
               <h5 class="fw-bold mb-0 text-primary-custom">Ingresos vs Egresos Semanal</h5>
               <div class="dropdown">
@@ -94,7 +94,7 @@
         </div>
 
         <div class="col-12 col-lg-4">
-          <div class="card border-0 shadow-sm p-4 h-100 card-custom">
+          <div class="card  shadow-sm p-4 h-100 card-custom">
             <h5 class="fw-bold mb-4 text-center text-lg-start text-primary-custom">Ventas por Categoría</h5>
             <div class="pie-placeholder mx-auto mb-4 shadow-sm"></div>
             <div class="legend small">
@@ -117,7 +117,7 @@
 
       <div class="row">
         <div class="col-12">
-          <div class="card border-0 shadow-sm p-4 border-top border-danger border-4 card-custom">
+          <div class="card  shadow-sm p-4 border-top border-danger border-4 card-custom">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
               <h5 class="fw-bold text-danger mb-0">Mermas Recientes Reportadas</h5>
               <button class="btn btn-sm btn-outline-danger px-3 rounded-pill">Gestionar todas las mermas</button>
