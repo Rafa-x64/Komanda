@@ -68,8 +68,8 @@ const formatCurrency = (value: number) => {
                 <div>
                   <h6 class="mb-0 text-primary-custom fw-bold">{{ recipe.nombre }}</h6>
                   <small class="text-secondary-custom d-flex align-items-center gap-1 mt-1">
-                    <span class="badge rounded-pill bg-light text-dark border shadow-sm">
-                      {{ recipe.ingredientes?.length || 0 }} hrs
+                    <span class="badge rounded-pill bg-light-custom border shadow-sm" style="color: var(--text-main)">
+                      {{ recipe.ingredientes?.length || 0 }}
                     </span>
                     ingredientes
                   </small>
@@ -193,8 +193,7 @@ const formatCurrency = (value: number) => {
 }
 .text-danger { color: #fa5252 !important; }
 
-.bg-light { background-color: var(--bg-body) !important; }
-.text-dark { color: var(--text-main) !important; }
+.bg-light-custom { background-color: var(--bg-body) !important; }
 
 /* In dark mode, outline buttons need slightly different hover colors to look good */
 @media (prefers-color-scheme: dark) {
