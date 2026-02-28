@@ -26,6 +26,7 @@ DROP TYPE IF EXISTS referencia_tipo_caja CASCADE;
 DROP TYPE IF EXISTS referencia_tipo_banco CASCADE;
 DROP TYPE IF EXISTS tipo_merma CASCADE;
 DROP TYPE IF EXISTS estado_reserva CASCADE;
+DROP TYPE IF EXISTS estado_pago_compra CASCADE;
 
 -- ======================================================
 -- CREACIÓN DE ESQUEMAS
@@ -52,6 +53,7 @@ CREATE TYPE referencia_tipo_caja AS ENUM ('venta', 'egreso', 'compra', 'apertura
 CREATE TYPE referencia_tipo_banco AS ENUM ('venta', 'egreso', 'compra', 'deposito_caja', 'ajuste');
 CREATE TYPE tipo_merma AS ENUM ('desperdicio', 'vencimiento', 'rotura', 'otro');
 CREATE TYPE estado_reserva AS ENUM ('pendiente', 'confirmada', 'cancelada', 'completada', 'no_show');
+CREATE TYPE estado_pago_compra AS ENUM ('pendiente', 'pagada', 'parcial');
 
 -- ======================================================
 -- FUNCIÓN GLOBAL: auto-update de updated_at
@@ -199,6 +201,8 @@ CREATE TABLE inventario.compras (
     fecha DATE NOT NULL,
     numero_factura_proveedor VARCHAR(50),
     total DECIMAL(12,2) NOT NULL,
+    estado_pago estado_pago_compra DEFAULT 'pagada',
+    saldo_pendiente DECIMAL(12,2) DEFAULT 0,
     descripcion VARCHAR(255),
     proveedor_id INTEGER,
     restaurante_id INTEGER NOT NULL,
