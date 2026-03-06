@@ -43,6 +43,11 @@ const router = createRouter({
             path: '/menu',
             name: 'menu',
             component: () => import('../modules/recipe-ingredient-entry/views/RecipeCrudView.vue')
+        },
+        {
+            path: '/pos',
+            name: 'pos',
+            component: () => import('../modules/pos/views/POSView.vue')
         }
     ]
 });
