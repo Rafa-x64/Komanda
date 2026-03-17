@@ -4,4 +4,4 @@ import { OrderController } from "./order.controller";
 export const orderRouter = Router();
 
 // POST /api/v1/orders
-orderRouter.post("/", OrderController.createOrder);
+orderRouter.post("/orders", OrderController.createOrder);
