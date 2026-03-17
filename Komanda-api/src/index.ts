@@ -4,6 +4,7 @@ import "reflect-metadata";
 import { Conexion } from "./config/database";
 import { signupRouter } from "./modules/signup/signup.routes";
 import { SignInRoutes } from "./modules/signin/signin.routes";
+import { orderRouter } from "./modules/order/order.routes";
 
 Conexion.initialize()
   .then(() => {
@@ -27,6 +28,7 @@ app.use(express.json());
 // Rutas de módulos
 app.use("/api/v1/signup", signupRouter);
 app.use("/api/v1/signin", SignInRoutes);
+app.use("/api/v1/orders", orderRouter);
 
 import { getKitchenStatus } from './modules/kitchen/kitchen.controller';
 
