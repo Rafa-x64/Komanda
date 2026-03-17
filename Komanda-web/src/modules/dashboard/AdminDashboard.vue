@@ -123,17 +123,17 @@
               <button class="btn btn-sm btn-outline-danger px-3 rounded-pill">Gestionar todas las mermas</button>
             </div>
             <div class="table-responsive">
-              <table class="table table-hover align-middle mb-0">
+              <table class="table table-custom table-hover-custom align-middle mb-0">
                 <thead>
-                  <tr class="bg-surface-custom">
-                    <th class="border-color text-secondary-custom">Ingrediente</th>
-                    <th class="border-color text-secondary-custom">Cantidad</th>
-                    <th class="border-color text-secondary-custom">Razón de Merma</th>
-                    <th class="border-color text-secondary-custom">Reportado</th>
-                    <th class="border-color text-secondary-custom">Fecha y Hora</th>
+                  <tr>
+                    <th>Ingrediente</th>
+                    <th>Cantidad</th>
+                    <th>Razón de Merma</th>
+                    <th>Reportado</th>
+                    <th>Fecha y Hora</th>
                   </tr>
                 </thead>
-                <tbody class="text-primary-custom">
+                <tbody>
                   <tr>
                     <td><span class="fw-bold">Carne Sirloin</span></td>
                     <td>1.5 kg</td>

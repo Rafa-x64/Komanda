@@ -42,6 +42,14 @@
           </router-link>
         </li>
 
+        <!-- PUNTO DE VENTA (POS) -->
+        <li class="nav-item" v-if="hasAccess(['admin', 'mesero', 'cajero'])">
+          <router-link to="/pos" class="nav-link text-white-50 d-flex align-items-center" active-class="active bg-korange text-white fw-bold">
+            <i class="bi bi-shop fs-5 me-3"></i>
+            <span>Punto de Venta</span>
+          </router-link>
+        </li>
+
         <!-- NUEVO MÓDULO MESERO: Mesas -->
         <li class="nav-item" v-if="hasAccess(['mesero'])">
           <router-link to="/mesas" class="nav-link text-white-50 d-flex align-items-center" active-class="active bg-korange text-white fw-bold">
