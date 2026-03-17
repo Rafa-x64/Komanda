@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const API_BASE = 'http://localhost:3000/api/v1'
 
 interface OrderItem {
@@ -29,32 +28,3 @@ export async function sendOrder(payload: OrderPayload) {
   if (!res.ok) throw new Error(json.message || 'Error al enviar la orden')
   return json
 }
-=======
-export const sendOrder = async (orderPayload: any) => { 
-
-    const URL = "/api/v1/sales/orders";
-
-    try {
-        const response = await fetch(URL, {
-            method: "POST",
-            headers: {
-                "ContentType": "application/json",
-                "Accept": "aplication/json"
-            },
-            body: JSON.stringify(orderPayload)
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || 'Error desconocido al enviar la orden')
-        }
-
-        return data;
-
-    } catch (error: any) {
-        console.error("Error al enviar la orden:", error.message);
-        throw error;
-    };
-}
->>>>>>> 39ceec68e5e9e06da700d490dcef3eacc9fea992

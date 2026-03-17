@@ -47,11 +47,7 @@ const router = createRouter({
         {
             path: '/pos',
             name: 'pos',
-<<<<<<< HEAD
             component: () => import('../modules/pos/views/POSView.vue')
-=======
-            component: () => import('../modules/pos/views/PosView.vue')
->>>>>>> 39ceec68e5e9e06da700d490dcef3eacc9fea992
         }
     ]
 });

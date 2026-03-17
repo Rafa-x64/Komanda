@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Plus, Minus, Pencil, X } from 'lucide-vue-next'
@@ -172,15 +171,3 @@ const saveNote = () => {
   flex: 1;
 }
 </style>
-=======
-<script setup lang='ts'>
-import { ref } from 'vue';
-
-</script>
-<template>
-    
-</template>
-<style scoped>
-
-</style>
->>>>>>> 39ceec68e5e9e06da700d490dcef3eacc9fea992
