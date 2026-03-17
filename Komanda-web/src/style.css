@@ -110,7 +110,10 @@ body {
 .form-control,
 .form-select {
   background-color: var(--bg-surface) !important;
-  transition: background-color 0.1s ease-in, box-shadow 0.1s ease-in, border var(--transition-speed) ease-in;
+  transition:
+    background-color 0.1s ease-in,
+    box-shadow 0.1s ease-in,
+    border var(--transition-speed) ease-in;
   color: var(--text-main) !important;
 }
 
@@ -127,7 +130,7 @@ body {
   border-color: var(--KOrange-hover);
 }
 
-.form-control::placeholder{
+.form-control::placeholder {
   color: var(--text-muted) !important;
 }
 
@@ -136,12 +139,12 @@ body {
   Overrides the default pale blue/yellow autofill backgrounds 
 */
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active{
-    -webkit-box-shadow: 0 0 0 30px var(--bg-surface) inset !important;
-    -webkit-text-fill-color: var(--text-main) !important;
-    transition: background-color 5000s ease-in-out 0s;
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px var(--bg-surface) inset !important;
+  -webkit-text-fill-color: var(--text-main) !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 /* Custom file input button styling */
@@ -166,6 +169,7 @@ input:-webkit-autofill:active{
 label {
   margin-top: 0.65rem;
 }
+<<<<<<< HEAD
 
 /* ========== Custom Tables ========== */
 .table-custom {
@@ -223,3 +227,5 @@ label {
 .table-custom tbody tr:last-child td {
   border-bottom: none;
 }
+=======
+>>>>>>> 39ceec68e5e9e06da700d490dcef3eacc9fea992
