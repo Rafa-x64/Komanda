@@ -1,14 +1,9 @@
 <template>
   <div>
-    <!-- Botón Toggle para móviles -->
     <button v-if="!isOpen" @click="isOpen = true" class="btn btn-korange toggle-btn d-md-none rounded-circle shadow">
       <i class="bi bi-list fs-4"></i>
     </button>
-
-    <!-- Overlay para móviles -->
     <div v-if="isOpen" @click="isOpen = false" class="sidebar-overlay d-md-none"></div>
-
-    <!-- Sidebar Principal -->
     <nav class="sidebar bg-surface-dark text-white d-flex flex-column p-4" :class="{ 'sidebar-open': isOpen }">
       <div class="sidebar-header d-flex justify-content-between align-items-center mb-5 mt-2">
         <h3 class="text-korange fw-bold mb-0 mx-auto">Komanda</h3>
@@ -18,47 +13,36 @@
       </div>
 
       <ul class="nav nav-pills flex-column mb-auto gap-2">
-        <!-- Inicio (Dashboard): Personalizado por rol -->
         <li class="nav-item">
           <router-link :to="dashboardRoute" class="nav-link text-white-50 d-flex align-items-center" active-class="active bg-korange text-white fw-bold">
             <i class="bi bi-house-door fs-5 me-3"></i> 
             <span>Inicio</span>
           </router-link>
         </li>
-
-        <!-- Operaciones: Mesas, Reservas, Pedidos (Solo Admin/Cajero) -->
         <li class="nav-item" v-if="hasAccess(['admin', 'cajero'])">
           <router-link to="/operaciones" class="nav-link text-white-50 d-flex align-items-center" active-class="active bg-korange text-white fw-bold">
             <i class="bi bi-briefcase fs-5 me-3"></i>
             <span>Operaciones</span>
           </router-link>
         </li>
-
-        <!-- NUEVO MÓDULO MESERO: Pedidos -->
         <li class="nav-item" v-if="hasAccess(['mesero'])">
           <router-link to="/pedidos" class="nav-link text-white-50 d-flex align-items-center" active-class="active bg-korange text-white fw-bold">
             <i class="bi bi-cart3 fs-5 me-3"></i>
             <span>Pedidos</span>
           </router-link>
         </li>
-
-        <!-- NUEVO MÓDULO MESERO: Mesas -->
         <li class="nav-item" v-if="hasAccess(['mesero'])">
           <router-link to="/mesas" class="nav-link text-white-50 d-flex align-items-center" active-class="active bg-korange text-white fw-bold">
             <i class="bi bi-grid-3x3-gap fs-5 me-3"></i>
             <span>Mesas</span>
           </router-link>
         </li>
-
-        <!-- Cocina: Monitor de pedidos (KDS) -->
         <li class="nav-item" v-if="hasAccess(['cocina'])">
           <router-link to="/kitchen" class="nav-link text-white-50 d-flex align-items-center" active-class="active bg-korange text-white fw-bold">
             <i class="bi bi-display fs-5 me-3"></i>
             <span>Cocina</span>
           </router-link>
         </li>
-
-        <!-- NUEVO MÓDULO COCINA: Almacén -->
         <li class="nav-item" v-if="hasAccess(['admin', 'cocina'])">
           <router-link to="/almacen" class="nav-link text-white-50 d-flex align-items-center" active-class="active bg-korange text-white fw-bold">
             <i class="bi bi-boxes fs-5 me-3"></i>
@@ -71,16 +55,12 @@
             <span>Inventario</span>
           </router-link>
         </li>
-
-        <!-- Menú: Categorías y Recetas (Solo Admin) -->
         <li class="nav-item" v-if="hasAccess(['admin'])">
           <router-link to="/menu" class="nav-link text-white-50 d-flex align-items-center" active-class="active bg-korange text-white fw-bold">
             <i class="bi bi-book fs-5 me-3"></i>
             <span>Menú</span>
           </router-link>
         </li>
-
-        <!-- Finanzas: Caja, Banco, Gastos (Solo Admin/Cajero) -->
         <li class="nav-item" v-if="hasAccess(['admin', 'cajero'])">
           <router-link to="/finanzas" class="nav-link text-white-50 d-flex align-items-center" active-class="active bg-korange text-white fw-bold">
             <i class="bi bi-cash-coin fs-5 me-3"></i>
@@ -88,7 +68,6 @@
           </router-link>
         </li>
 
-        <!-- Configuración: Usuarios, Roles, Datos del Restaurante (Solo Admin) -->
         <li class="nav-item" v-if="hasAccess(['admin'])">
           <router-link to="/configuracion" class="nav-link text-white-50 d-flex align-items-center" active-class="active bg-korange text-white fw-bold">
             <i class="bi bi-gear fs-5 me-3"></i>
