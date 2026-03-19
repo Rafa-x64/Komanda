@@ -110,7 +110,10 @@ body {
 .form-control,
 .form-select {
   background-color: var(--bg-surface) !important;
-  transition: background-color 0.1s ease-in, box-shadow 0.1s ease-in, border var(--transition-speed) ease-in;
+  transition:
+    background-color 0.1s ease-in,
+    box-shadow 0.1s ease-in,
+    border var(--transition-speed) ease-in;
   color: var(--text-main) !important;
 }
 
@@ -127,7 +130,7 @@ body {
   border-color: var(--KOrange-hover);
 }
 
-.form-control::placeholder{
+.form-control::placeholder {
   color: var(--text-muted) !important;
 }
 
@@ -136,12 +139,12 @@ body {
   Overrides the default pale blue/yellow autofill backgrounds 
 */
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active{
-    -webkit-box-shadow: 0 0 0 30px var(--bg-surface) inset !important;
-    -webkit-text-fill-color: var(--text-main) !important;
-    transition: background-color 5000s ease-in-out 0s;
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px var(--bg-surface) inset !important;
+  -webkit-text-fill-color: var(--text-main) !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 /* Custom file input button styling */
@@ -166,3 +169,63 @@ input:-webkit-autofill:active{
 label {
   margin-top: 0.65rem;
 }
+<<<<<<< HEAD
+
+/* ========== Custom Tables ========== */
+.table-custom {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--text-main);
+  --bs-table-striped-bg: transparent;
+  --bs-table-active-bg: transparent;
+  --bs-table-hover-bg: transparent;
+
+  color: var(--text-main);
+  background-color: transparent;
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
+
+.table-custom th {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--border-color);
+  padding: 1rem 0.75rem;
+  background-color: var(--bg-surface);
+  --bs-table-bg: var(--bg-surface);
+  --bs-table-color: var(--text-muted);
+}
+
+.table-custom td {
+  padding: 1rem 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-main);
+  vertical-align: middle;
+  background-color: transparent;
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--text-main);
+}
+
+/* Hover effects */
+.table-hover-custom tbody tr {
+  transition: background-color var(--transition-speed) ease;
+}
+
+.table-hover-custom tbody tr:hover {
+  background-color: var(--bg-surface);
+}
+
+/* Optional: Subtle KOrange tint on hover instead of pure surface tint */
+.table-hover-custom.table-hover-orange tbody tr:hover td {
+  background-color: rgba(253, 126, 20, 0.05) !important;
+}
+
+/* Remove border from last row */
+.table-custom tbody tr:last-child td {
+  border-bottom: none;
+}
+=======
+>>>>>>> 39ceec68e5e9e06da700d490dcef3eacc9fea992

@@ -480,7 +480,7 @@ const handleSubmit = () => {
       <!-- Navigation Actions -->
       <div class="wizard-actions mt-5 pt-4 border-top d-flex flex-column flex-md-row justify-content-between align-items-center gap-3" style="border-color: var(--border-color) !important;">
         <div class="w-100 w-md-auto text-center text-md-start">
-          <button type="button" class="btn btn-outline-secondary rounded-pill px-4 text-secondary-custom w-100 w-md-auto" @click="emit('cancel')">
+          <button type="button" class="btn btn-outline-secondary custom-outline-secondary rounded-pill px-4 text-secondary-custom w-100 w-md-auto" @click="emit('cancel')">
             Cancelar
           </button>
         </div>
@@ -655,6 +655,15 @@ const handleSubmit = () => {
 }
 .btn-surface:hover {
   background-color: var(--border-color);
+}
+.btn-outline-secondary.custom-outline-secondary {
+  color: var(--text-muted);
+  border-color: var(--border-color);
+  background-color: transparent;
+}
+.btn-outline-secondary.custom-outline-secondary:hover {
+  background-color: var(--border-color);
+  color: var(--text-main);
 }
 .btn-outline-korange {
   color: var(--KOrange);

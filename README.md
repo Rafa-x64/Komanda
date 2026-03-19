@@ -57,15 +57,46 @@ El inventario es el corazón logístico. Aquí aplicamos **Back-flushing**:
 
 ---
 
-## 🛠 Tech Stack
+## 🛠 Tech Stack & Arquitectura
 
-| Capa         | Tecnología           | ¿Por qué?                                                                |
-| :----------- | :------------------- | :----------------------------------------------------------------------- |
-| **Frontend** | Vue.js 3 + Vite      | Reactividad instantánea y una experiencia de desarrollo superior.        |
-| **Styling**  | Bootstrap / Tailwind | Diseño minimalista y funcional sin pelear con CSS global.                |
-| **Backend**  | Node (TS) + PHP      | TS para tiempo real (Sockets) y PHP para lógica financiera robusta.      |
-| **Database** | PostgreSQL           | Integridad referencial y escalabilidad real para una solución SaaS.      |
-| **Tooling**  | pnpm / bun           | Porque el tiempo es oro y amamos la velocidad en la gestión de paquetes. |
+### 🧠 La Filosofía (Arquitectura > Improvisación)
+
+Este proyecto no es un "reguero" más. Está construido bajo una **Arquitectura Híbrida Modular (Domain-Driven Design Lite)**.
+¿Qué significa esto para ti como dev? Que el sistema se divide en **unidades de negocio autónomas**. Si mañana quieres cambiar el módulo de Nómina, no tienes que rezar para que no explote el Inventario. Todo está separado, desacoplado y listo para escalar a mil sucursales si es necesario.
+
+### 🌐 Frontend (Komanda-web)
+
+- **Framework Principal:** Vue 3 (Usando estrictamente **Composition API** y la etiqueta `<script setup>`).
+- **Build Tool:** Vite (Desarrollo ultrarrápido y compilación optimizada).
+- **Lenguaje:** TypeScript / JavaScript.
+- **Estilos y UI:**
+  - Vanilla CSS (Usando CSS Variables personalizadas para los temas, colores como `--KOrange` y `--bg-body`).
+  - Bootstrap 5 (Para el sistema de grid fluido, utilities y componentes base).
+- **Enrutamiento:** Vue Router.
+- **Iconografía:** Lucide Vue Next (`lucide-vue-next`) y Bootstrap Icons (`bi`).
+
+### ⚙️ Backend (Komanda-api)
+
+- **Arquitectura:** Híbrida y modular (DDD-Lite).
+- **Entornos de Ejecución:**
+  - Node.js (Principal motor para APIs RESTful de alto rendimiento y WebSockets).
+  - PHP (Acompañando lógica heredada o endpoints específicos).
+- **Framework Node:** Express.js.
+- **Lenguaje (Node):** TypeScript (Tipado estricto pero pragmático).
+- **Validaciones (Input):** Zod (Para validar fuertemente los esquemas de entrada antes de que toquen los controladores).
+
+### 🗄️ Base de Datos
+
+- **Motor:** PostgreSQL.
+- **Reglas de Diseño:**
+  - Nombres de tablas siempre en **plural y en inglés** (Ej: `users`, `orders`).
+  - Columnas siempre en **snake_case** (Ej: `created_at`).
+
+### 📦 Gestión y Herramientas del Proyecto
+
+- **Estructura del Proyecto:** Monorepo.
+- **Gestor de Paquetes:** `pnpm` (o en su defecto `bun`). Obligatorio para instalar dependencias y gestionar los workspaces del monorepo rápidamente.
+- **Tiempo Real:** WebSockets (Sincronización letal entre la vista del Mesero y el KDS de Cocina).
 
 ---
 

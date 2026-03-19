@@ -31,6 +31,8 @@
             <span>Pedidos</span>
           </router-link>
         </li>
+
+        <!-- NUEVO MÓDULO MESERO: Mesas -->
         <li class="nav-item" v-if="hasAccess(['mesero'])">
           <router-link to="/mesas" class="nav-link text-white-50 d-flex align-items-center" active-class="active bg-korange text-white fw-bold">
             <i class="bi bi-grid-3x3-gap fs-5 me-3"></i>
