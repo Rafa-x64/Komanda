@@ -5,47 +5,21 @@ import ProductCard from '../components/ProductCard.vue'
 import PosCategoryFilter from '../components/PosCategoryFilter.vue'
 import CartItemRow from '../components/CardItemRow.vue'
 import { useCart } from '../composables/useCart'
-import { sendOrder } from '../pos.api'
+import { sendOrder, fetchCategories, fetchProducts, fetchTables } from '../pos.api'
 
 // Cart composable
 const { cartItems, selectedTable, addItem, updateQuantity, addKitchenNote, removeItem, clearCart, subtotal, taxes, total } = useCart()
 
 // UI state
 const loading = ref(false)
+const loadingData = ref(true)
 const toast = ref<{ type: 'success' | 'error'; message: string } | null>(null)
 const activeCategory = ref<number | null>(null)
 
-// Mock data (will be replaced by API calls)
-const categories = ref([
-  { id: 1, nombre: 'Entradas' },
-  { id: 2, nombre: 'Platos Fuertes' },
-  { id: 3, nombre: 'Bebidas' },
-  { id: 4, nombre: 'Postres' },
-])
-
-const tables = ref([
-  { id: 1, nombre: 'Mesa 1' },
-  { id: 2, nombre: 'Mesa 2' },
-  { id: 3, nombre: 'Mesa 3' },
-  { id: 4, nombre: 'Mesa 4' },
-  { id: 5, nombre: 'Mesa 5' },
-  { id: 6, nombre: 'Mesa 6' },
-])
-
-const products = ref([
-  { id: 1, nombre: 'Nachos con Guacamole', precio_venta: 6.50, categoria_id: 1 },
-  { id: 2, nombre: 'Alitas BBQ', precio_venta: 8.00, categoria_id: 1 },
-  { id: 3, nombre: 'Sopa del Día', precio_venta: 4.50, categoria_id: 1 },
-  { id: 4, nombre: 'Hamburguesa Komanda', precio_venta: 9.50, categoria_id: 2 },
-  { id: 5, nombre: 'Filete de Res', precio_venta: 15.00, categoria_id: 2 },
-  { id: 6, nombre: 'Pollo a la Parrilla', precio_venta: 11.50, categoria_id: 2 },
-  { id: 7, nombre: 'Pasta Alfredo', precio_venta: 10.00, categoria_id: 2 },
-  { id: 8, nombre: 'Limonada Natural', precio_venta: 3.00, categoria_id: 3 },
-  { id: 9, nombre: 'Coca-Cola', precio_venta: 2.50, categoria_id: 3 },
-  { id: 10, nombre: 'Café Americano', precio_venta: 2.00, categoria_id: 3 },
-  { id: 11, nombre: 'Flan Napolitano', precio_venta: 5.00, categoria_id: 4 },
-  { id: 12, nombre: 'Brownie con Helado', precio_venta: 6.00, categoria_id: 4 },
-])
+// Data from API
+const categories = ref<{ id: number; nombre: string }[]>([])
+const tables = ref<{ id: number; nombre: string | null; numero: number }[]>([])
+const products = ref<{ id: number; nombre: string; precio_venta: number; categoria_id: number; imagen_url?: string }[]>([])
 
 // Filtered products by category
 const filteredProducts = computed(() => {
@@ -88,8 +62,22 @@ const handleConfirm = async () => {
   }
 }
 
-onMounted(() => {
-  // TODO: fetch categories, products & tables from API
+onMounted(async () => {
+  try {
+    const [cats, prods, tbls] = await Promise.all([
+      fetchCategories(),
+      fetchProducts(),
+      fetchTables(),
+    ])
+    categories.value = cats
+    products.value = prods.map((p: any) => ({ ...p, precio_venta: parseFloat(p.precio_venta) }))
+    tables.value = tbls
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : 'No se pudo conectar con el servidor'
+    showToast('error', msg)
+  } finally {
+    loadingData.value = false
+  }
 })
 </script>
 
@@ -140,7 +128,7 @@ onMounted(() => {
         >
           <option :value="null" disabled>Seleccionar Mesa</option>
           <option v-for="t in tables" :key="t.id" :value="t.id">
-            {{ t.nombre }}
+            {{ t.nombre || `Mesa ${t.numero}` }}
           </option>
         </select>
       </div>
