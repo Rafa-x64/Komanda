@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict gtPSSm4ScMjCyeFd4aE2aahPi2ZZR1cCYF5tnYJh9ghIQlJ2qhj8Nt37lYKMQ4E
+\restrict y6FeDqZZnkhe7WS6zFAuTEwcaykSherO633E39RkszOutZIMPi6teOT4eWa5EIL
 
 -- Dumped from database version 18.3
 -- Dumped by pg_dump version 18.3
 
--- Started on 2026-03-24 21:06:28 -04
+-- Started on 2026-03-24 21:19:57 -04
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -498,7 +498,6 @@ ALTER SEQUENCE core.restaurante_id_seq OWNED BY core.restaurante.id;
 CREATE TABLE core.roles (
     id integer NOT NULL,
     nombre character varying(50) NOT NULL,
-    restaurante_id integer NOT NULL,
     created_at timestamp without time zone DEFAULT now() NOT NULL
 );
 
@@ -2883,7 +2882,7 @@ CREATE TABLE sales.orders (
 ALTER TABLE sales.orders OWNER TO postgres;
 
 --
--- TOC entry 3807 (class 2604 OID 20124)
+-- TOC entry 3807 (class 2604 OID 20230)
 -- Name: libro_diario id; Type: DEFAULT; Schema: contabilidad; Owner: postgres
 --
 
@@ -2891,7 +2890,7 @@ ALTER TABLE ONLY contabilidad.libro_diario ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
--- TOC entry 3716 (class 2604 OID 20125)
+-- TOC entry 3716 (class 2604 OID 20231)
 -- Name: metodos_pago id; Type: DEFAULT; Schema: core; Owner: postgres
 --
 
@@ -2899,7 +2898,7 @@ ALTER TABLE ONLY core.metodos_pago ALTER COLUMN id SET DEFAULT nextval('core.met
 
 
 --
--- TOC entry 3706 (class 2604 OID 20126)
+-- TOC entry 3706 (class 2604 OID 20232)
 -- Name: restaurante id; Type: DEFAULT; Schema: core; Owner: postgres
 --
 
@@ -2907,7 +2906,7 @@ ALTER TABLE ONLY core.restaurante ALTER COLUMN id SET DEFAULT nextval('core.rest
 
 
 --
--- TOC entry 3719 (class 2604 OID 20127)
+-- TOC entry 3719 (class 2604 OID 20233)
 -- Name: roles id; Type: DEFAULT; Schema: core; Owner: postgres
 --
 
@@ -2915,7 +2914,7 @@ ALTER TABLE ONLY core.roles ALTER COLUMN id SET DEFAULT nextval('core.roles_id_s
 
 
 --
--- TOC entry 3814 (class 2604 OID 20128)
+-- TOC entry 3814 (class 2604 OID 20234)
 -- Name: tables id; Type: DEFAULT; Schema: core; Owner: postgres
 --
 
@@ -2923,7 +2922,7 @@ ALTER TABLE ONLY core.tables ALTER COLUMN id SET DEFAULT nextval('core.tables_id
 
 
 --
--- TOC entry 3715 (class 2604 OID 20129)
+-- TOC entry 3715 (class 2604 OID 20235)
 -- Name: unidad_medida id; Type: DEFAULT; Schema: core; Owner: postgres
 --
 
@@ -2931,7 +2930,7 @@ ALTER TABLE ONLY core.unidad_medida ALTER COLUMN id SET DEFAULT nextval('core.un
 
 
 --
--- TOC entry 3721 (class 2604 OID 20130)
+-- TOC entry 3721 (class 2604 OID 20236)
 -- Name: usuarios id; Type: DEFAULT; Schema: core; Owner: postgres
 --
 
@@ -2939,7 +2938,7 @@ ALTER TABLE ONLY core.usuarios ALTER COLUMN id SET DEFAULT nextval('core.usuario
 
 
 --
--- TOC entry 3800 (class 2604 OID 20131)
+-- TOC entry 3800 (class 2604 OID 20237)
 -- Name: banco id; Type: DEFAULT; Schema: finanzas; Owner: postgres
 --
 
@@ -2947,7 +2946,7 @@ ALTER TABLE ONLY finanzas.banco ALTER COLUMN id SET DEFAULT nextval('finanzas.ba
 
 
 --
--- TOC entry 3805 (class 2604 OID 20132)
+-- TOC entry 3805 (class 2604 OID 20238)
 -- Name: banco_movimientos id; Type: DEFAULT; Schema: finanzas; Owner: postgres
 --
 
@@ -2955,7 +2954,7 @@ ALTER TABLE ONLY finanzas.banco_movimientos ALTER COLUMN id SET DEFAULT nextval(
 
 
 --
--- TOC entry 3795 (class 2604 OID 20133)
+-- TOC entry 3795 (class 2604 OID 20239)
 -- Name: caja id; Type: DEFAULT; Schema: finanzas; Owner: postgres
 --
 
@@ -2963,7 +2962,7 @@ ALTER TABLE ONLY finanzas.caja ALTER COLUMN id SET DEFAULT nextval('finanzas.caj
 
 
 --
--- TOC entry 3798 (class 2604 OID 20134)
+-- TOC entry 3798 (class 2604 OID 20240)
 -- Name: caja_movimientos id; Type: DEFAULT; Schema: finanzas; Owner: postgres
 --
 
@@ -2971,7 +2970,7 @@ ALTER TABLE ONLY finanzas.caja_movimientos ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
--- TOC entry 3793 (class 2604 OID 20135)
+-- TOC entry 3793 (class 2604 OID 20241)
 -- Name: egresos id; Type: DEFAULT; Schema: finanzas; Owner: postgres
 --
 
@@ -2979,7 +2978,7 @@ ALTER TABLE ONLY finanzas.egresos ALTER COLUMN id SET DEFAULT nextval('finanzas.
 
 
 --
--- TOC entry 3725 (class 2604 OID 20136)
+-- TOC entry 3725 (class 2604 OID 20242)
 -- Name: categoria_egresos id; Type: DEFAULT; Schema: inventario; Owner: postgres
 --
 
@@ -2987,7 +2986,7 @@ ALTER TABLE ONLY inventario.categoria_egresos ALTER COLUMN id SET DEFAULT nextva
 
 
 --
--- TOC entry 3744 (class 2604 OID 20137)
+-- TOC entry 3744 (class 2604 OID 20243)
 -- Name: compra_detalle id; Type: DEFAULT; Schema: inventario; Owner: postgres
 --
 
@@ -2995,7 +2994,7 @@ ALTER TABLE ONLY inventario.compra_detalle ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
--- TOC entry 3740 (class 2604 OID 20138)
+-- TOC entry 3740 (class 2604 OID 20244)
 -- Name: compras id; Type: DEFAULT; Schema: inventario; Owner: postgres
 --
 
@@ -3003,7 +3002,7 @@ ALTER TABLE ONLY inventario.compras ALTER COLUMN id SET DEFAULT nextval('inventa
 
 
 --
--- TOC entry 3733 (class 2604 OID 20139)
+-- TOC entry 3733 (class 2604 OID 20245)
 -- Name: ingredientes id; Type: DEFAULT; Schema: inventario; Owner: postgres
 --
 
@@ -3011,7 +3010,7 @@ ALTER TABLE ONLY inventario.ingredientes ALTER COLUMN id SET DEFAULT nextval('in
 
 
 --
--- TOC entry 3746 (class 2604 OID 20140)
+-- TOC entry 3746 (class 2604 OID 20246)
 -- Name: mermas id; Type: DEFAULT; Schema: inventario; Owner: postgres
 --
 
@@ -3019,7 +3018,7 @@ ALTER TABLE ONLY inventario.mermas ALTER COLUMN id SET DEFAULT nextval('inventar
 
 
 --
--- TOC entry 3727 (class 2604 OID 20141)
+-- TOC entry 3727 (class 2604 OID 20247)
 -- Name: proveedores id; Type: DEFAULT; Schema: inventario; Owner: postgres
 --
 
@@ -3027,7 +3026,7 @@ ALTER TABLE ONLY inventario.proveedores ALTER COLUMN id SET DEFAULT nextval('inv
 
 
 --
--- TOC entry 3731 (class 2604 OID 20142)
+-- TOC entry 3731 (class 2604 OID 20248)
 -- Name: unidad_compra id; Type: DEFAULT; Schema: inventario; Owner: postgres
 --
 
@@ -3035,7 +3034,7 @@ ALTER TABLE ONLY inventario.unidad_compra ALTER COLUMN id SET DEFAULT nextval('i
 
 
 --
--- TOC entry 3811 (class 2604 OID 20143)
+-- TOC entry 3811 (class 2604 OID 20249)
 -- Name: categories id; Type: DEFAULT; Schema: inventory; Owner: postgres
 --
 
@@ -3043,7 +3042,7 @@ ALTER TABLE ONLY inventory.categories ALTER COLUMN id SET DEFAULT nextval('inven
 
 
 --
--- TOC entry 3812 (class 2604 OID 20144)
+-- TOC entry 3812 (class 2604 OID 20250)
 -- Name: products id; Type: DEFAULT; Schema: inventory; Owner: postgres
 --
 
@@ -3051,7 +3050,7 @@ ALTER TABLE ONLY inventory.products ALTER COLUMN id SET DEFAULT nextval('invento
 
 
 --
--- TOC entry 3749 (class 2604 OID 20145)
+-- TOC entry 3749 (class 2604 OID 20251)
 -- Name: categorias id; Type: DEFAULT; Schema: menu; Owner: postgres
 --
 
@@ -3059,7 +3058,7 @@ ALTER TABLE ONLY menu.categorias ALTER COLUMN id SET DEFAULT nextval('menu.categ
 
 
 --
--- TOC entry 3762 (class 2604 OID 20146)
+-- TOC entry 3762 (class 2604 OID 20252)
 -- Name: receta_ingredientes id; Type: DEFAULT; Schema: menu; Owner: postgres
 --
 
@@ -3067,7 +3066,7 @@ ALTER TABLE ONLY menu.receta_ingredientes ALTER COLUMN id SET DEFAULT nextval('m
 
 
 --
--- TOC entry 3754 (class 2604 OID 20147)
+-- TOC entry 3754 (class 2604 OID 20253)
 -- Name: recetas id; Type: DEFAULT; Schema: menu; Owner: postgres
 --
 
@@ -3075,7 +3074,7 @@ ALTER TABLE ONLY menu.recetas ALTER COLUMN id SET DEFAULT nextval('menu.recetas_
 
 
 --
--- TOC entry 3786 (class 2604 OID 20148)
+-- TOC entry 3786 (class 2604 OID 20254)
 -- Name: facturas id; Type: DEFAULT; Schema: operaciones; Owner: postgres
 --
 
@@ -3083,7 +3082,7 @@ ALTER TABLE ONLY operaciones.facturas ALTER COLUMN id SET DEFAULT nextval('opera
 
 
 --
--- TOC entry 3763 (class 2604 OID 20149)
+-- TOC entry 3763 (class 2604 OID 20255)
 -- Name: mesas id; Type: DEFAULT; Schema: operaciones; Owner: postgres
 --
 
@@ -3091,7 +3090,7 @@ ALTER TABLE ONLY operaciones.mesas ALTER COLUMN id SET DEFAULT nextval('operacio
 
 
 --
--- TOC entry 3767 (class 2604 OID 20150)
+-- TOC entry 3767 (class 2604 OID 20256)
 -- Name: meseros id; Type: DEFAULT; Schema: operaciones; Owner: postgres
 --
 
@@ -3099,7 +3098,7 @@ ALTER TABLE ONLY operaciones.meseros ALTER COLUMN id SET DEFAULT nextval('operac
 
 
 --
--- TOC entry 3785 (class 2604 OID 20151)
+-- TOC entry 3785 (class 2604 OID 20257)
 -- Name: pedido_detalle id; Type: DEFAULT; Schema: operaciones; Owner: postgres
 --
 
@@ -3107,7 +3106,7 @@ ALTER TABLE ONLY operaciones.pedido_detalle ALTER COLUMN id SET DEFAULT nextval(
 
 
 --
--- TOC entry 3775 (class 2604 OID 20152)
+-- TOC entry 3775 (class 2604 OID 20258)
 -- Name: pedidos id; Type: DEFAULT; Schema: operaciones; Owner: postgres
 --
 
@@ -3115,7 +3114,7 @@ ALTER TABLE ONLY operaciones.pedidos ALTER COLUMN id SET DEFAULT nextval('operac
 
 
 --
--- TOC entry 3771 (class 2604 OID 20153)
+-- TOC entry 3771 (class 2604 OID 20259)
 -- Name: reservas id; Type: DEFAULT; Schema: operaciones; Owner: postgres
 --
 
@@ -3123,7 +3122,7 @@ ALTER TABLE ONLY operaciones.reservas ALTER COLUMN id SET DEFAULT nextval('opera
 
 
 --
--- TOC entry 3702 (class 2604 OID 20154)
+-- TOC entry 3702 (class 2604 OID 20260)
 -- Name: banco id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3131,7 +3130,7 @@ ALTER TABLE ONLY public.banco ALTER COLUMN id SET DEFAULT nextval('public.banco_
 
 
 --
--- TOC entry 3705 (class 2604 OID 20155)
+-- TOC entry 3705 (class 2604 OID 20261)
 -- Name: banco_movimientos id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3139,7 +3138,7 @@ ALTER TABLE ONLY public.banco_movimientos ALTER COLUMN id SET DEFAULT nextval('p
 
 
 --
--- TOC entry 3700 (class 2604 OID 20156)
+-- TOC entry 3700 (class 2604 OID 20262)
 -- Name: caja id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3147,7 +3146,7 @@ ALTER TABLE ONLY public.caja ALTER COLUMN id SET DEFAULT nextval('public.caja_id
 
 
 --
--- TOC entry 3701 (class 2604 OID 20157)
+-- TOC entry 3701 (class 2604 OID 20263)
 -- Name: caja_movimientos id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3155,7 +3154,7 @@ ALTER TABLE ONLY public.caja_movimientos ALTER COLUMN id SET DEFAULT nextval('pu
 
 
 --
--- TOC entry 3672 (class 2604 OID 20158)
+-- TOC entry 3672 (class 2604 OID 20264)
 -- Name: categoria_egresos id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3163,7 +3162,7 @@ ALTER TABLE ONLY public.categoria_egresos ALTER COLUMN id SET DEFAULT nextval('p
 
 
 --
--- TOC entry 3683 (class 2604 OID 20159)
+-- TOC entry 3683 (class 2604 OID 20265)
 -- Name: compra_detalle id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3171,7 +3170,7 @@ ALTER TABLE ONLY public.compra_detalle ALTER COLUMN id SET DEFAULT nextval('publ
 
 
 --
--- TOC entry 3682 (class 2604 OID 20160)
+-- TOC entry 3682 (class 2604 OID 20266)
 -- Name: compras id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3179,7 +3178,7 @@ ALTER TABLE ONLY public.compras ALTER COLUMN id SET DEFAULT nextval('public.comp
 
 
 --
--- TOC entry 3699 (class 2604 OID 20161)
+-- TOC entry 3699 (class 2604 OID 20267)
 -- Name: egresos id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3187,7 +3186,7 @@ ALTER TABLE ONLY public.egresos ALTER COLUMN id SET DEFAULT nextval('public.egre
 
 
 --
--- TOC entry 3697 (class 2604 OID 20162)
+-- TOC entry 3697 (class 2604 OID 20268)
 -- Name: facturas id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3195,7 +3194,7 @@ ALTER TABLE ONLY public.facturas ALTER COLUMN id SET DEFAULT nextval('public.fac
 
 
 --
--- TOC entry 3678 (class 2604 OID 20163)
+-- TOC entry 3678 (class 2604 OID 20269)
 -- Name: ingredientes id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3203,7 +3202,7 @@ ALTER TABLE ONLY public.ingredientes ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
--- TOC entry 3691 (class 2604 OID 20164)
+-- TOC entry 3691 (class 2604 OID 20270)
 -- Name: mesas id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3211,7 +3210,7 @@ ALTER TABLE ONLY public.mesas ALTER COLUMN id SET DEFAULT nextval('public.mesas_
 
 
 --
--- TOC entry 3692 (class 2604 OID 20165)
+-- TOC entry 3692 (class 2604 OID 20271)
 -- Name: meseros id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3219,7 +3218,7 @@ ALTER TABLE ONLY public.meseros ALTER COLUMN id SET DEFAULT nextval('public.mese
 
 
 --
--- TOC entry 3668 (class 2604 OID 20166)
+-- TOC entry 3668 (class 2604 OID 20272)
 -- Name: metodos_pago id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3227,7 +3226,7 @@ ALTER TABLE ONLY public.metodos_pago ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
--- TOC entry 3696 (class 2604 OID 20167)
+-- TOC entry 3696 (class 2604 OID 20273)
 -- Name: pedido_detalle id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3235,7 +3234,7 @@ ALTER TABLE ONLY public.pedido_detalle ALTER COLUMN id SET DEFAULT nextval('publ
 
 
 --
--- TOC entry 3694 (class 2604 OID 20168)
+-- TOC entry 3694 (class 2604 OID 20274)
 -- Name: pedidos id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3243,7 +3242,7 @@ ALTER TABLE ONLY public.pedidos ALTER COLUMN id SET DEFAULT nextval('public.pedi
 
 
 --
--- TOC entry 3673 (class 2604 OID 20169)
+-- TOC entry 3673 (class 2604 OID 20275)
 -- Name: proveedores id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3251,7 +3250,7 @@ ALTER TABLE ONLY public.proveedores ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
--- TOC entry 3690 (class 2604 OID 20170)
+-- TOC entry 3690 (class 2604 OID 20276)
 -- Name: receta_ingredientes id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3259,7 +3258,7 @@ ALTER TABLE ONLY public.receta_ingredientes ALTER COLUMN id SET DEFAULT nextval(
 
 
 --
--- TOC entry 3684 (class 2604 OID 20171)
+-- TOC entry 3684 (class 2604 OID 20277)
 -- Name: recetas id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3267,7 +3266,7 @@ ALTER TABLE ONLY public.recetas ALTER COLUMN id SET DEFAULT nextval('public.rece
 
 
 --
--- TOC entry 3663 (class 2604 OID 20172)
+-- TOC entry 3663 (class 2604 OID 20278)
 -- Name: restaurante id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3275,7 +3274,7 @@ ALTER TABLE ONLY public.restaurante ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
--- TOC entry 3669 (class 2604 OID 20173)
+-- TOC entry 3669 (class 2604 OID 20279)
 -- Name: roles id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3283,7 +3282,7 @@ ALTER TABLE ONLY public.roles ALTER COLUMN id SET DEFAULT nextval('public.roles_
 
 
 --
--- TOC entry 3677 (class 2604 OID 20174)
+-- TOC entry 3677 (class 2604 OID 20280)
 -- Name: unidad_compra id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3291,7 +3290,7 @@ ALTER TABLE ONLY public.unidad_compra ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
--- TOC entry 3667 (class 2604 OID 20175)
+-- TOC entry 3667 (class 2604 OID 20281)
 -- Name: unidad_medida id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3299,7 +3298,7 @@ ALTER TABLE ONLY public.unidad_medida ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
--- TOC entry 3670 (class 2604 OID 20176)
+-- TOC entry 3670 (class 2604 OID 20282)
 -- Name: usuarios id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3353,11 +3352,11 @@ COPY core.restaurante (id, nombre, direccion, telefono, email, logo_url, moneda,
 -- Data for Name: roles; Type: TABLE DATA; Schema: core; Owner: postgres
 --
 
-COPY core.roles (id, nombre, restaurante_id, created_at) FROM stdin;
-1	admin	1	2026-03-03 10:56:13.498568
-2	cajero	1	2026-03-24 20:21:54.161944
-3	mesero	1	2026-03-24 20:22:05.04884
-4	cocina	1	2026-03-24 20:22:15.689054
+COPY core.roles (id, nombre, created_at) FROM stdin;
+1	admin	2026-03-03 10:56:13.498568
+2	cajero	2026-03-24 20:21:54.161944
+3	mesero	2026-03-24 20:22:05.04884
+4	cocina	2026-03-24 20:22:15.689054
 \.
 
 
@@ -6654,11 +6653,11 @@ ALTER TABLE ONLY sales.orders
     ADD CONSTRAINT orders_table_id_fkey FOREIGN KEY (table_id) REFERENCES core.tables(id);
 
 
--- Completed on 2026-03-24 21:06:29 -04
+-- Completed on 2026-03-24 21:19:57 -04
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict gtPSSm4ScMjCyeFd4aE2aahPi2ZZR1cCYF5tnYJh9ghIQlJ2qhj8Nt37lYKMQ4E
+\unrestrict y6FeDqZZnkhe7WS6zFAuTEwcaykSherO633E39RkszOutZIMPi6teOT4eWa5EIL
 
