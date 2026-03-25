@@ -97,10 +97,12 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import Sidebar from '../../components/Sidebar.vue';
+import { useAuth } from '../../core/composables/useAuth';
 
-const userName = "Luis Landaeta";
+const auth = useAuth();
+const userName = computed(() => auth.user.value?.nombre || 'Cajero');
 const cajaAbierta = ref(true);
 const montoCaja = ref(2450.75);
 const ventasTurno = ref(1820.00);

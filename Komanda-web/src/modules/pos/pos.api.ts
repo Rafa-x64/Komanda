@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:3000/api/v1'
+import { fetchWithAuth } from '../../core/api/auth.api'
 
 interface OrderItem {
   receta_id: number
@@ -11,20 +11,25 @@ interface OrderPayload {
   items: OrderItem[]
 }
 
+export async function fetchCategories() {
+  const res = await fetchWithAuth('/sales/categories')
+  return res.data
+}
+
+export async function fetchProducts() {
+  const res = await fetchWithAuth('/sales/products')
+  return res.data
+}
+
+export async function fetchTables() {
+  const res = await fetchWithAuth('/sales/tables')
+  return res.data
+}
+
 export async function sendOrder(payload: OrderPayload) {
-  const res = await fetch(`${API_BASE}/sales/orders`, {
+  const res = await fetchWithAuth('/sales/orders', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   })
-  
-  // Verificamos si la respuesta es JSON antes de parsearla
-  const contentType = res.headers.get('content-type')
-  if (!contentType || !contentType.includes('application/json')) {
-    throw new Error('El backend no respondió con JSON. ¿Está corriendo el servidor y existe la ruta /api/v1/sales/orders?')
-  }
-
-  const json = await res.json()
-  if (!res.ok) throw new Error(json.message || 'Error al enviar la orden')
-  return json
+  return res.data
 }
