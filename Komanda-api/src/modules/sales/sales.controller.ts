@@ -3,10 +3,9 @@ import { CreateOrderSchema } from "./sales.validator";
 import { SalesService } from "./sales.service";
 
 export const SalesController = {
-    async getCategories(_req: Request, res: Response) {
+    async getCategories(req: Request, res: Response) {
         try {
-            const restaurantId = 1; // TODO: extraer del JWT
-            const data = await SalesService.getCategories(restaurantId);
+            const data = await SalesService.getCategories(req.user!.restaurantId);
             return res.json({ status: "success", data });
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : "Error al obtener categorías";
@@ -14,10 +13,9 @@ export const SalesController = {
         }
     },
 
-    async getProducts(_req: Request, res: Response) {
+    async getProducts(req: Request, res: Response) {
         try {
-            const restaurantId = 1; // TODO: extraer del JWT
-            const data = await SalesService.getProducts(restaurantId);
+            const data = await SalesService.getProducts(req.user!.restaurantId);
             return res.json({ status: "success", data });
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : "Error al obtener productos";
@@ -25,10 +23,9 @@ export const SalesController = {
         }
     },
 
-    async getTables(_req: Request, res: Response) {
+    async getTables(req: Request, res: Response) {
         try {
-            const restaurantId = 1; // TODO: extraer del JWT
-            const data = await SalesService.getTables(restaurantId);
+            const data = await SalesService.getTables(req.user!.restaurantId);
             return res.json({ status: "success", data });
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : "Error al obtener mesas";
@@ -44,8 +41,7 @@ export const SalesController = {
         }
 
         try {
-            const restaurantId = 1; // TODO: extraer del JWT
-            const order = await SalesService.createOrder(parsed.data, restaurantId);
+            const order = await SalesService.createOrder(parsed.data, req.user!.restaurantId);
             return res.status(201).json({ status: "success", data: order });
         } catch (error: unknown) {
             const message = error instanceof Error ? error.message : "Error al procesar la orden";

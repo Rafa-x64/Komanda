@@ -159,10 +159,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed } from 'vue';
 import Sidebar from '../../components/Sidebar.vue';
+import { useAuth } from '../../core/composables/useAuth';
 
-const userName = ref("Luis");
+const auth = useAuth()
+const userName = computed(() => auth.user.value?.nombre || 'Administrador')
+
 const currentDate = new Date().toLocaleDateString('es-ES', {
   weekday: 'long',
   year: 'numeric',

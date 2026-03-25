@@ -17,7 +17,8 @@
         </button>
       </div>
 
-      <ul class="nav nav-pills flex-column mb-auto gap-2">
+      <div class="flex-grow-1 overflow-y-auto sidebar-scroll" style="min-height: 0; padding-right: 0.25rem;">
+        <ul class="nav nav-pills flex-column mb-auto gap-2">
         <!-- Inicio (Dashboard): Personalizado por rol -->
         <li class="nav-item">
           <router-link :to="dashboardRoute" class="nav-link text-white-50 d-flex align-items-center" active-class="active bg-korange text-white fw-bold">
@@ -98,16 +99,23 @@
 
         <!-- Configuración: Usuarios, Roles, Datos del Restaurante (Solo Admin) -->
         <li class="nav-item" v-if="hasAccess(['admin'])">
+          <router-link to="/empleados" class="nav-link text-white-50 d-flex align-items-center" active-class="active bg-korange text-white fw-bold">
+            <i class="bi bi-people fs-5 me-3"></i>
+            <span>Empleados</span>
+          </router-link>
+        </li>
+        <li class="nav-item" v-if="hasAccess(['admin'])">
           <router-link to="/configuracion" class="nav-link text-white-50 d-flex align-items-center" active-class="active bg-korange text-white fw-bold">
             <i class="bi bi-gear fs-5 me-3"></i>
             <span>Configuración</span>
           </router-link>
         </li>
-      </ul>
+        </ul>
+      </div>
 
-      <hr class="border-secondary mt-5">
+      <hr class="border-secondary my-3">
       
-      <div class="user-profile mt-3">
+      <div class="user-profile mt-auto pb-2">
         <div class="dropdown">
           <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle px-2 py-2 rounded profile-btn" data-bs-toggle="dropdown" aria-expanded="false">
             <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; font-weight: bold;">
@@ -122,7 +130,7 @@
             <li><a class="dropdown-item" href="#">Perfil</a></li>
             <li><a class="dropdown-item" href="#">Ajustes</a></li>
             <li><hr class="dropdown-divider border-secondary"></li>
-            <li><a class="dropdown-item text-danger" href="#">Cerrar sesión</a></li>
+            <li><a class="dropdown-item text-danger" href="#" @click.prevent="handleLogout">Cerrar sesión</a></li>
           </ul>
         </div>
       </div>
@@ -132,12 +140,14 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { useAuth } from '../core/composables/useAuth';
 
 const props = defineProps<{
-  role: 'admin' | 'mesero' | 'cajero' | 'cocina';
+  role: string;
   userName?: string;
 }>();
 
+const auth = useAuth();
 const isOpen = ref(false);
 
 const hasAccess = (allowedRoles: string[]) => {
@@ -153,6 +163,10 @@ const dashboardRoute = computed(() => {
     default: return '/';
   }
 });
+
+const handleLogout = () => {
+    auth.logout();
+};
 </script>
 
 <style scoped>
@@ -240,5 +254,20 @@ const dashboardRoute = computed(() => {
   .sidebar.sidebar-open {
     transform: translateX(0);
   }
+}
+
+/* Custom Scrollbar for Sidebar */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 </style>

@@ -41,12 +41,14 @@ export const SignupService = {
             } as any);
             await queryRunner.manager.save(restaurant);
 
-            // 4. Crear el Rol "admin" para este restaurante
-            const role = queryRunner.manager.create(Role, {
-                nombre: "admin",
-                restaurante_id: restaurant.id,
-            } as any);
-            await queryRunner.manager.save(role);
+            // 4. Obtener o crear el Rol "admin" global
+            let role = await queryRunner.manager.findOne(Role, {
+                where: { nombre: "admin" },
+            });
+            if (!role) {
+                role = queryRunner.manager.create(Role, { nombre: "admin" } as any);
+                await queryRunner.manager.save(role);
+            }
 
             // 5. Hashear la contraseña
             const salt = await bcrypt.genSalt(10);

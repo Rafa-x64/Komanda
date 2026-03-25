@@ -1,9 +1,9 @@
 <script setup lang='ts'>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { LogInIcon } from 'lucide-vue-next';
-import { useRouter } from 'vue-router';
+import { useAuth } from '../../../core/composables/useAuth';
 
-const router = useRouter();
+const auth = useAuth();
 
 const formData = ref({
     username: '',
@@ -35,8 +35,17 @@ const handleSubmit = async () => {
             return;
         }
 
+        // Guardar la sesión real
+        const token = data.data.token;
+        const user = data.data.user;
+        const restaurant = data.data.restaurant;
+
+        auth.setAuthData(token, user, restaurant);
+
+        // Notificar y redirigir
         alert("¡Inicio de sesión exitoso!");
-        router.push('/dashboard');
+        auth.navigateToDashboard();
+        
     } catch (error) {
         console.error("Error de conexión:", error);
         alert("No se pudo conectar con el servidor, revisa si está encendido.");
