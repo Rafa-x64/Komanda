@@ -26,15 +26,20 @@ export const EmployeesController = {
     async seedRoles(req: Request, res: Response) {
         try {
             const { Conexion } = await import("../../config/database");
-            await Conexion.query(`
-                INSERT INTO core.roles (nombre, descripcion, restaurante_id)
-                VALUES 
-                ('cajero', 'Rol de cajero para ventas', 1),
-                ('mesero', 'Rol de mesero para pedidos', 1),
-                ('cocina', 'Rol de cocina para ordenes', 1)
-                ON CONFLICT (nombre) DO NOTHING;
-            `);
-            return res.json({ status: "success", message: "Roles seeded" });
+            const { Role } = await import("../signup/domain/role.entity");
+            
+            // If dropping a column fails because of old schema issues, we just ignore it
+            try { await Conexion.query(`ALTER TABLE core.roles DROP COLUMN IF EXISTS restaurante_id CASCADE;`) } catch(e) {}
+            
+            const rolesToSeed = ['admin', 'cajero', 'mesero', 'cocina'];
+            for (const r of rolesToSeed) {
+                const exists = await Conexion.manager.findOne(Role, { where: { nombre: r } });
+                if (!exists) {
+                    const newRole = Conexion.manager.create(Role, { nombre: r } as any);
+                    await Conexion.manager.save(newRole);
+                }
+            }
+            return res.json({ status: "success", message: "Roles seeded globally" });
         } catch (error: unknown) {
             const msg = error instanceof Error ? error.message : "Error";
             return res.status(500).json({ status: "error", message: msg });
