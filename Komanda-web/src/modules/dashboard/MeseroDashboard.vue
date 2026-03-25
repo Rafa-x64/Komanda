@@ -107,10 +107,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import Sidebar from '../../components/Sidebar.vue';
+import { useAuth } from '../../core/composables/useAuth';
 
-const userName = "Luis Mesero";
+const auth = useAuth();
+const userName = computed(() => auth.user.value?.nombre || 'Mesero');
 const currentTime = ref("");
 
 const mesas = ref([
