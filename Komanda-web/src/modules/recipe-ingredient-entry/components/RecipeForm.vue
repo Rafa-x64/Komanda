@@ -118,6 +118,10 @@ const selectIngredient = (ing: {id: number, nombre: string}) => {
   showIngredientDropdown.value = false;
 };
 
+const handleDropdownBlur = () => {
+  setTimeout(() => { showIngredientDropdown.value = false; }, 200);
+};
+
 const calculateMargin = () => {
   if (form.value.costo_produccion > 0 && form.value.precio_venta > 0) {
     const profit = form.value.precio_venta - form.value.costo_produccion;
@@ -161,9 +165,6 @@ const getValidationMessage = () => {
   return '';
 };
 
-const canProceedToStep2 = computed(() => {
-  return getValidationMessage() === '';
-});
 
 const nextStep = () => {
   if (currentStep.value === 1) {
@@ -334,7 +335,7 @@ const handleSubmit = () => {
                     type="text" 
                     v-model="ingredientSearchQuery" 
                     @focus="showIngredientDropdown = true" 
-                    @blur="setTimeout(() => showIngredientDropdown = false, 200)" 
+                    @blur="handleDropdownBlur"
                     class="form-control custom-input py-2 rounded-3" 
                     placeholder="Escribe para buscar (Ej. Carne)..."
                   >

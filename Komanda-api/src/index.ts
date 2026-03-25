@@ -7,6 +7,7 @@ import { SignInRoutes } from "./modules/signin/signin.routes";
 import { salesRouter } from "./modules/sales/sales.routes";
 import { employeesRouter } from "./modules/employees/employees.routes";
 import { getKitchenStatus } from './modules/kitchen/kitchen.controller';
+import { menuRouter } from "./modules/menu/menu.routes";
 
 const app = express();
 const PORT = 3000;
@@ -21,6 +22,7 @@ app.use("/api/v1/signin", SignInRoutes);
 // Rutas protegidas (auth middleware aplicado dentro de cada router)
 app.use("/api/v1/sales", salesRouter);
 app.use("/api/v1/employees", employeesRouter);
+app.use("/api/v1/menu", menuRouter);
 
 app.get('/api/v1/kitchen/status', getKitchenStatus);
 

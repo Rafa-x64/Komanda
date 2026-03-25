@@ -79,7 +79,6 @@
           </router-link>
         </li>
         </ul>
-      </div>
 
       <hr class="border-secondary my-3">
       
