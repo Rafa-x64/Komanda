@@ -7,7 +7,15 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
+# Node modules
+node_modules/
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+
+# Build Outputs
 dist
 dist-ssr
 *.local
@@ -22,13 +30,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-node_modules
-node_modules
-node_modules
-node_modules
 
-node_modules/
-.pnpm-debug.log*
+# PNPM & Lockfiles
 pnpm-lock.yaml
-dist/
-.env
