@@ -34,6 +34,26 @@ export class POSController {
         }
     }
 
+    static async getPaymentMethods(req: Request, res: Response): Promise<void> {
+        try {
+            const { restaurantId } = (req as any).user;
+            const methods = await POSService.getPaymentMethods(restaurantId);
+            res.status(200).json({ status: "success", data: methods });
+        } catch (error: any) {
+            res.status(500).json({ status: "error", message: error.message });
+        }
+    }
+
+    static async getSales(req: Request, res: Response): Promise<void> {
+        try {
+            const { restaurantId } = (req as any).user;
+            const sales = await POSService.getSales(restaurantId);
+            res.status(200).json({ status: "success", data: sales });
+        } catch (error: any) {
+            res.status(500).json({ status: "error", message: error.message });
+        }
+    }
+
     static async createSale(req: Request, res: Response): Promise<void> {
         try {
             const payload = CreateSaleSchema.parse(req.body);

@@ -38,6 +38,25 @@ export class POSService {
         });
     }
 
+    static async getPaymentMethods(restaurantId: number) {
+        return Conexion.query(
+            `SELECT id, nombre, activo FROM core.metodos_pago 
+             WHERE (restaurante_id = $1) AND activo = true 
+             ORDER BY nombre`,
+            [restaurantId]
+        );
+    }
+
+    static async getSales(restaurantId: number) {
+        return Conexion.query(
+            `SELECT p.id, p.codigo, p.cliente, p.estado, p.estado_cuenta, p.subtotal, p.impuestos, p.total, p.fecha_hora
+             FROM operaciones.pedidos p
+             WHERE p.restaurante_id = $1
+             ORDER BY p.fecha_hora DESC LIMIT 50`,
+            [restaurantId]
+        );
+    }
+
     static async createSale(data: CreateSaleInput, restaurantId: number, userId: number) {
         const qr = Conexion.createQueryRunner();
         await qr.connect();

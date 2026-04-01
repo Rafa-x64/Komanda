@@ -11,7 +11,9 @@ posRouter.use(authMiddleware);
 posRouter.get("/categories", POSController.getCategories);
 posRouter.get("/products", POSController.getProducts);
 posRouter.get("/tables", POSController.getTables);
+posRouter.get("/payment-methods", POSController.getPaymentMethods);
 
 // Operaciones principales POS
+posRouter.get("/sales", POSController.getSales);
 posRouter.post("/sales", POSController.createSale);
 posRouter.post("/cash-closures", POSController.closeCashRegister);
