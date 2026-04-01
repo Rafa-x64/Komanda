@@ -59,28 +59,29 @@ import { Mail, MapPin, Phone, Send } from 'lucide-vue-next';
                         <form @submit.prevent>
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="name" placeholder="Tu Nombre">
-                                        <label for="name">Nombre</label>
+                                    <div class="mb-3">
+                                        <label for="name" class="form-label text-main fw-bold">Nombre</label>
+                                        <input type="text" class="form-control py-2 text-main" id="name" placeholder="Tu Nombre">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <input type="email" class="form-control" id="email"
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label text-main fw-bold">Email</label>
+                                        <input type="email" class="form-control py-2 text-main" id="email"
                                             placeholder="nombre@ejemplo.com">
-                                        <label for="email">Email</label>
                                     </div>
                                 </div>
                                 <div class="col-12">
-                                    <div class="form-floating">
-                                        <textarea class="form-control" placeholder="Deja tu mensaje aquí" id="message"
-                                            style="height: 150px"></textarea>
-                                        <label for="message">Mensaje</label>
+                                    <div class="mb-3">
+                                        <label for="message" class="form-label text-main fw-bold">Mensaje</label>
+                                        <textarea class="form-control text-main" placeholder="Deja tu mensaje aquí..." id="message"
+                                            style="height: 120px; resize: none;"></textarea>
                                     </div>
                                 </div>
                                 <div class="col-12">
                                     <button
-                                        class="btn btn-korange w-100 py-3 fw-bold d-flex align-items-center justify-content-center gap-2">
+                                        class="btn-korange w-100 py-3 fw-bold d-flex align-items-center justify-content-center gap-2 rounded-3 border-0"
+                                        style="background-color: var(--KOrange) !important; color: white !important;">
                                         Enviar Mensaje
                                         <Send :size="18" />
                                     </button>

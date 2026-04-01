@@ -52,8 +52,8 @@ const toggleMenu = () => {
                         <a href="#" class="icon-link">
                             <Linkedin :size="20" />
                         </a>
-                        <router-link to="/singin" class="btn-outline-korange border-2 rounded-pill px-1 text-decoration-none">Iniciar Sesion</router-link>
-                        <router-link to="/singup" class="btn-korange border-2 rounded-pill px-1 text-decoration-none">Registrarse</router-link>
+                        <router-link to="/singin" class="btn btn-login rounded-pill px-4 text-decoration-none fw-bold">Iniciar Sesión</router-link>
+                        <router-link to="/singup" class="btn btn-register rounded-pill px-4 text-decoration-none fw-bold">Registrarse</router-link>
                     </div>
                 </div>
             </div>
@@ -93,8 +93,31 @@ const toggleMenu = () => {
     color: var(--KOrange);
 }
 
-.btn-korange {
-    color: var(--text-main)
+.btn-login {
+    border: 2px solid var(--KOrange);
+    color: var(--KOrange);
+    background-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+    background-color: var(--KOrange);
+    color: white;
+}
+
+.btn-register {
+    background-color: var(--KOrange);
+    color: white;
+    border: 2px solid var(--KOrange);
+    transition: all 0.3s ease;
+}
+
+.btn-register:hover {
+    background-color: #E66A00; /* A darker orange for hover */
+    border-color: #E66A00;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(253, 126, 20, 0.3);
 }
 
 @media (max-width: 991.98px) {

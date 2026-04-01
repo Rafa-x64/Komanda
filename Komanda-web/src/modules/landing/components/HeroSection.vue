@@ -34,7 +34,8 @@ onMounted(() => {
                         </p>
                         <div class="d-flex gap-3 flex-wrap">
                             <router-link to="/kitchen"
-                                class="btn btn-korange btn-lg rounded-pill px-5 d-flex align-items-center gap-2">
+                                class="btn-korange rounded-pill px-5 py-3 d-flex align-items-center gap-2 text-decoration-none fs-5 fw-bold shadow-sm"
+                                style="background-color: var(--KOrange) !important; color: white !important;">
                                 Comenzar
                                 <ArrowRight :size="20" />
                             </router-link>
