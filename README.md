@@ -121,17 +121,29 @@ Para que no pierdas tiempo peleando con el entorno, hemos preparado guías espec
 Si ya tienes el entorno listo (Node v20+, Postgres, pnpm):
 
 ```bash
-# 1. Clona el repo
+# 1. Clona el repo y actualiza
 git clone https://github.com/Rafa-x64/Komanda.git
+cd Komanda
+git pull origin master
 
 # 2. Instala dependencias (Monorepo)
 pnpm install
 
-# 3. Configura variables
-cp .env.example .env
+# 3. Importación y configuración de la base de datos
+# Asegúrate de crear la base de datos "komanda_db" en tu PostgreSQL
+# Pudes usar psql para importar si tienes un dump o crearla directamente
+# psql -U postgres -c "CREATE DATABASE komanda_db;"
 
-# 4. Corre todo el ecosistema (API + Web)
-pnpm komanda
+# 4. Configura variables
+cp .env.example .env
+# IMPORTANTE: Asegurate de ingresar tus credenciales de Postgres en el .env
+# DB_PORT=5432
+# DB_USER=postgres
+# DB_PASSWORD=postgres
+# DB_NAME=komanda_db
+
+# 5. Corre todo el ecosistema (API + Web)
+pnpm run komanda
 ```
 
 ---

@@ -36,12 +36,12 @@ app.get('/', (_req, res) => {
 
 Conexion.initialize()
   .then(() => {
-    console.log("Database connected");
+    console.log("Database connected to:", Conexion.options.database);
     app.listen(PORT, () => {
       console.log(`\n🚀 Server ready at: http://localhost:${PORT}`);
     });
   })
   .catch((error) => {
-    console.error("Database connection error:", error);
+    console.error("Database connection error:", error.message || "Unknown error");
     process.exit(1);
   });

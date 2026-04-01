@@ -15,17 +15,24 @@ komanda-project/
 ├── 📂 docs/                    # Documentación técnica y de negocio
 │   ├── 📂 instalation-guides/  # Guías de despliegue (Windows, Linux)
 │   ├── 📜 ARCHITECTURE.md      # Documentación de la filosofía DDD-Lite
+│   ├── 📜 KOMANDA.md           # Definición funcional y módulos del sistema
+│   ├── 📜 ROADMAP.md           # Plan de desarrollo por sprints
+│   ├── 📜 TODO.md              # Checklist maestra de desarrollo
 │   ├── 📜 STRUCTURE.md         # Este archivo
 │   └── ...                     # Otros manuales y contratos
 │
-├── 📂 Komanda-api/             # Backend Híbrido (Node.js/TS + PHP)
+├── 📂 Komanda-api/             # Backend (Node.js/TS + Express + TypeORM)
 │   ├── 📂 src/
-│   │   ├── 📂 api/             # Endpoints específicos (Ej: stats.php)
+│   │   ├── 📂 api/             # Endpoints PHP específicos (ej: stats.php)
 │   │   ├── 📂 config/          # Variables de entorno y constantes
-│   │   ├── 📂 modules/         # Lógica de negocio (DDD-Lite)
-│   │   │   ├── 📂 inventory/   # Gestión de stock y productos
-│   │   │   ├── 📂 kitchen/     # Gestión de comandas
-│   │   │   └── ...
+│   │   ├── 📂 modules/         # Lógica de negocio (DDD-Lite) — 5 módulos
+│   │   │   ├── 📂 warehouse/   # Almacén y Compras (ingredientes, proveedores, compras)
+│   │   │   ├── 📂 menu/        # Menú y Recetas (platos, BOM, precios dinámicos)
+│   │   │   ├── 📂 pos/         # Punto de Venta (ventas + caja + métodos de pago)
+│   │   │   ├── 📂 accounting/  # Contabilidad (asientos, balance, estado de resultados)
+│   │   │   ├── 📂 expenses/    # Gastos Operativos (agua, luz, gas, alquiler, internet)
+│   │   │   ├── 📂 auth/        # Autenticación JWT
+│   │   │   └── 📂 users/       # Gestión de usuarios y RBAC
 │   │   ├── 📂 shared/          # Base de datos y utilidades comunes
 │   │   └── 📜 index.ts         # Punto de entrada Express
 │   ├── 📜 package.json         # Scripts de Node
@@ -36,11 +43,15 @@ komanda-project/
 │   ├── 📂 src/
 │   │   ├── 📂 assets/          # Imágenes y CSS global
 │   │   ├── 📂 core/            # Configuración de API y hooks globales
-│   │   ├── 📂 modules/         # Vistas y lógica por dominio
-│   │   │   ├── 📂 kitchen/     # Pantalla de cocina
-│   │   │   ├── 📂 landing/     # Landing Page principal
-│   │   │   ├── 📂 singin/      # Autenticación (Login)
-│   │   │   └── ...
+│   │   ├── 📂 modules/         # Vistas y lógica por dominio — 5 módulos
+│   │   │   ├── 📂 warehouse/   # Almacén y Compras (ingredientes, compras, proveedores)
+│   │   │   ├── 📂 menu/        # Menú y Recetas (catálogo, recetas, precios)
+│   │   │   ├── 📂 pos/         # Punto de Venta (POS + caja + cobro)
+│   │   │   ├── 📂 accounting/  # Contabilidad (Balance General, Estado de Resultados)
+│   │   │   ├── 📂 expenses/    # Gastos Operativos
+│   │   │   ├── 📂 dashboard/   # Panel gerencial con KPIs
+│   │   │   ├── 📂 auth/        # Login y protección de rutas
+│   │   │   └── 📂 landing/     # Landing Page principal
 │   │   ├── 📂 router/          # Configuración de Vue Router
 │   │   ├── 📜 App.vue          # Componente raíz
 │   │   ├── 📜 main.ts          # Inicialización de la App
