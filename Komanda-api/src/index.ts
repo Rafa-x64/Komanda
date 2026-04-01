@@ -4,7 +4,7 @@ import "reflect-metadata";
 import { Conexion } from "./config/database";
 import { signupRouter } from "./modules/signup/signup.routes";
 import { SignInRoutes } from "./modules/signin/signin.routes";
-import { salesRouter } from "./modules/sales/sales.routes";
+import { posRouter } from "./modules/pos/pos.routes";
 import { employeesRouter } from "./modules/employees/employees.routes";
 import { getKitchenStatus } from './modules/kitchen/kitchen.controller';
 
@@ -19,7 +19,7 @@ app.use("/api/v1/signup", signupRouter);
 app.use("/api/v1/signin", SignInRoutes);
 
 // Rutas protegidas (auth middleware aplicado dentro de cada router)
-app.use("/api/v1/sales", salesRouter);
+app.use("/api/v1/pos", posRouter);
 app.use("/api/v1/employees", employeesRouter);
 
 app.get('/api/v1/kitchen/status', getKitchenStatus);

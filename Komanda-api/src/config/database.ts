@@ -5,11 +5,11 @@ import { DataSource } from "typeorm";
 import { Restaurant } from "../modules/signup/domain/restaurant.entity";
 import { User } from "../modules/signup/domain/user.entity";
 import { Role } from "../modules/signup/domain/role.entity";
-import { Pedido } from "../modules/sales/domain/pedido.entity";
-import { PedidoDetalle } from "../modules/sales/domain/pedido-detalle.entity";
-import { Mesa } from "../modules/sales/domain/mesa.entity";
-import { Receta } from "../modules/sales/domain/receta.entity";
-import { Categoria } from "../modules/sales/domain/categoria.entity";
+import { Pedido } from "../modules/pos/domain/pedido.entity";
+import { PedidoDetalle } from "../modules/pos/domain/pedido-detalle.entity";
+import { Mesa } from "../modules/pos/domain/mesa.entity";
+import { Receta } from "../modules/pos/domain/receta.entity";
+import { Categoria } from "../modules/pos/domain/categoria.entity";
 
 export const Conexion = new DataSource({
     type: "postgres",
