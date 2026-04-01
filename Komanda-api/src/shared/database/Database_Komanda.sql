@@ -6645,19 +6645,566 @@ ALTER TABLE ONLY sales.orders
 
 
 --
--- TOC entry 4140 (class 2606 OID 19855)
--- Name: orders orders_table_id_fkey; Type: FK CONSTRAINT; Schema: sales; Owner: postgres
---
-
 ALTER TABLE ONLY sales.orders
     ADD CONSTRAINT orders_table_id_fkey FOREIGN KEY (table_id) REFERENCES core.tables(id);
 
 
--- Completed on 2026-03-24 21:19:57 -04
+-- ============================================================
+-- AMPLIACIÓN v0.1.0 - 2026-03-31
+-- Correcciones académicas: Profesores Gerenciales y Contabilidad
+-- Nuevas tablas requeridas por el enunciado de Costos y Ventas
+-- ============================================================
+
+
+-- ============================================================
+-- TYPE: metodo_pago_enum
+-- Métodos de pago aceptados en el Punto de Venta (Enunciado #4)
+-- Un pedido puede usar uno o más métodos simultáneamente
+-- ============================================================
+
+CREATE TYPE public.metodo_pago_enum AS ENUM (
+    'efectivo',
+    'pago_movil',
+    'tarjeta',
+    'divisa'
+);
+
+ALTER TYPE public.metodo_pago_enum OWNER TO postgres;
+
+COMMENT ON TYPE public.metodo_pago_enum IS
+'Métodos de pago aceptados: efectivo (Bs), pago_movil (transferencia), tarjeta (débito/crédito), divisa (USD/EUR físico)';
+
+
+-- ============================================================
+-- TYPE: categoria_gasto_enum
+-- Categorías de gastos operativos según el enunciado (solo estas 5)
+-- ============================================================
+
+CREATE TYPE public.categoria_gasto_enum AS ENUM (
+    'agua',
+    'gas',
+    'electricidad',
+    'internet',
+    'alquiler'
+);
+
+ALTER TYPE public.categoria_gasto_enum OWNER TO postgres;
+
+COMMENT ON TYPE public.categoria_gasto_enum IS
+'Gastos operativos fijos según enunciado académico: agua, gas, electricidad, internet, alquiler';
+
+
+-- ============================================================
+-- TYPE: tipo_cuenta_contable_enum
+-- Clasificación del plan de cuentas contable
+-- ============================================================
+
+CREATE TYPE public.tipo_cuenta_contable_enum AS ENUM (
+    'activo',
+    'pasivo',
+    'patrimonio',
+    'ingreso',
+    'costo',
+    'gasto'
+);
+
+ALTER TYPE public.tipo_cuenta_contable_enum OWNER TO postgres;
+
+
+-- ============================================================
+-- TABLE: operaciones.transacciones_pago
+-- Requerimiento del Profesor de Contabilidad:
+-- "El punto de venta y caja van en un solo lugar. Se especifica
+--  con qué método se pagó cada venta." (efectivo, pago móvil,
+--  tarjeta, divisa). Un pedido puede tener múltiples filas aquí
+--  (pago mixto). El arqueo de caja se calcula agrupando por metodo.
+-- ============================================================
+
+CREATE SEQUENCE operaciones.transacciones_pago_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE operaciones.transacciones_pago_id_seq OWNER TO postgres;
+
+CREATE TABLE operaciones.transacciones_pago (
+    id            integer NOT NULL DEFAULT nextval('operaciones.transacciones_pago_id_seq'),
+    pedido_id     integer NOT NULL,
+    metodo        public.metodo_pago_enum NOT NULL,
+    monto         numeric(12,2) NOT NULL CHECK (monto > 0),
+    referencia    character varying(100),     -- Nro. confirmación pago móvil / últimos 4 dígitos tarjeta
+    tasa_cambio   numeric(12,4) DEFAULT 1,   -- Si metodo=divisa: tasa Bs/USD usada en la transacción
+    usuario_id    integer,
+    restaurante_id integer NOT NULL,
+    created_at    timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE operaciones.transacciones_pago OWNER TO postgres;
+
+ALTER SEQUENCE operaciones.transacciones_pago_id_seq OWNED BY operaciones.transacciones_pago.id;
+
+COMMENT ON TABLE operaciones.transacciones_pago IS
+'Registro de método(s) de pago por pedido. Un pedido puede tener múltiples filas (pago mixto).
+Permite arqueo por método: SUM(monto) WHERE metodo = ''efectivo'' AND caja_id = X';
+
+COMMENT ON COLUMN operaciones.transacciones_pago.tasa_cambio IS
+'Aplica cuando metodo=divisa. Registra la tasa Bs/USD vigente al momento de la transacción para reportes contables correctos.';
+
+COMMENT ON COLUMN operaciones.transacciones_pago.referencia IS
+'Número de confirmación (pago móvil), últimos 4 dígitos (tarjeta) o identificador libre.';
+
+ALTER TABLE ONLY operaciones.transacciones_pago
+    ADD CONSTRAINT transacciones_pago_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY operaciones.transacciones_pago
+    ADD CONSTRAINT fk_trans_pago_pedido
+    FOREIGN KEY (pedido_id) REFERENCES operaciones.pedidos(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY operaciones.transacciones_pago
+    ADD CONSTRAINT fk_trans_pago_restaurante
+    FOREIGN KEY (restaurante_id) REFERENCES core.restaurante(id) ON DELETE CASCADE;
+
+CREATE INDEX idx_trans_pago_pedido ON operaciones.transacciones_pago(pedido_id);
+CREATE INDEX idx_trans_pago_metodo ON operaciones.transacciones_pago(metodo, restaurante_id);
+
+
+-- ============================================================
+-- TABLE: finanzas.gastos_operativos
+-- Requerimiento del Enunciado #4:
+-- "Gestión de Gastos fijos: Registro exclusivo de pagos de
+--  servicios: Agua, Gas, Electricidad, Internet y Alquiler."
+-- Estos gastos alimentan directamente el Estado de Resultados.
+-- ============================================================
+
+CREATE SEQUENCE finanzas.gastos_operativos_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE finanzas.gastos_operativos_id_seq OWNER TO postgres;
+
+CREATE TABLE finanzas.gastos_operativos (
+    id              integer NOT NULL DEFAULT nextval('finanzas.gastos_operativos_id_seq'),
+    categoria       public.categoria_gasto_enum NOT NULL,
+    descripcion     character varying(255),
+    monto           numeric(12,2) NOT NULL CHECK (monto > 0),
+    fecha           date NOT NULL,
+    metodo_pago     public.metodo_pago_enum NOT NULL DEFAULT 'efectivo',
+    referencia      character varying(100),
+    periodo_mes     integer CHECK (periodo_mes BETWEEN 1 AND 12),
+    periodo_anio    integer,
+    usuario_id      integer,
+    restaurante_id  integer NOT NULL,
+    created_at      timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE finanzas.gastos_operativos OWNER TO postgres;
+
+ALTER SEQUENCE finanzas.gastos_operativos_id_seq OWNED BY finanzas.gastos_operativos.id;
+
+COMMENT ON TABLE finanzas.gastos_operativos IS
+'Gastos operativos fijos del restaurante. Según el enunciado académico solo se registran:
+agua, gas, electricidad, internet y alquiler. Cada registro genera un asiento contable automático
+en contabilidad.asientos (Debe: Gasto / Haber: Caja o Banco).';
+
+COMMENT ON COLUMN finanzas.gastos_operativos.categoria IS
+'Una de las 5 categorías del enunciado: agua, gas, electricidad, internet, alquiler.';
+
+COMMENT ON COLUMN finanzas.gastos_operativos.periodo_mes IS
+'Mes al que corresponde el gasto (puede diferir de la fecha de pago). Usado en Estado de Resultados.';
+
+ALTER TABLE ONLY finanzas.gastos_operativos
+    ADD CONSTRAINT gastos_operativos_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY finanzas.gastos_operativos
+    ADD CONSTRAINT fk_gastos_restaurante
+    FOREIGN KEY (restaurante_id) REFERENCES core.restaurante(id) ON DELETE CASCADE;
+
+CREATE INDEX idx_gastos_restaurante_fecha ON finanzas.gastos_operativos(restaurante_id, fecha);
+CREATE INDEX idx_gastos_categoria ON finanzas.gastos_operativos(categoria, restaurante_id);
+
+
+-- ============================================================
+-- TABLAS DE CONTABILIDAD COMPLETA (Doble Entrada)
+-- Requerimiento del Profesor de Contabilidad:
+-- "El módulo contable debe llevar la contabilidad completa"
+-- Balance General + Estado de Resultados + Libro Diario real
+--
+-- NOTA: contabilidad.libro_diario ya existe (registro plano,
+-- se conserva para compatibilidad). Las nuevas tablas implementan
+-- el sistema de doble entrada (Debe = Haber) requerido.
+-- ============================================================
+
+-- Plan de Cuentas Contable
+CREATE SEQUENCE contabilidad.plan_cuentas_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE contabilidad.plan_cuentas_id_seq OWNER TO postgres;
+
+CREATE TABLE contabilidad.plan_cuentas (
+    id              integer NOT NULL DEFAULT nextval('contabilidad.plan_cuentas_id_seq'),
+    codigo          character varying(20) NOT NULL,   -- ej: "1.1.01"
+    nombre          character varying(100) NOT NULL,
+    tipo            public.tipo_cuenta_contable_enum NOT NULL,
+    padre_id        integer,                          -- jerarquía del plan de cuentas
+    es_auxiliar     boolean DEFAULT true,             -- false = cuenta de grupo, no se mueve
+    restaurante_id  integer,                          -- NULL = cuenta global del sistema
+    activo          boolean DEFAULT true,
+    created_at      timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE contabilidad.plan_cuentas OWNER TO postgres;
+
+ALTER SEQUENCE contabilidad.plan_cuentas_id_seq OWNED BY contabilidad.plan_cuentas.id;
+
+COMMENT ON TABLE contabilidad.plan_cuentas IS
+'Plan de Cuentas Contable. Estructura jerárquica (padre_id) que permite generar
+Balance General y Estado de Resultados agrupando por tipo de cuenta.
+Las cuentas globales (restaurante_id IS NULL) aplican a todos los restaurantes.';
+
+COMMENT ON COLUMN contabilidad.plan_cuentas.codigo IS
+'Código contable estándar. Ej: 1=Activo, 2=Pasivo, 3=Patrimonio, 4=Ingreso, 5=Costo, 6=Gasto';
+
+ALTER TABLE ONLY contabilidad.plan_cuentas
+    ADD CONSTRAINT plan_cuentas_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY contabilidad.plan_cuentas
+    ADD CONSTRAINT plan_cuentas_codigo_restaurante_unique
+    UNIQUE (codigo, restaurante_id);
+
+ALTER TABLE ONLY contabilidad.plan_cuentas
+    ADD CONSTRAINT fk_plan_cuentas_padre
+    FOREIGN KEY (padre_id) REFERENCES contabilidad.plan_cuentas(id);
+
+ALTER TABLE ONLY contabilidad.plan_cuentas
+    ADD CONSTRAINT fk_plan_cuentas_restaurante
+    FOREIGN KEY (restaurante_id) REFERENCES core.restaurante(id) ON DELETE CASCADE;
+
+CREATE INDEX idx_plan_cuentas_tipo ON contabilidad.plan_cuentas(tipo);
+
+
+-- Cabecera del Asiento Contable (Libro Diario - Doble Entrada)
+CREATE SEQUENCE contabilidad.asientos_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE contabilidad.asientos_id_seq OWNER TO postgres;
+
+CREATE TABLE contabilidad.asientos (
+    id              integer NOT NULL DEFAULT nextval('contabilidad.asientos_id_seq'),
+    fecha           date NOT NULL,
+    descripcion     character varying(255) NOT NULL,
+    -- Referencia polimórfica al evento que generó el asiento
+    origen_tipo     character varying(50),    -- 'venta', 'compra', 'gasto_operativo', 'costo_venta'
+    origen_id       integer,                   -- id del pedido, compra o gasto que lo originó
+    total_debe      numeric(12,2) DEFAULT 0 NOT NULL,
+    total_haber     numeric(12,2) DEFAULT 0 NOT NULL,
+    -- Invariante: total_debe DEBE ser = total_haber (doble entrada)
+    restaurante_id  integer NOT NULL,
+    creado_por      integer,                   -- usuario_id que desencadenó el evento
+    created_at      timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE contabilidad.asientos OWNER TO postgres;
+
+ALTER SEQUENCE contabilidad.asientos_id_seq OWNED BY contabilidad.asientos.id;
+
+COMMENT ON TABLE contabilidad.asientos IS
+'Cabecera del asiento contable. Cada evento del sistema (venta, compra, gasto) genera
+un asiento automáticamente. INVARIANTE: total_debe = total_haber (principio de partida doble).';
+
+COMMENT ON COLUMN contabilidad.asientos.origen_tipo IS
+'venta: pedido pagado | compra: entrada de mercancía | gasto_operativo: agua/luz/etc | costo_venta: back-flushing';
+
+ALTER TABLE ONLY contabilidad.asientos
+    ADD CONSTRAINT asientos_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY contabilidad.asientos
+    ADD CONSTRAINT fk_asientos_restaurante
+    FOREIGN KEY (restaurante_id) REFERENCES core.restaurante(id) ON DELETE CASCADE;
+
+CREATE INDEX idx_asientos_fecha ON contabilidad.asientos(fecha, restaurante_id);
+CREATE INDEX idx_asientos_origen ON contabilidad.asientos(origen_tipo, origen_id);
+
+
+-- Líneas del Asiento Contable (Partida Doble: Debe y Haber)
+CREATE SEQUENCE contabilidad.asiento_lineas_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE contabilidad.asiento_lineas_id_seq OWNER TO postgres;
+
+CREATE TABLE contabilidad.asiento_lineas (
+    id              integer NOT NULL DEFAULT nextval('contabilidad.asiento_lineas_id_seq'),
+    asiento_id      integer NOT NULL,
+    cuenta_id       integer NOT NULL,             -- FK a contabilidad.plan_cuentas
+    tipo_movimiento character varying(5) NOT NULL CHECK (tipo_movimiento IN ('debe', 'haber')),
+    monto           numeric(12,2) NOT NULL CHECK (monto > 0),
+    descripcion     character varying(255),
+    restaurante_id  integer NOT NULL
+);
+
+ALTER TABLE contabilidad.asiento_lineas OWNER TO postgres;
+
+ALTER SEQUENCE contabilidad.asiento_lineas_id_seq OWNED BY contabilidad.asiento_lineas.id;
+
+COMMENT ON TABLE contabilidad.asiento_lineas IS
+'Líneas de cada asiento contable. Cada asiento tiene N líneas (min. 2: un Debe y un Haber).
+La suma de todas las líneas tipo "debe" debe ser igual a la suma de las "haber" en el mismo asiento.
+Ejemplo para una Venta:
+  DEBE:  Caja/Banco            500.00
+  HABER: Ingresos por Ventas   500.00
+  DEBE:  Costo de Ventas       180.00
+  HABER: Inventario            180.00';
+
+COMMENT ON COLUMN contabilidad.asiento_lineas.tipo_movimiento IS
+'debe = cargo a la cuenta | haber = abono a la cuenta (partida doble)';
+
+ALTER TABLE ONLY contabilidad.asiento_lineas
+    ADD CONSTRAINT asiento_lineas_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY contabilidad.asiento_lineas
+    ADD CONSTRAINT fk_asiento_lineas_asiento
+    FOREIGN KEY (asiento_id) REFERENCES contabilidad.asientos(id) ON DELETE CASCADE;
+
+ALTER TABLE ONLY contabilidad.asiento_lineas
+    ADD CONSTRAINT fk_asiento_lineas_cuenta
+    FOREIGN KEY (cuenta_id) REFERENCES contabilidad.plan_cuentas(id);
+
+ALTER TABLE ONLY contabilidad.asiento_lineas
+    ADD CONSTRAINT fk_asiento_lineas_restaurante
+    FOREIGN KEY (restaurante_id) REFERENCES core.restaurante(id) ON DELETE CASCADE;
+
+CREATE INDEX idx_asiento_lineas_asiento ON contabilidad.asiento_lineas(asiento_id);
+CREATE INDEX idx_asiento_lineas_cuenta ON contabilidad.asiento_lineas(cuenta_id, restaurante_id);
+
+
+-- ============================================================
+-- SEED: Plan de Cuentas Base (Global - restaurante_id NULL)
+-- Cuentas del enunciado: Activos, Pasivos, Patrimonio,
+-- Ingresos, Costos de Venta, Gastos Operativos
+-- ============================================================
+
+INSERT INTO contabilidad.plan_cuentas (codigo, nombre, tipo, es_auxiliar, restaurante_id) VALUES
+-- ACTIVOS
+('1',       'ACTIVOS',                              'activo',    false, NULL),
+('1.1',     'Activos Corrientes',                   'activo',    false, NULL),
+('1.1.01',  'Caja',                                 'activo',    true,  NULL),
+('1.1.02',  'Banco',                                'activo',    true,  NULL),
+('1.1.03',  'Inventario de Insumos',                'activo',    true,  NULL),
+-- PASIVOS
+('2',       'PASIVOS',                              'pasivo',    false, NULL),
+('2.1',     'Pasivos Corrientes',                   'pasivo',    false, NULL),
+('2.1.01',  'Cuentas por Pagar a Proveedores',      'pasivo',    true,  NULL),
+-- PATRIMONIO
+('3',       'PATRIMONIO',                           'patrimonio', false, NULL),
+('3.1.01',  'Capital Social',                       'patrimonio', true,  NULL),
+('3.1.02',  'Utilidades Acumuladas',                'patrimonio', true,  NULL),
+('3.1.03',  'Utilidad / Pérdida del Ejercicio',     'patrimonio', true,  NULL),
+-- INGRESOS
+('4',       'INGRESOS',                             'ingreso',   false, NULL),
+('4.1.01',  'Ingresos por Ventas',                  'ingreso',   true,  NULL),
+-- COSTOS
+('5',       'COSTOS DE VENTA',                      'costo',     false, NULL),
+('5.1.01',  'Costo de Ventas (Ingredientes)',        'costo',     true,  NULL),
+-- GASTOS OPERATIVOS (los 5 del enunciado)
+('6',       'GASTOS OPERATIVOS',                    'gasto',     false, NULL),
+('6.1.01',  'Gasto Agua',                           'gasto',     true,  NULL),
+('6.1.02',  'Gasto Gas',                            'gasto',     true,  NULL),
+('6.1.03',  'Gasto Electricidad',                   'gasto',     true,  NULL),
+('6.1.04',  'Gasto Internet',                       'gasto',     true,  NULL),
+('6.1.05',  'Gasto Alquiler',                       'gasto',     true,  NULL);
+
+-- Asignar padre_id para la jerarquía
+UPDATE contabilidad.plan_cuentas SET padre_id = (SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '1'   AND restaurante_id IS NULL) WHERE codigo = '1.1'     AND restaurante_id IS NULL;
+UPDATE contabilidad.plan_cuentas SET padre_id = (SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '1.1' AND restaurante_id IS NULL) WHERE codigo LIKE '1.1.%' AND restaurante_id IS NULL;
+UPDATE contabilidad.plan_cuentas SET padre_id = (SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '2'   AND restaurante_id IS NULL) WHERE codigo = '2.1'     AND restaurante_id IS NULL;
+UPDATE contabilidad.plan_cuentas SET padre_id = (SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '2.1' AND restaurante_id IS NULL) WHERE codigo LIKE '2.1.%' AND restaurante_id IS NULL;
+UPDATE contabilidad.plan_cuentas SET padre_id = (SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '3'   AND restaurante_id IS NULL) WHERE codigo LIKE '3.1.%' AND restaurante_id IS NULL;
+UPDATE contabilidad.plan_cuentas SET padre_id = (SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '4'   AND restaurante_id IS NULL) WHERE codigo LIKE '4.1.%' AND restaurante_id IS NULL;
+UPDATE contabilidad.plan_cuentas SET padre_id = (SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '5'   AND restaurante_id IS NULL) WHERE codigo LIKE '5.1.%' AND restaurante_id IS NULL;
+UPDATE contabilidad.plan_cuentas SET padre_id = (SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '6'   AND restaurante_id IS NULL) WHERE codigo LIKE '6.1.%' AND restaurante_id IS NULL;
+
+
+-- ============================================================
+-- SEED: Roles del sistema (idempotente - WHERE NOT EXISTS)
+-- ============================================================
+
+INSERT INTO core.roles (nombre)
+SELECT v.nombre FROM (VALUES
+    ('super_admin'),
+    ('admin'),
+    ('cajero'),
+    ('cocina')
+) AS v(nombre)
+WHERE NOT EXISTS (
+    SELECT 1 FROM core.roles r WHERE r.nombre = v.nombre
+);
+
+
+-- ============================================================
+-- SEED: Unidades de Medida base (idempotente - WHERE NOT EXISTS)
+-- ============================================================
+
+INSERT INTO core.unidad_medida (nombre, abreviatura)
+SELECT v.nombre, v.abrev FROM (VALUES
+    ('Gramos',      'g'),
+    ('Kilogramos',  'kg'),
+    ('Litros',      'L'),
+    ('Mililitros',  'ml'),
+    ('Unidades',    'und')
+) AS v(nombre, abrev)
+WHERE NOT EXISTS (
+    SELECT 1 FROM core.unidad_medida u WHERE u.nombre = v.nombre
+);
+
+
+-- ============================================================
+-- VISTA: contabilidad.v_balance_general
+-- Facilita la consulta del Balance General por restaurante y período
+-- ============================================================
+
+CREATE OR REPLACE VIEW contabilidad.v_balance_general AS
+SELECT
+    r.id            AS restaurante_id,
+    r.nombre        AS restaurante,
+    pc.tipo,
+    pc.codigo,
+    pc.nombre       AS cuenta,
+    COALESCE(SUM(
+        CASE al.tipo_movimiento
+            WHEN 'debe'  THEN
+                CASE WHEN pc.tipo::text IN ('activo','costo','gasto') THEN al.monto ELSE -al.monto END
+            WHEN 'haber' THEN
+                CASE WHEN pc.tipo::text IN ('activo','costo','gasto') THEN -al.monto ELSE al.monto END
+        END
+    ), 0)           AS saldo
+FROM contabilidad.plan_cuentas pc
+CROSS JOIN core.restaurante r
+LEFT JOIN contabilidad.asiento_lineas al
+    ON al.cuenta_id = pc.id AND al.restaurante_id = r.id
+LEFT JOIN contabilidad.asientos a
+    ON a.id = al.asiento_id AND a.restaurante_id = r.id
+WHERE pc.es_auxiliar = true
+GROUP BY r.id, r.nombre, pc.tipo, pc.codigo, pc.nombre
+ORDER BY pc.codigo;
+
+COMMENT ON VIEW contabilidad.v_balance_general IS
+'Vista del Balance General y Estado de Resultados. Filtrar por restaurante_id y rango de fechas
+usando JOIN con contabilidad.asientos.';
+
+
+-- ============================================================
+-- VISTA: contabilidad.v_estado_resultados
+-- Estado de Resultados: Ingresos - Costo de Ventas - Gastos = Utilidad
+-- ============================================================
+
+CREATE OR REPLACE VIEW contabilidad.v_estado_resultados AS
+SELECT
+    al.restaurante_id,
+    a.fecha,
+    pc.tipo,
+    pc.nombre AS cuenta,
+    SUM(
+        CASE al.tipo_movimiento
+            WHEN 'debe'  THEN
+                CASE WHEN pc.tipo::text IN ('costo','gasto') THEN al.monto ELSE -al.monto END
+            WHEN 'haber' THEN
+                CASE WHEN pc.tipo::text = 'ingreso' THEN al.monto ELSE -al.monto END
+        END
+    ) AS monto
+FROM contabilidad.asiento_lineas al
+JOIN contabilidad.asientos a ON a.id = al.asiento_id
+JOIN contabilidad.plan_cuentas pc ON pc.id = al.cuenta_id
+WHERE pc.tipo::text IN ('ingreso', 'costo', 'gasto')
+GROUP BY al.restaurante_id, a.fecha, pc.tipo, pc.nombre
+ORDER BY a.fecha, pc.tipo::text;
+
+COMMENT ON VIEW contabilidad.v_estado_resultados IS
+'Estado de Resultados por fecha. Para obtener el total de un período:
+SELECT tipo, cuenta, SUM(monto) FROM contabilidad.v_estado_resultados
+WHERE restaurante_id = X AND fecha BETWEEN inicio AND fin
+GROUP BY tipo, cuenta;';
+
+
+-- ============================================================
+-- VIEW: operaciones.v_arqueo_caja
+-- Arqueo de caja agrupado por método de pago
+-- Requerimiento del Profesor de Contabilidad
+-- ============================================================
+
+CREATE OR REPLACE VIEW operaciones.v_arqueo_caja AS
+SELECT
+    tp.restaurante_id,
+    DATE(tp.created_at)     AS fecha,
+    tp.metodo               AS metodo_pago,
+    COUNT(tp.id)            AS num_transacciones,
+    SUM(tp.monto)           AS total_recaudado
+FROM operaciones.transacciones_pago tp
+GROUP BY tp.restaurante_id, DATE(tp.created_at), tp.metodo
+ORDER BY tp.restaurante_id, fecha, tp.metodo;
+
+COMMENT ON VIEW operaciones.v_arqueo_caja IS
+'Resumen del arqueo de caja por día y método de pago.
+Filtra por restaurante_id y fecha para el cierre diario.
+Muestra cuánto se recaudó en efectivo, pago_movil, tarjeta y divisa por separado.';
+
+
+-- ============================================================
+-- VIEW: menu.v_rentabilidad_platos
+-- Reporte de Rentabilidad por Plato (requerido en el enunciado)
+-- Compara: Costo de Producción (CPP actual) vs. Precio de Venta
+-- ============================================================
+
+CREATE OR REPLACE VIEW menu.v_rentabilidad_platos AS
+SELECT
+    r.restaurante_id,
+    r.id            AS receta_id,
+    r.nombre        AS plato,
+    r.costo_produccion,
+    r.precio_sugerido,
+    r.precio_venta,
+    CASE
+        WHEN r.precio_venta > 0
+        THEN ROUND(((r.precio_venta - r.costo_produccion) / r.precio_venta) * 100, 2)
+        ELSE 0
+    END             AS margen_real_porcentaje,
+    CASE
+        WHEN r.precio_venta > 0
+        THEN (r.precio_venta - r.costo_produccion)
+        ELSE 0
+    END             AS utilidad_por_plato
+FROM menu.recetas r
+WHERE r.activo = true;
+
+COMMENT ON VIEW menu.v_rentabilidad_platos IS
+'Reporte de rentabilidad por plato. Compara costo_produccion (CPP de ingredientes * cantidades)
+vs precio_venta. El campo costo_produccion debe actualizarse cuando cambia el CPP de un ingrediente.';
+
+
+-- Completed on 2026-03-24 21:19:57 -04 | Ampliado 2026-03-31
 
 --
 -- PostgreSQL database dump complete
 --
 
 \unrestrict y6FeDqZZnkhe7WS6zFAuTEwcaykSherO633E39RkszOutZIMPi6teOT4eWa5EIL
-

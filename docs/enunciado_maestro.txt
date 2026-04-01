@@ -1,0 +1,329 @@
+================================================================================
+  KOMANDA — ENUNCIADO MAESTRO DEL PROYECTO
+  Sistema Web Contable SaaS para Restaurantes
+  Materia: Costos y Ventas para Restaurantes (Rafael Álvarez)
+  Última actualización: 2026-03-31
+================================================================================
+
+PROPÓSITO DE ESTE DOCUMENTO
+----------------------------
+Este archivo es la referencia maestra de desarrollo. Resume el enunciado original
+del proyecto, las correcciones académicas recibidas y las reglas de negocio que
+DEBEN guiar cada decisión técnica. Leer antes de comenzar cualquier módulo.
+
+
+================================================================================
+  PARTE 1 — ENUNCIADO ORIGINAL DEL PROYECTO
+================================================================================
+
+Sistema de Costos y Ventas para Restaurantes (Rafael Álvarez)
+
+El sistema debe gestionar la operación completa de un restaurante con énfasis
+especial en la contabilidad de costos. Los módulos requeridos son:
+
+1. GESTIÓN DE ALMACÉN Y COMPRAS (Materia Prima)
+   - Registro de ingredientes: arroz, cebollín, salchicha, refresco, etc.
+   - Unidad de medida: gramos, litros, unidades, kilogramos.
+   - Registro de entradas de productos (compras) para actualizar el stock.
+   - Cálculo del COSTO PROMEDIO del ingrediente tras cada compra.
+
+2. ESTANDARIZACIÓN DE MENÚ (Recetas)
+   - Definición de platos asociando ingredientes y cantidades exactas.
+     Ejemplo: "Arroz con Salchicha" = 200g arroz + 50g salchicha + 10g cebollín.
+   - Al vender, el sistema descuenta automáticamente los ingredientes (Back-flushing).
+
+3. PRECIOS DINÁMICOS Y FLEXIBLES
+   - Sugerencia de precio: Costo de ingredientes + margen de utilidad (ej. 30%).
+   - El administrador puede sobrescribir el precio sugerido manualmente.
+
+4. FACTURACIÓN Y GASTOS OPERATIVOS
+   - Módulo de Ventas: Selección de platos y generación de factura.
+   - Gastos fijos registrables: Agua, Gas, Electricidad, Internet, Alquiler.
+     (SOLO estos cinco conceptos, nada más.)
+
+5. REQUERIMIENTOS CONTABLES (Sistematización)
+
+   Balance General:
+   - Activos:    Caja/Bancos + Inventario (valorizado al CPP).
+   - Pasivos:    Cuentas por pagar a proveedores de insumos.
+   - Patrimonio: Capital social + utilidades acumuladas.
+
+   Estado de Resultados:
+   - Ingresos:        Ventas totales.
+   - Costo de Venta:  Valor de ingredientes consumidos (al CPP).
+   - Gastos:          Agua, Gas, Luz, Alquiler, Internet.
+   - Utilidad Neta:   Resultado final del ejercicio.
+
+   Reporte de Rentabilidad:
+   - Comparativa entre costo de producción de un plato y su precio de venta.
+
+6. ACCESO POR ROLES (RBAC)
+   - Admin/Gerente:    Acceso a recetas, costos, compras y reportes contables.
+   - Vendedor/Cajero:  Solo facturación de platos y consulta de disponibilidad.
+
+7. VALIDACIONES CRÍTICAS
+   - No se puede vender un plato si no hay stock suficiente de ingredientes.
+   - Alerta de "Stock Crítico" cuando ingrediente < mínimo configurado.
+
+CONTEXTO ADICIONAL:
+   El sistema debe ser SaaS (multi-restaurante) y también debe ser un sistema
+   web contable que maneje VARIOS restaurantes desde una misma plataforma.
+
+
+================================================================================
+  PARTE 2 — CORRECCIONES RECIBIDAS DE LOS PROFESORES
+================================================================================
+
+PROFESOR DE GERENCIALES:
+  - Corrección: "Parecía un sistema gerencial, no hagas tantos módulos."
+  - Corrección: "Ponle nombres más apropiados a cada módulo."
+  - Corrección: "Si ves que 2 módulos pueden ser 1 solo (como inventario y
+    almacén), hazlo así para que sea menos fastidioso para el usuario."
+  - Corrección: "Haz un módulo para cada cosa que pide [el enunciado]."
+
+  → ACCIÓN TOMADA: Se consolidaron los módulos redundantes en 5 módulos claros.
+    Inventory + Warehouse → "Almacén y Compras"
+    Sales + Caja (POS)   → "Punto de Venta"
+
+PROFESOR DE CONTABILIDAD:
+  - Corrección: "El módulo contable debe llevar la contabilidad completa."
+  - Corrección: "El punto de venta y caja van en un solo lugar."
+  - Corrección: "Ya sea que se pague con efectivo, pago móvil, divisa o tarjeta,
+    eso se registra aparte en el punto de venta. Todo va en el mismo lugar pero
+    se especifica qué venta se realizó con qué transacción."
+
+  → ACCIÓN TOMADA: 
+    - El módulo Contabilidad es ahora un módulo de primera clase con asientos
+      automáticos, Balance General, Estado de Resultados y Libro Diario.
+    - El POS registra múltiples métodos de pago en una misma venta, cada uno
+      con su monto individual. El arqueo muestra el desglose por método.
+
+
+================================================================================
+  PARTE 3 — REGLAS DE NEGOCIO CRÍTICAS (Para el desarrollador)
+================================================================================
+
+REGLA 1: COSTO PROMEDIO PONDERADO (CPP) — La fórmula sagrada
+--------------------------------------------------------------
+  Cada vez que entra una compra de un ingrediente, se recalcula su CPP:
+
+  CPP_nuevo = (Stock_actual × CPP_anterior + Cantidad_comprada × Precio_compra)
+              ─────────────────────────────────────────────────────────────────
+                          (Stock_actual + Cantidad_comprada)
+
+  Este CPP_nuevo es el que se usa para:
+  a) Valorizar el inventario en el Balance General.
+  b) Calcular el Costo de Ventas cuando se vende un plato.
+
+  IMPORTANTE: El costo registrado en el asiento de "Costo de Ventas" es el CPP
+  VIGENTE EN EL MOMENTO DE LA VENTA, no el precio actual del ingrediente.
+
+
+REGLA 2: TRANSACCIÓN ATÓMICA EN CADA VENTA — Todo o nada
+---------------------------------------------------------
+  Cuando el cajero procesa una venta, el sistema debe ejecutar estas operaciones
+  dentro de UNA SOLA transacción de base de datos:
+
+  PASO 1: Verificar que haya stock suficiente de TODOS los ingredientes.
+  PASO 2: Crear el registro de la venta y sus ítems.
+  PASO 3: Registrar los métodos de pago con sus montos.
+  PASO 4: Descontar el stock de cada ingrediente (Back-flushing).
+  PASO 5: Generar los asientos contables automáticos:
+          - Debe: Caja/Banco (por el monto de la venta)
+          - Haber: Ingresos por Ventas
+          - Debe: Costo de Ventas (CPP × cantidad consumida)
+          - Haber: Inventario
+
+  Si cualquier paso falla → ROLLBACK completo. La venta no se registra.
+
+
+REGLA 3: PUNTO DE VENTA — Múltiples métodos de pago
+----------------------------------------------------
+  Una misma venta puede pagarse con más de un método:
+
+  Métodos aceptados:
+  - EFECTIVO     : En bolívares
+  - PAGO_MOVIL   : Transferencia bancaria móvil venezolana
+  - TARJETA      : Débito o crédito (punto físico)
+  - DIVISA       : Dólares o euros en efectivo
+
+  Ejemplo: Venta por Bs. 150.000
+    → Bs. 80.000 en efectivo + Bs. 70.000 en Pago Móvil → VÁLIDO.
+    → El sistema registra 2 filas en la tabla payment_transactions.
+
+  El ARQUEO (cierre de caja) muestra el total y desglose por método de pago.
+
+
+REGLA 4: CONTABILIDAD — Asientos automáticos obligatorios
+----------------------------------------------------------
+  El sistema genera asientos en el Libro Diario automáticamente. El desarrollador
+  no debe crear asientos manuales; estos se disparan mediante eventos de negocio.
+
+  Evento: COMPRA de ingrediente (de contado)
+    DEBE  → Inventario              (por monto de la compra)
+    HABER → Caja/Banco             (sale dinero)
+
+  Evento: COMPRA de ingrediente (a crédito / proveedor)
+    DEBE  → Inventario              (por monto de la compra)
+    HABER → Cuentas por Pagar      (se genera deuda con proveedor)
+
+  Evento: VENTA de plato
+    DEBE  → Caja/Banco             (entra dinero)
+    HABER → Ingresos por Ventas    (se registra ingreso)
+    DEBE  → Costo de Ventas        (sale costo al CPP)
+    HABER → Inventario             (sale el valor del inventario)
+
+  Evento: GASTO OPERATIVO
+    DEBE  → Gasto (Agua/Luz/etc.)  (se registra el gasto)
+    HABER → Caja/Banco             (sale dinero)
+
+  REGLA: Debe = Haber siempre. Si no cuadra, hay un bug. Escribir test.
+
+
+REGLA 5: GASTOS OPERATIVOS — Solo los 5 del enunciado
+------------------------------------------------------
+  El módulo de Gastos Operativos SOLO registra estos conceptos (por ahora):
+  1. Agua
+  2. Gas
+  3. Electricidad
+  4. Internet
+  5. Alquiler
+
+  No agregar otros conceptos sin aprobación del profesor.
+
+
+REGLA 6: MULTI-TENANT — Datos separados por restaurante
+-------------------------------------------------------
+  Komanda es SaaS. Cada restaurante es un tenant.
+  Todo query a la base de datos DEBE incluir el filtro por restaurant_id.
+  El restaurant_id se extrae del JWT en el middleware de autenticación.
+
+  NUNCA retornar datos de un restaurante a usuario de otro restaurante.
+  El middleware de tenant debe aplicarse a TODOS los endpoints privados.
+
+
+REGLA 7: BLOQUEO DE VENTA POR STOCK
+-------------------------------------
+  El sistema DEBE verificar antes de procesar una venta:
+  - Por cada ítem del carrito, verificar que Stock_disponible >= Cantidad_receta × Unidades_vendidas.
+  - Si falla algún ingrediente, rechazar la venta con mensaje claro.
+  - Este chequeo ocurre en el backend (el frontend puede desactivar el botón
+    como UX, pero la validación real es en el API).
+
+
+================================================================================
+  PARTE 4 — ESTRUCTURA DE MÓDULOS (Referencia rápida)
+================================================================================
+
+  MÓDULO               BACKEND (módulo)         FRONTEND (módulo)
+  ─────────────────────────────────────────────────────────────────────────
+  Almacén y Compras    modules/warehouse        modules/warehouse
+  Menú y Recetas       modules/menu             modules/menu
+  Punto de Venta       modules/pos              modules/pos
+  Contabilidad         modules/accounting       modules/accounting
+  Gastos Operativos    modules/expenses         modules/expenses
+  Autenticación        modules/auth             modules/auth
+  Usuarios / RBAC      modules/users            modules/users
+  Dashboard Gerencial  (usa datos de otros)     modules/dashboard
+  ─────────────────────────────────────────────────────────────────────────
+
+
+================================================================================
+  PARTE 5 — ESQUEMA DE BASE DE DATOS (Tablas clave)
+================================================================================
+
+  TABLA                DESCRIPCIÓN
+  ─────────────────────────────────────────────────────────────────────────
+  restaurants          Tenant principal. Cada restaurante es una fila.
+  users                Usuarios con restaurant_id (multi-tenant).
+  roles                Admin, Cajero, Cocina, SuperAdmin.
+  ─────────────────────────────────────────────────────────────────────────
+  ingredients          Ingredientes con CPP actual y stock actual.
+  suppliers            Proveedores.
+  purchases            Compras (cabecera).
+  purchase_details     Detalle de compra (ingrediente, cantidad, precio).
+  ─────────────────────────────────────────────────────────────────────────
+  categories           Categorías del menú.
+  menu_items           Platos del menú con precio y costo sugerido.
+  recipe_details       Ingredientes por plato: (menu_item_id, ingredient_id, qty).
+  ─────────────────────────────────────────────────────────────────────────
+  sales                Ventas (cabecera con total).
+  sale_details         Ítems vendidos por venta.
+  payment_transactions Registro de pago: (sale_id, method, amount).
+  cash_closures        Arqueoos de caja por turno/día.
+  ─────────────────────────────────────────────────────────────────────────
+  expenses             Gastos operativos (tipo, monto, fecha).
+  ─────────────────────────────────────────────────────────────────────────
+  accounts             Plan de cuentas contable (Activo, Pasivo, etc.).
+  journal_entries      Libro diario completo (cabecera de asiento).
+  journal_entry_lines  Líneas de cada asiento (Debe/Haber, cuenta, monto).
+  ─────────────────────────────────────────────────────────────────────────
+
+  Nota: Todas las tablas incluyen restaurant_id (multi-tenant),
+        created_at y updated_at con timezone.
+        Convención: snake_case, inglés, tablas en plural.
+
+
+================================================================================
+  PARTE 6 — ROLES Y PERMISOS (RBAC)
+================================================================================
+
+  ROL              QUÉ PUEDE HACER
+  ─────────────────────────────────────────────────────────────────────────
+  super_admin      Todo. Gestionar cualquier restaurante. Solo para SaaS.
+  admin            Todo dentro de su restaurante: recetas, costos, usuarios,
+                   compras, contabilidad, gastos, reportes.
+  cajero           Solo Punto de Venta: crear ventas, consultar disponibilidad.
+  cocina           Ver y actualizar estado de comandas (KDS).
+  ─────────────────────────────────────────────────────────────────────────
+
+
+================================================================================
+  PARTE 7 — FLUJOS PRINCIPALES (Referencia de implementación)
+================================================================================
+
+FLUJO 1: Compra de ingrediente
+  Usuario Admin → Módulo Almacén → Registra compra
+    → Backend aumenta stock del ingrediente
+    → Backend recalcula CPP
+    → Backend genera asiento contable (Inventario vs. CxP o Caja)
+    → Inventario actualizado en Balance General
+
+FLUJO 2: Venta completa
+  Usuario Cajero → Módulo Punto de Venta → Selecciona platos
+    → Frontend verifica disponibilidad (API stock-check)
+    → Cajero selecciona método(s) de pago y montos
+    → Backend ejecuta transacción atómica:
+        1. Valida stock final
+        2. Crea venta + ítems
+        3. Registra payment_transactions
+        4. Back-flushing de inventario (descuenta por receta)
+        5. Genera asientos: Ingreso + Costo de Venta
+    → Ticket/comprobante generado
+
+FLUJO 3: Contabilidad
+  Usuario Admin → Módulo Contabilidad → Selecciona período
+    → Balance General: consulta Activos (Caja + Inventario valorizado)
+      Pasivos (CxP proveedores) y Patrimonio (capital + utilidades)
+    → Estado de Resultados: Ventas del período - Costo de Ventas - Gastos
+    → Reporte de Rentabilidad: Para cada plato, muestra costo vs precio vs margen
+
+
+================================================================================
+  NOTAS FINALES PARA EL DESARROLLADOR
+================================================================================
+
+1. Lee siempre MANUAL_BACKEND.md antes de crear un módulo nuevo en la API.
+2. Lee siempre MANUAL_FRONTEND.md antes de crear un componente o vista.
+3. Sigue la convención de archivos:
+   - Backend:  *.validator.ts / *.route.ts / *.controller.ts / *.service.ts
+   - Frontend: components/NombreComponente.vue / views/NombreVista.vue
+4. Cada módulo backend vive en Komanda-api/src/modules/<nombre>/
+5. Cada módulo frontend vive en Komanda-web/src/modules/<nombre>/
+6. No hay lógica de negocio en controladores ni en componentes UI.
+7. Usa pnpm, no npm ni yarn.
+8. Valida con Zod en el backend. Siempre.
+
+================================================================================
+  FIN DEL ENUNCIADO MAESTRO
+================================================================================
