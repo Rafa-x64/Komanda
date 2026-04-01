@@ -6,6 +6,34 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ---
 
+## [v0.1.0] - 2026-03-31
+
+### 📋 Revisión y Consolidación de Módulos (Correcciones Académicas)
+
+> [!IMPORTANT]
+> Revisión mayor de la arquitectura funcional basada en las correcciones de los profesores de Gerenciales y Contabilidad. No se modificó código, solo documentación y estructura de módulos.
+
+- **Consolidación de Módulos:** Se redujo de múltiples módulos redundantes a **5 módulos funcionales claros**:
+  - `Almacén y Compras` (fusiona lo que antes eran "Inventario" y "Almacén" por separado).
+  - `Menú y Recetas` (estandarización de platos con BOM y precios dinámicos).
+  - `Punto de Venta` (fusiona "Ventas" y "Caja" en un único lugar).
+  - `Contabilidad` (módulo completo con Balance General, Estado de Resultados y Libro Diario).
+  - `Gastos Operativos` (agua, gas, electricidad, internet, alquiler exclusivamente).
+
+- **Punto de Venta Unificado:** El POS y la caja son un solo módulo. Cada venta registra el/los método(s) de pago usados (Efectivo, Pago Móvil, Tarjeta, Divisa) con sus montos individuales para un arqueo preciso.
+
+- **Módulo Contable Completo:** La contabilidad ahora es un módulo de primera clase con asientos automáticos por cada evento de negocio (compra, venta, gasto). Incluye Balance General, Estado de Resultados y Reporte de Rentabilidad por plato.
+
+- **Contexto SaaS:** Se formalizó que Komanda es un sistema SaaS multi-restaurante (multi-tenant). Cada restaurante es un tenant aislado.
+
+- **Documentación Actualizada:**
+  - `KOMANDA.md` — Redefinición completa con los 5 módulos y contexto SaaS.
+  - `ROADMAP.md` — Plan de sprints alineado con los módulos consolidados.
+  - `TODO.md` — Checklist maestra reorganizada por los 5 módulos.
+  - `enunciado_maestro.txt` — Documento guía de referencia para el desarrollo.
+
+---
+
 ## [v0.0.3] - 2026-02-18
 
 ### 🗄️ Base de Datos (Breaking Change v2.1)
