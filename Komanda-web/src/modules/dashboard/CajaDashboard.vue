@@ -59,8 +59,8 @@
               </h5>
             </div>
             <div class="table-responsive">
-              <table class="table table-hover align-middle mb-0">
-                <thead class="bg-surface">
+              <table class="table table-custom table-hover-custom align-middle mb-0">
+                <thead>
                   <tr>
                     <th class="ps-4">Mesa</th>
                     <th>Mesero</th>

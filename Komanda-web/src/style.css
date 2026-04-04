@@ -169,7 +169,6 @@ input:-webkit-autofill:active {
 label {
   margin-top: 0.65rem;
 }
-<<<<<<< HEAD
 
 /* ========== Custom Tables ========== */
 .table-custom {
@@ -227,5 +226,3 @@ label {
 .table-custom tbody tr:last-child td {
   border-bottom: none;
 }
-=======
->>>>>>> 39ceec68e5e9e06da700d490dcef3eacc9fea992

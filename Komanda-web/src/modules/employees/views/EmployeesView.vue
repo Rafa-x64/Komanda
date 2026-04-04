@@ -26,36 +26,36 @@
       <!-- Tabla de empleados -->
       <div class="card shadow rounded-4 overflow-hidden border-0" style="background-color: var(--bg-surface);">
         <div class="table-responsive">
-          <table class="table table-hover table-dark table-borderless align-middle mb-0">
-            <thead class="bg-black text-white-50">
+          <table class="table table-custom table-hover-custom align-middle mb-0">
+            <thead>
               <tr>
-                <th class="ps-4 py-3 text-uppercase small" style="letter-spacing: 1px;">Nombre Completo</th>
-                <th class="py-3 text-uppercase small" style="letter-spacing: 1px;">Usuario</th>
-                <th class="py-3 text-uppercase small" style="letter-spacing: 1px;">Rol</th>
-                <th class="py-3 text-uppercase small" style="letter-spacing: 1px;">Estado</th>
-                <th class="text-end pe-4 py-3 text-uppercase small" style="letter-spacing: 1px;">Acciones</th>
+                <th class="ps-4 py-3">Nombre Completo</th>
+                <th class="py-3">Usuario</th>
+                <th class="py-3">Rol</th>
+                <th class="py-3">Estado</th>
+                <th class="text-end pe-4 py-3">Acciones</th>
               </tr>
             </thead>
             <tbody>
               <tr v-if="loading">
-                <td colspan="5" class="text-center py-5 text-white-50">Cargando empleados...</td>
+                <td colspan="5" class="text-center py-5 text-secondary-custom">Cargando empleados...</td>
               </tr>
               <tr v-else-if="employees.length === 0">
-                <td colspan="5" class="text-center py-5 text-white-50">No hay empleados registrados.</td>
+                <td colspan="5" class="text-center py-5 text-secondary-custom">No hay empleados registrados.</td>
               </tr>
-              <tr v-else v-for="emp in employees" :key="emp.id" class="border-bottom border-secondary">
+              <tr v-else v-for="emp in employees" :key="emp.id">
                 <td class="ps-4 py-3 fw-bold">
                   <div class="d-flex align-items-center">
                     <div class="avatar bg-korange text-white rounded-circle d-flex align-items-center justify-content-center me-3 shadow-sm" style="width: 40px; height: 40px; font-size: 1.2rem;">
                       {{ emp.nombre.charAt(0).toUpperCase() }}
                     </div>
                     <div>
-                      <span class="text-white fw-bold fs-6">{{ emp.nombre }}</span>
-                      <div class="small fw-normal text-white-50">{{ emp.email }}</div>
+                      <span class="text-primary-custom fw-bold fs-6">{{ emp.nombre }}</span>
+                      <div class="small fw-normal text-secondary-custom">{{ emp.email }}</div>
                     </div>
                   </div>
                 </td>
-                <td class="text-white-50 py-3">@{{ emp.username }}</td>
+                <td class="text-secondary-custom py-3">@{{ emp.username }}</td>
                 <td class="py-3"><span class="badge" style="background-color: rgba(255,107,0,0.15); color: var(--KOrange); padding: 0.5em 1em;">{{ emp.rol_nombre.toUpperCase() }}</span></td>
                 <td class="py-3">
                   <span v-if="emp.activo" class="badge bg-success bg-opacity-25 text-success px-3 py-2 rounded-pill">Activo</span>
