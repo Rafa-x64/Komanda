@@ -4,7 +4,7 @@ import RecipeList from '../components/RecipeList.vue';
 import RecipeForm from '../components/RecipeForm.vue';
 import type { Recipe } from '../components/RecipeForm.vue';
 import { PlusCircle, Search } from 'lucide-vue-next';
-
+import { fetchWithAuth } from '../../../core/api/auth.api';
 // State
 const loading = ref(false);
 const showForm = ref(false);
@@ -26,22 +26,13 @@ const filteredRecipes = computed(() => {
 const fetchData = async () => {
   loading.value = true;
   try {
-    // ----------------------------------------------------------------------
-    // TODO: Reemplazar con fetch reales a tu API (Node o PHP) según manual
-    // const resRecetas = await fetch('http://localhost:3000/api/v1/recetas');
-    // const jsonRecetas = await resRecetas.json();
-    // recipes.value = jsonRecetas.data;
-    // ----------------------------------------------------------------------
+    const resRecetas = await fetchWithAuth('/menu/recetas');
+    recipes.value = resRecetas.data || [];
 
-    // Mockup Data para visualizar el CRUD
-    await new Promise(r => setTimeout(r, 600)); // Simulate latency
+    const resCategorias = await fetchWithAuth('/menu/categorias');
+    categorias.value = resCategorias.data || [];
 
-    categorias.value = [
-      { id: 1, nombre: 'Entradas' },
-      { id: 2, nombre: 'Platos Fuertes' },
-      { id: 3, nombre: 'Bebidas' },
-    ];
-
+    // Para ingredientes, no tenemos endpoint, así que usamos el mock
     ingredientesDisponibles.value = [
       { id: 1, nombre: 'Carne de Res' },
       { id: 2, nombre: 'Pan de Hamburguesa' },
@@ -49,41 +40,6 @@ const fetchData = async () => {
       { id: 4, nombre: 'Papas' },
       { id: 5, nombre: 'Aceite' },
     ];
-
-    recipes.value = [
-      {
-        id: 1,
-        nombre: 'Hamburguesa Komanda',
-        descripcion: 'Doble carne con queso y papas',
-        categoria_id: 2,
-        imagen_url: '',
-        costo_produccion: 3.50,
-        precio_sugerido: 9.00,
-        precio_venta: 8.50,
-        margen_utilidad: 58.82,
-        activo: true,
-        ingredientes: [
-          { ingrediente_id: 1, cantidad: 0.4, unidad: 'kg', nombre_ingrediente: 'Carne de Res' },
-          { ingrediente_id: 2, cantidad: 1, unidad: 'unidad', nombre_ingrediente: 'Pan de Hamburguesa' }
-        ]
-      },
-      {
-        id: 2,
-        nombre: 'Papas Fritas',
-        descripcion: 'Papas fritas con sal',
-        categoria_id: 1,
-        imagen_url: '',
-        costo_produccion: 1.20,
-        precio_sugerido: 3.50,
-        precio_venta: 3.50,
-        margen_utilidad: 65.71,
-        activo: true,
-        ingredientes: [
-          { ingrediente_id: 4, cantidad: 0.25, unidad: 'kg', nombre_ingrediente: 'Papas' }
-        ]
-      }
-    ];
-
   } catch (error) {
     console.error('Error fetching data:', error);
   } finally {
@@ -106,33 +62,41 @@ const handleEdit = (recipe: Recipe) => {
   showForm.value = true;
 };
 
-const handleDelete = (recipe: Recipe) => {
+const handleDelete = async (recipe: Recipe) => {
   if (confirm(`¿Estás seguro de eliminar el plato "${recipe.nombre}"?`)) {
-    // TODO: DELETE request
-    recipes.value = recipes.value.filter(r => r.id !== recipe.id);
+    try {
+      await fetchWithAuth(`/menu/recetas/${recipe.id}`, { method: 'DELETE' });
+      recipes.value = recipes.value.filter(r => r.id !== recipe.id);
+    } catch (e) {
+      console.error('Error deleting recipe', e);
+      alert('Error eliminando receta');
+    }
   }
 };
 
 const handleSubmit = async (recipe: Recipe) => {
   loading.value = true;
   try {
-    // TODO: POST / PUT request
-    await new Promise(r => setTimeout(r, 400)); // Simulate save
-
     if (recipe.id) {
-      // Update
+      const res = await fetchWithAuth(`/menu/recetas/${recipe.id}`, {
+        method: 'PUT',
+        body: JSON.stringify(recipe)
+      });
       const index = recipes.value.findIndex(r => r.id === recipe.id);
-      if (index !== -1) recipes.value[index] = recipe;
+      if (index !== -1) recipes.value[index] = res.data;
     } else {
-      // Create
-      recipe.id = Date.now();
-      recipes.value.push(recipe);
+      const res = await fetchWithAuth('/menu/recetas', {
+        method: 'POST',
+        body: JSON.stringify(recipe)
+      });
+      recipes.value.push(res.data);
     }
 
     showForm.value = false;
     editingRecipe.value = null;
   } catch (error) {
     console.error('Error saving recipe:', error);
+    alert('Error guardando la receta');
   } finally {
     loading.value = false;
   }
@@ -146,18 +110,15 @@ const handleCancel = () => {
 // Handle category created from the form inline
 const handleCreateCategory = async (nombre: string) => {
   try {
-    // TODO: POST request to API to create category
-    // For now we mock it:
-    const newId = Math.max(...categorias.value.map(c => c.id)) + 1;
-    categorias.value.push({
-      id: newId,
-      nombre
+    const res = await fetchWithAuth('/menu/categorias', {
+      method: 'POST',
+      body: JSON.stringify({ nombre })
     });
+    categorias.value.push(res.data);
     alert(`Categoría "${nombre}" creada exitosamente.`);
-    // Since the dumb component is not v-model bound to the entire list, 
-    // it just gets the newly updated props automatically.
   } catch (e) {
     console.error('Error creating category', e);
+    alert('Error creando categoría');
   }
 };
 </script>
