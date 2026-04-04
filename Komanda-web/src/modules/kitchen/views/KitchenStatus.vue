@@ -19,7 +19,7 @@
 
       <div class="row row-cols-1 row-cols-md-2 row-cols-xxl-3 g-3 m-0">
         <div v-for="pedido in pedidos" :key="pedido.id" class="col p-2">
-          <div :class="['card ticket shadow-sm', { 'border-urgente': pedido.minutos >= 15 }]">
+          <div :class="['card ticket shadow-sm', { 'border border-4 border-danger': pedido.minutos >= 15 }]">
 
             <div class="card-header d-flex justify-content-between align-items-center p-3 border-0 bg-transparent">
               <div class="d-flex flex-column">
@@ -68,44 +68,89 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import Sidebar from '../../../components/Sidebar.vue';
+import { useSocketCocina } from '../composables/useSocketCocina';
 
-const pedidos = ref([
-  {
-    id: 101,
-    mesa: "05",
-    mesero: "Carlos R.", // Nombre del mesero
-    minutos: 8,
-    items: [
-      { cantidad: 2, nombre: "Hamb. Komanda", notas: "Sin cebolla" },
-      { cantidad: 1, nombre: "Papas Fritas", notas: "Extra sal" }
-    ]
-  },
-  {
-    id: 102,
-    mesa: "12",
-    mesero: "Ana M.", // Nombre del mesero
-    minutos: 18,
-    items: [
-      { cantidad: 1, nombre: "Pizza Margarita", notas: "Mucha salsa" },
-      { cantidad: 1, nombre: "Ensalada César", notas: null }
-    ]
+const pedidos = ref([]);
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
+
+const getMinutosTranscurridos = (fechaIso) => {
+  if (!fechaIso) return 0;
+  const fecha = new Date(fechaIso);
+  const ahora = new Date();
+  const diffMs = ahora - fecha;
+  return Math.floor(diffMs / 60000);
+};
+
+const fetchPedidos = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const response = await fetch(`${API_URL}/kitchen`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (response.ok) {
+      const resp = await response.json();
+      pedidos.value = resp.data.map(p => ({
+        ...p,
+        minutos: getMinutosTranscurridos(p.fecha_hora)
+      }));
+    }
+  } catch (error) {
+    console.error('Error fetching kitchen orders:', error);
   }
-]);
+};
+
+const { isConnected } = useSocketCocina(
+  () => fetchPedidos(), 
+  (payload) => fetchPedidos()
+);
+
+onMounted(() => {
+  fetchPedidos();
+  // Refrescar los minutos cada minuto
+  setInterval(() => {
+    pedidos.value = pedidos.value.map(p => ({ ...p, minutos: getMinutosTranscurridos(p.fecha_hora) }));
+  }, 60000);
+});
 
 const resumenProduccion = computed(() => {
   const totales = {};
   pedidos.value.forEach(p => {
-    p.items.forEach(item => {
-      totales[item.nombre] = (totales[item.nombre] || 0) + item.cantidad;
-    });
+    if (p.items) {
+      p.items.forEach(item => {
+        totales[item.nombre] = (totales[item.nombre] || 0) + item.cantidad;
+      });
+    }
   });
   return totales;
 });
 
-const marcarComoListo = (id) => {
-  pedidos.value = pedidos.value.filter(p => p.id !== id);
+const marcarComoListo = async (id) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_URL}/kitchen/${id}/status`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ estado: 'listo' })
+    });
+    
+    if (response.ok) {
+      pedidos.value = pedidos.value.filter(p => p.id !== id);
+    } else {
+      console.error('Error updating order status', await response.text());
+    }
+  } catch (error) {
+    console.error('Error in request:', error);
+  }
 };
 </script>
 
@@ -144,10 +189,6 @@ const marcarComoListo = (id) => {
   transition: all var(--transition-speed);
 }
 
-/* Solo color de borde para urgencia, sin animación de movimiento */
-.border-urgente {
-  border: 4px solid #dc3545 !important;
-}
 
 .nota-alerta {
   background-color: #fff3cd;

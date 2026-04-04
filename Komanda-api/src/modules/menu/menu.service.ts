@@ -1,6 +1,6 @@
 import { Conexion } from "../../config/database";
-import { Receta } from "../sales/domain/receta.entity";
-import { Categoria } from "../sales/domain/categoria.entity";
+import { Receta } from "../pos/domain/receta.entity";
+import { Categoria } from "../pos/domain/categoria.entity";
 import { CreateRecipeInput, UpdateRecipeInput, CreateCategoryInput } from "./menu.validator";
 
 export const MenuService = {
