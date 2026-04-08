@@ -6,6 +6,7 @@ import { Pedido } from "./domain/pedido.entity";
 import { PedidoDetalle } from "./domain/pedido-detalle.entity";
 import { Restaurant } from "../signup/domain/restaurant.entity";
 import { CreateSaleInput, CashClosureInput } from "./pos.validator";
+import { broadcastNewOrderToKitchen } from "../kitchen/kitchen.socket";
 
 /** Genera código único: PED-20260401-0001 */
 const generateOrderCode = async (restaurantId: number): Promise<string> => {
@@ -163,7 +164,7 @@ export class POSService {
                 mesa_id: data.mesa_id || null,
                 mesero_id: userId,
                 cliente: data.cliente || null,
-                estado: "entregado", // Por defecto al POS directo va a entregado si se paga o se asume rápido
+                estado: "pendiente", // Se envía a cocina como pendiente
                 estado_cuenta,
                 subtotal,
                 descuento: 0,
@@ -185,12 +186,24 @@ export class POSService {
 
             // 10. Registrar transacciones de pago si las hay (Tabla: operaciones.transacciones_pago)
             if (data.pagos && data.pagos.length > 0) {
+                const metodosIds = data.pagos.map(p => p.metodo_pago_id);
+                const dbMetodos: any[] = await qr.manager.query(`SELECT id, nombre FROM core.metodos_pago WHERE id = ANY($1)`, [metodosIds]);
+                
                 for (const pago of data.pagos) {
+                    const foundMetodo = dbMetodos.find(m => m.id === pago.metodo_pago_id);
+                    let enumVal = 'efectivo'; // por defecto
+                    if (foundMetodo) {
+                        const nom = foundMetodo.nombre.toLowerCase();
+                        if (nom.includes('móvil') || nom.includes('movil') || nom.includes('zelle')) enumVal = 'pago_movil';
+                        else if (nom.includes('tarjeta') || nom.includes('punto')) enumVal = 'tarjeta';
+                        else if (nom.includes('divisa') || nom.includes('dólar') || nom.includes('dolar')) enumVal = 'divisa';
+                    }
+
                     await qr.manager.query(
                         `INSERT INTO operaciones.transacciones_pago 
-                        (pedido_id, caja_movimiento_id, metodo_pago_id, monto, moneda, tasa_cambio, estado, referencia, restaurante_id) 
-                        VALUES ($1, NULL, $2, $3, $4, $5, $6, $7, $8)`,
-                        [pedido.id, pago.metodo_pago_id, pago.monto, restaurant.moneda, 1.0, 'aprobado', pago.referencia || null, restaurantId]
+                        (pedido_id, metodo, monto, referencia, tasa_cambio, usuario_id, restaurante_id) 
+                        VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+                        [pedido.id, enumVal, pago.monto, pago.referencia || null, 1.0, userId, restaurantId]
                     );
                 }
             }
@@ -210,6 +223,9 @@ export class POSService {
             );
 
             await qr.commitTransaction();
+
+            // Notify Kitchen through WebSocket
+            broadcastNewOrderToKitchen({ id: pedido.id, codigo: pedido.codigo, restaurante_id: restaurantId });
 
             return {
                 id: pedido.id,

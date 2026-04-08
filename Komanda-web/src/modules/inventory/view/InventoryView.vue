@@ -170,11 +170,11 @@ const criticalItemsCount = computed(() => {
         <div v-if="currentView === 'inventory'" key="inventory">
         
         <!-- Action Bar -->
-        <div class="row mb-4 gx-3 justify-content-between align-items-center">
-            <div class="col-md-5 order-2 order-md-1 mt-3 mt-md-0">
-                <div class="search-box position-relative">
-                    <Search class="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary-custom" :size="20" />
-                    <input v-model="searchQuery" type="text" class="form-control ps-5 py-2 rounded-pill custom-input"
+        <div class="row mb-5 gx-3 justify-content-between align-items-center">
+            <div class="col-md-6 order-2 order-md-1 mt-3 mt-md-0">
+                <div class="search-box position-relative shadow-sm rounded-pill transition-transform">
+                    <Search class="position-absolute top-50 start-0 translate-middle-y ms-4 text-korange" :size="20" />
+                    <input v-model="searchQuery" type="text" class="form-control ps-5 py-3 rounded-pill custom-input bg-surface-custom border-0"
                     placeholder="Buscar insumo por nombre o categoría...">
                 </div>
             </div>
@@ -188,13 +188,13 @@ const criticalItemsCount = computed(() => {
         </div>
 
         <!-- Cards / Overview -->
-        <div class="row mb-4">
+        <div class="row mb-5">
             <div class="col-md-4">
-                <div class="card p-4 border-start border-4 border-danger rounded-3 shadow-sm d-flex justify-content-between h-100" style="background-color: var(--bg-surface)">
+                <div class="card p-4 border-start border-4 border-korange rounded-4 shadow-sm d-flex justify-content-between h-100 transition-transform hover-translate-y" style="background-color: var(--bg-surface)">
                     <div>
-                        <p class="small text-secondary-custom fw-semibold text-uppercase tracking-wider mb-1">Stock Crítico</p>
-                        <h2 class="display-6 fw-black text-primary-custom mb-0">{{ criticalItemsCount }}
-                            <span class="fs-5 fw-medium text-secondary-custom ms-1">ítems</span>
+                        <p class="small text-secondary-custom fw-bold text-uppercase tracking-wider mb-2">Stock Crítico</p>
+                        <h2 class="display-5 fw-black text-primary-custom mb-0">{{ criticalItemsCount }}
+                            <span class="fs-5 fw-medium text-korange ms-1">ítems</span>
                         </h2>
                     </div>
                 </div>
@@ -204,12 +204,12 @@ const criticalItemsCount = computed(() => {
         <!-- Tabla de Inventario -->
         <div class="row">
             <div class="col-12">
-                <div class="shadow-sm rounded-4 overflow-hidden border border-custom bg-surface-custom">
+                <div class="shadow-sm rounded-4 overflow-hidden border border-custom bg-surface-custom p-2">
                 <div class="table-responsive">
-                    <table class="table table-custom table-hover-custom mb-0 w-100 align-middle">
-                        <thead class="bg-light-opacity text-uppercase small tracking-wider text-secondary-custom fw-bold">
+                    <table class="table table-custom table-hover-custom table-hover-orange mb-0 w-100 align-middle">
+                        <thead class="text-uppercase small tracking-wider text-secondary-custom fw-bold">
                             <tr>
-                                <th class="px-4 py-3 border-bottom">Insumo</th>
+                                <th class="px-4 py-3 border-bottom text-korange">Insumo</th>
                                 <th class="px-4 py-3 border-bottom">Categoría</th>
                                 <th class="px-4 py-3 border-bottom">Cantidad</th>
                                 <th class="px-4 py-3 border-bottom">Min. Stock</th>
@@ -267,10 +267,10 @@ const criticalItemsCount = computed(() => {
             </div>
 
             <div class="col-lg-10">
-                <div class="bg-surface-custom p-4 p-md-5 rounded-4 shadow-sm border border-custom">
+                <div class="bg-surface-custom p-4 p-md-5 rounded-4 shadow-sm border border-custom position-relative">
                     <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-5">
                         <div class="d-flex align-items-center gap-3">
-                            <button @click="goBack" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-2 transition-transform hover-translate-x" title="Volver">
+                            <button @click="goBack" class="btn btn-outline-korange rounded-circle d-flex align-items-center justify-content-center p-2 transition-transform hover-translate-x" title="Volver">
                                 <ArrowLeft :size="24" />
                             </button>
                             <div>
@@ -280,7 +280,7 @@ const criticalItemsCount = computed(() => {
                         </div>
 
                         <button
-                            class="btn btn-outline-secondary px-4 py-2 rounded-pill fw-bold d-inline-flex justify-content-center align-items-center gap-2 shadow-sm"
+                            class="btn btn-outline-korange px-4 py-2 rounded-pill fw-bold d-inline-flex justify-content-center align-items-center gap-2 shadow-sm"
                             @click="openCategories">
                             <Tags :size="18" /> Categorías
                         </button>
@@ -336,14 +336,14 @@ const criticalItemsCount = computed(() => {
                         </div>
 
                         <div class="d-flex justify-content-center mb-5">
-                            <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill py-1 px-3 fw-bold" @click="addPurchaseRow">
+                            <button type="button" class="btn btn-outline-korange btn-sm rounded-pill py-2 px-4 fw-bold transition-transform hover-translate-y" @click="addPurchaseRow">
                                 + Agregar otra fila
                             </button>
                         </div>
 
-                        <div class="border-top border-custom pt-4 flex-row d-flex justify-content-end gap-2">
-                            <button type="button" @click="goBack" class="btn btn-light px-4 py-2 fw-bold text-secondary-custom rounded-pill">Cancelar</button>
-                            <button type="submit" class="btn btn-korange px-4 py-2 rounded-pill fw-bold shadow-sm d-inline-flex gap-2 align-items-center pulse-btn">
+                        <div class="border-top border-custom pt-4 flex-row d-flex justify-content-end gap-3 mt-2">
+                            <button type="button" @click="goBack" class="btn btn-outline-secondary px-4 py-2 fw-bold rounded-pill">Cancelar</button>
+                            <button type="submit" class="btn btn-korange px-4 py-2 rounded-pill fw-bold shadow-sm d-inline-flex gap-2 align-items-center pulse-btn transition-transform hover-translate-y">
                                 <PlusCircle :size="18" /> Guardar Compra
                             </button>
                         </div>
@@ -435,7 +435,17 @@ const criticalItemsCount = computed(() => {
 }
 
 .bg-light-opacity {
-    background-color: rgba(0,0,0,0.03);
+    background-color: var(--bg-surface);
+}
+
+.border-korange {
+    border-color: var(--KOrange) !important;
+}
+
+/* Hover effects */
+.hover-translate-y:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
 }
 
 /* Custom Search Input */

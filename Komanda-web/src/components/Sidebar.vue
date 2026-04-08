@@ -1,11 +1,8 @@
 <template>
   <div>
-    <!-- Botón Toggle para móviles -->
     <button v-if="!isOpen" @click="isOpen = true" class="btn btn-korange toggle-btn d-md-none rounded-circle shadow">
       <i class="bi bi-list fs-4"></i>
     </button>
-
-    <!-- Overlay para móviles -->
     <div v-if="isOpen" @click="isOpen = false" class="sidebar-overlay d-md-none"></div>
 
     <!-- Sidebar Principal -->
