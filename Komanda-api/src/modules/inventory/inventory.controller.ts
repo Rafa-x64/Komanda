@@ -19,7 +19,6 @@ export class InventoryController {
     static async createPurchase(req: Request, res: Response): Promise<void> {
         try {
             // Validacion de Zod
-            console.log("REQ BODY LLEGANDO AL CONTROLLER:", req.body);
             const payload = purchaseSchema.parse(req.body);
             const items = payload.items;
             
