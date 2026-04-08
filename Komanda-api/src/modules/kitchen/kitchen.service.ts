@@ -9,7 +9,7 @@ export class KitchenService {
                 p.id, 
                 p.codigo, 
                 p.mesa_id, 
-                coalesce(m.nombre, p.mesa_id::text) as mesa,
+                coalesce(m.nombre, 'Mesa ' || p.mesa_id::text, 'Para llevar') as mesa,
                 u.nombre as mesero, 
                 p.cliente, 
                 p.estado, 
@@ -26,7 +26,7 @@ export class KitchenService {
                     WHERE d.pedido_id = p.id
                 ) as items
              FROM operaciones.pedidos p
-             LEFT JOIN core.tables m ON m.id = p.mesa_id
+             LEFT JOIN operaciones.mesas m ON m.id = p.mesa_id
              LEFT JOIN core.usuarios u ON u.id = p.mesero_id
              WHERE p.restaurante_id = $1 
                AND p.estado IN ('pendiente', 'preparando')

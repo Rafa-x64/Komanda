@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { Send, ShoppingCart, AlertCircle, CheckCircle, CreditCard, X, Plus } from 'lucide-vue-next'
 import ProductCard from '../components/ProductCard.vue'
 import PosCategoryFilter from '../components/PosCategoryFilter.vue'
@@ -63,9 +63,14 @@ const showToast = (type: 'success' | 'error', message: string) => {
   setTimeout(() => { toast.value = null }, 4000)
 }
 
+// Tracking removed since we use undefined check
+
 // Open payment modal
 const openPaymentModal = () => {
   if (!cartItems.value.length) { showToast('error', 'El carrito está vacío'); return }
+  if (tables.value.length > 0 && selectedTable.value === undefined) {
+    showToast('error', 'Selecciona una mesa o elige "Sin mesa (para llevar)"'); return
+  }
   // Auto-llenar con el total completo en el primer método
   if (metodosPago.value.length && !pagos.value.length) {
     const primero = metodosPago.value[0]
@@ -103,7 +108,7 @@ const handleConfirm = async () => {
     closePaymentModal()
     clearCart()
     clienteNombre.value = ''
-    showToast('success', '¡Venta registrada exitosamente! 🎉')
+    showToast('success', '¡Venta registrada! Pedido enviado a cocina 🍳')
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : 'Error desconocido'
     showToast('error', msg)
@@ -196,6 +201,7 @@ onMounted(async () => {
           v-model="selectedTable"
           class="form-select form-select-sm pos-ticket__select"
         >
+          <option :value="undefined" disabled>— Selecciona mesa —</option>
           <option :value="null">Sin mesa (para llevar)</option>
           <option v-for="t in tables" :key="t.id" :value="t.id">
             {{ t.nombre || `Mesa ${t.numero}` }}

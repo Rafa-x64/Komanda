@@ -17,7 +17,7 @@ interface CartItem {
 const TAX_RATE = 0.12
 
 const cartItems = ref<CartItem[]>([])
-const selectedTable = ref<number | null>(null)
+const selectedTable = ref<number | null | undefined>(undefined)
 
 const addItem = (product: CartProduct) => {
   const existing = cartItems.value.find(i => i.product.id === product.id)
@@ -43,7 +43,7 @@ const addKitchenNote = (productId: number, note: string) => {
 
 const clearCart = () => {
   cartItems.value = []
-  selectedTable.value = null
+  selectedTable.value = undefined
 }
 
 const subtotal = computed(() =>

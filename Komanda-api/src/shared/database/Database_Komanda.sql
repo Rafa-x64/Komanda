@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict y6FeDqZZnkhe7WS6zFAuTEwcaykSherO633E39RkszOutZIMPi6teOT4eWa5EIL
+\restrict WUAK399PlKghsnngOnAtz92gQCKgYycfoEsreHVHkya4aeirIQKy0EEvD3YoqsA
 
 -- Dumped from database version 18.3
 -- Dumped by pg_dump version 18.3
 
--- Started on 2026-03-24 21:19:57 -04
+-- Started on 2026-04-07 20:21:11 -04
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -22,7 +22,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 12 (class 2615 OID 18902)
+-- TOC entry 7 (class 2615 OID 16389)
 -- Name: contabilidad; Type: SCHEMA; Schema: -; Owner: postgres
 --
 
@@ -32,7 +32,7 @@ CREATE SCHEMA contabilidad;
 ALTER SCHEMA contabilidad OWNER TO postgres;
 
 --
--- TOC entry 7 (class 2615 OID 18897)
+-- TOC entry 8 (class 2615 OID 16390)
 -- Name: core; Type: SCHEMA; Schema: -; Owner: postgres
 --
 
@@ -42,7 +42,7 @@ CREATE SCHEMA core;
 ALTER SCHEMA core OWNER TO postgres;
 
 --
--- TOC entry 11 (class 2615 OID 18901)
+-- TOC entry 9 (class 2615 OID 16391)
 -- Name: finanzas; Type: SCHEMA; Schema: -; Owner: postgres
 --
 
@@ -52,7 +52,7 @@ CREATE SCHEMA finanzas;
 ALTER SCHEMA finanzas OWNER TO postgres;
 
 --
--- TOC entry 8 (class 2615 OID 18898)
+-- TOC entry 10 (class 2615 OID 16392)
 -- Name: inventario; Type: SCHEMA; Schema: -; Owner: postgres
 --
 
@@ -62,7 +62,7 @@ CREATE SCHEMA inventario;
 ALTER SCHEMA inventario OWNER TO postgres;
 
 --
--- TOC entry 13 (class 2615 OID 19778)
+-- TOC entry 11 (class 2615 OID 16393)
 -- Name: inventory; Type: SCHEMA; Schema: -; Owner: postgres
 --
 
@@ -72,7 +72,7 @@ CREATE SCHEMA inventory;
 ALTER SCHEMA inventory OWNER TO postgres;
 
 --
--- TOC entry 9 (class 2615 OID 18899)
+-- TOC entry 12 (class 2615 OID 16394)
 -- Name: menu; Type: SCHEMA; Schema: -; Owner: postgres
 --
 
@@ -82,7 +82,7 @@ CREATE SCHEMA menu;
 ALTER SCHEMA menu OWNER TO postgres;
 
 --
--- TOC entry 10 (class 2615 OID 18900)
+-- TOC entry 13 (class 2615 OID 16395)
 -- Name: operaciones; Type: SCHEMA; Schema: -; Owner: postgres
 --
 
@@ -92,7 +92,7 @@ CREATE SCHEMA operaciones;
 ALTER SCHEMA operaciones OWNER TO postgres;
 
 --
--- TOC entry 14 (class 2615 OID 19779)
+-- TOC entry 14 (class 2615 OID 16396)
 -- Name: sales; Type: SCHEMA; Schema: -; Owner: postgres
 --
 
@@ -102,7 +102,7 @@ CREATE SCHEMA sales;
 ALTER SCHEMA sales OWNER TO postgres;
 
 --
--- TOC entry 2 (class 3079 OID 19767)
+-- TOC entry 2 (class 3079 OID 16397)
 -- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -110,7 +110,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
 
 
 --
--- TOC entry 4418 (class 0 OID 0)
+-- TOC entry 4532 (class 0 OID 0)
 -- Dependencies: 2
 -- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: 
 --
@@ -119,7 +119,32 @@ COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UU
 
 
 --
--- TOC entry 1062 (class 1247 OID 18944)
+-- TOC entry 1208 (class 1247 OID 18032)
+-- Name: categoria_gasto_enum; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE public.categoria_gasto_enum AS ENUM (
+    'agua',
+    'gas',
+    'electricidad',
+    'internet',
+    'alquiler'
+);
+
+
+ALTER TYPE public.categoria_gasto_enum OWNER TO postgres;
+
+--
+-- TOC entry 4533 (class 0 OID 0)
+-- Dependencies: 1208
+-- Name: TYPE categoria_gasto_enum; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON TYPE public.categoria_gasto_enum IS 'Gastos operativos fijos según enunciado académico: agua, gas, electricidad, internet, alquiler';
+
+
+--
+-- TOC entry 995 (class 1247 OID 16409)
 -- Name: estado_caja; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -132,7 +157,7 @@ CREATE TYPE public.estado_caja AS ENUM (
 ALTER TYPE public.estado_caja OWNER TO postgres;
 
 --
--- TOC entry 1056 (class 1247 OID 18928)
+-- TOC entry 998 (class 1247 OID 16414)
 -- Name: estado_cuenta; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -147,7 +172,7 @@ CREATE TYPE public.estado_cuenta AS ENUM (
 ALTER TYPE public.estado_cuenta OWNER TO postgres;
 
 --
--- TOC entry 1059 (class 1247 OID 18938)
+-- TOC entry 1001 (class 1247 OID 16424)
 -- Name: estado_factura; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -160,7 +185,7 @@ CREATE TYPE public.estado_factura AS ENUM (
 ALTER TYPE public.estado_factura OWNER TO postgres;
 
 --
--- TOC entry 1050 (class 1247 OID 18904)
+-- TOC entry 1004 (class 1247 OID 16430)
 -- Name: estado_mesa; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -175,7 +200,7 @@ CREATE TYPE public.estado_mesa AS ENUM (
 ALTER TYPE public.estado_mesa OWNER TO postgres;
 
 --
--- TOC entry 1080 (class 1247 OID 19004)
+-- TOC entry 1007 (class 1247 OID 16440)
 -- Name: estado_pago_compra; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -189,7 +214,7 @@ CREATE TYPE public.estado_pago_compra AS ENUM (
 ALTER TYPE public.estado_pago_compra OWNER TO postgres;
 
 --
--- TOC entry 1053 (class 1247 OID 18914)
+-- TOC entry 1010 (class 1247 OID 16448)
 -- Name: estado_pedido; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -206,7 +231,7 @@ CREATE TYPE public.estado_pedido AS ENUM (
 ALTER TYPE public.estado_pedido OWNER TO postgres;
 
 --
--- TOC entry 1077 (class 1247 OID 18992)
+-- TOC entry 1013 (class 1247 OID 16462)
 -- Name: estado_reserva; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -222,7 +247,31 @@ CREATE TYPE public.estado_reserva AS ENUM (
 ALTER TYPE public.estado_reserva OWNER TO postgres;
 
 --
--- TOC entry 1179 (class 1247 OID 19882)
+-- TOC entry 1205 (class 1247 OID 18022)
+-- Name: metodo_pago_enum; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE public.metodo_pago_enum AS ENUM (
+    'efectivo',
+    'pago_movil',
+    'tarjeta',
+    'divisa'
+);
+
+
+ALTER TYPE public.metodo_pago_enum OWNER TO postgres;
+
+--
+-- TOC entry 4534 (class 0 OID 0)
+-- Dependencies: 1205
+-- Name: TYPE metodo_pago_enum; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON TYPE public.metodo_pago_enum IS 'Métodos de pago aceptados: efectivo (Bs), pago_movil (transferencia), tarjeta (débito/crédito), divisa (USD/EUR físico)';
+
+
+--
+-- TOC entry 1016 (class 1247 OID 16474)
 -- Name: order_status_enum; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -238,7 +287,7 @@ CREATE TYPE public.order_status_enum AS ENUM (
 ALTER TYPE public.order_status_enum OWNER TO postgres;
 
 --
--- TOC entry 1185 (class 1247 OID 19973)
+-- TOC entry 1019 (class 1247 OID 16486)
 -- Name: orders_status_enum; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -254,7 +303,7 @@ CREATE TYPE public.orders_status_enum AS ENUM (
 ALTER TYPE public.orders_status_enum OWNER TO postgres;
 
 --
--- TOC entry 1071 (class 1247 OID 18970)
+-- TOC entry 1022 (class 1247 OID 16498)
 -- Name: referencia_tipo_banco; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -270,7 +319,7 @@ CREATE TYPE public.referencia_tipo_banco AS ENUM (
 ALTER TYPE public.referencia_tipo_banco OWNER TO postgres;
 
 --
--- TOC entry 1068 (class 1247 OID 18956)
+-- TOC entry 1025 (class 1247 OID 16510)
 -- Name: referencia_tipo_caja; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -287,7 +336,24 @@ CREATE TYPE public.referencia_tipo_caja AS ENUM (
 ALTER TYPE public.referencia_tipo_caja OWNER TO postgres;
 
 --
--- TOC entry 1074 (class 1247 OID 18982)
+-- TOC entry 1211 (class 1247 OID 18044)
+-- Name: tipo_cuenta_contable_enum; Type: TYPE; Schema: public; Owner: postgres
+--
+
+CREATE TYPE public.tipo_cuenta_contable_enum AS ENUM (
+    'activo',
+    'pasivo',
+    'patrimonio',
+    'ingreso',
+    'costo',
+    'gasto'
+);
+
+
+ALTER TYPE public.tipo_cuenta_contable_enum OWNER TO postgres;
+
+--
+-- TOC entry 1028 (class 1247 OID 16524)
 -- Name: tipo_merma; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -302,7 +368,7 @@ CREATE TYPE public.tipo_merma AS ENUM (
 ALTER TYPE public.tipo_merma OWNER TO postgres;
 
 --
--- TOC entry 1065 (class 1247 OID 18950)
+-- TOC entry 1031 (class 1247 OID 16534)
 -- Name: tipo_movimiento; Type: TYPE; Schema: public; Owner: postgres
 --
 
@@ -315,7 +381,7 @@ CREATE TYPE public.tipo_movimiento AS ENUM (
 ALTER TYPE public.tipo_movimiento OWNER TO postgres;
 
 --
--- TOC entry 338 (class 1255 OID 17018)
+-- TOC entry 362 (class 1255 OID 16539)
 -- Name: update_updated_at_column(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -336,7 +402,141 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- TOC entry 327 (class 1259 OID 19470)
+-- TOC entry 347 (class 1259 OID 18159)
+-- Name: asiento_lineas; Type: TABLE; Schema: contabilidad; Owner: postgres
+--
+
+CREATE TABLE contabilidad.asiento_lineas (
+    id integer NOT NULL,
+    asiento_id integer NOT NULL,
+    cuenta_id integer NOT NULL,
+    tipo_movimiento character varying(5) NOT NULL,
+    monto numeric(12,2) NOT NULL,
+    descripcion character varying(255),
+    restaurante_id integer NOT NULL,
+    CONSTRAINT asiento_lineas_monto_check CHECK ((monto > (0)::numeric)),
+    CONSTRAINT asiento_lineas_tipo_movimiento_check CHECK (((tipo_movimiento)::text = ANY ((ARRAY['debe'::character varying, 'haber'::character varying])::text[])))
+);
+
+
+ALTER TABLE contabilidad.asiento_lineas OWNER TO postgres;
+
+--
+-- TOC entry 4535 (class 0 OID 0)
+-- Dependencies: 347
+-- Name: TABLE asiento_lineas; Type: COMMENT; Schema: contabilidad; Owner: postgres
+--
+
+COMMENT ON TABLE contabilidad.asiento_lineas IS 'Líneas de cada asiento contable. Cada asiento tiene N líneas (min. 2: un Debe y un Haber).
+La suma de todas las líneas tipo "debe" debe ser igual a la suma de las "haber" en el mismo asiento.
+Ejemplo para una Venta:
+  DEBE:  Caja/Banco            500.00
+  HABER: Ingresos por Ventas   500.00
+  DEBE:  Costo de Ventas       180.00
+  HABER: Inventario            180.00';
+
+
+--
+-- TOC entry 4536 (class 0 OID 0)
+-- Dependencies: 347
+-- Name: COLUMN asiento_lineas.tipo_movimiento; Type: COMMENT; Schema: contabilidad; Owner: postgres
+--
+
+COMMENT ON COLUMN contabilidad.asiento_lineas.tipo_movimiento IS 'debe = cargo a la cuenta | haber = abono a la cuenta (partida doble)';
+
+
+--
+-- TOC entry 346 (class 1259 OID 18158)
+-- Name: asiento_lineas_id_seq; Type: SEQUENCE; Schema: contabilidad; Owner: postgres
+--
+
+CREATE SEQUENCE contabilidad.asiento_lineas_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE contabilidad.asiento_lineas_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4537 (class 0 OID 0)
+-- Dependencies: 346
+-- Name: asiento_lineas_id_seq; Type: SEQUENCE OWNED BY; Schema: contabilidad; Owner: postgres
+--
+
+ALTER SEQUENCE contabilidad.asiento_lineas_id_seq OWNED BY contabilidad.asiento_lineas.id;
+
+
+--
+-- TOC entry 345 (class 1259 OID 18136)
+-- Name: asientos; Type: TABLE; Schema: contabilidad; Owner: postgres
+--
+
+CREATE TABLE contabilidad.asientos (
+    id integer NOT NULL,
+    fecha date NOT NULL,
+    descripcion character varying(255) NOT NULL,
+    origen_tipo character varying(50),
+    origen_id integer,
+    total_debe numeric(12,2) DEFAULT 0 NOT NULL,
+    total_haber numeric(12,2) DEFAULT 0 NOT NULL,
+    restaurante_id integer NOT NULL,
+    creado_por integer,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE contabilidad.asientos OWNER TO postgres;
+
+--
+-- TOC entry 4538 (class 0 OID 0)
+-- Dependencies: 345
+-- Name: TABLE asientos; Type: COMMENT; Schema: contabilidad; Owner: postgres
+--
+
+COMMENT ON TABLE contabilidad.asientos IS 'Cabecera del asiento contable. Cada evento del sistema (venta, compra, gasto) genera
+un asiento automáticamente. INVARIANTE: total_debe = total_haber (principio de partida doble).';
+
+
+--
+-- TOC entry 4539 (class 0 OID 0)
+-- Dependencies: 345
+-- Name: COLUMN asientos.origen_tipo; Type: COMMENT; Schema: contabilidad; Owner: postgres
+--
+
+COMMENT ON COLUMN contabilidad.asientos.origen_tipo IS 'venta: pedido pagado | compra: entrada de mercancía | gasto_operativo: agua/luz/etc | costo_venta: back-flushing';
+
+
+--
+-- TOC entry 344 (class 1259 OID 18135)
+-- Name: asientos_id_seq; Type: SEQUENCE; Schema: contabilidad; Owner: postgres
+--
+
+CREATE SEQUENCE contabilidad.asientos_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE contabilidad.asientos_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4540 (class 0 OID 0)
+-- Dependencies: 344
+-- Name: asientos_id_seq; Type: SEQUENCE OWNED BY; Schema: contabilidad; Owner: postgres
+--
+
+ALTER SEQUENCE contabilidad.asientos_id_seq OWNED BY contabilidad.asientos.id;
+
+
+--
+-- TOC entry 228 (class 1259 OID 16540)
 -- Name: libro_diario; Type: TABLE; Schema: contabilidad; Owner: postgres
 --
 
@@ -357,8 +557,8 @@ CREATE TABLE contabilidad.libro_diario (
 ALTER TABLE contabilidad.libro_diario OWNER TO postgres;
 
 --
--- TOC entry 4419 (class 0 OID 0)
--- Dependencies: 327
+-- TOC entry 4541 (class 0 OID 0)
+-- Dependencies: 228
 -- Name: TABLE libro_diario; Type: COMMENT; Schema: contabilidad; Owner: postgres
 --
 
@@ -366,8 +566,8 @@ COMMENT ON TABLE contabilidad.libro_diario IS 'Asientos contables para generar B
 
 
 --
--- TOC entry 4420 (class 0 OID 0)
--- Dependencies: 327
+-- TOC entry 4542 (class 0 OID 0)
+-- Dependencies: 228
 -- Name: COLUMN libro_diario.tipo; Type: COMMENT; Schema: contabilidad; Owner: postgres
 --
 
@@ -375,7 +575,7 @@ COMMENT ON COLUMN contabilidad.libro_diario.tipo IS 'Ej: venta, costo_venta, gas
 
 
 --
--- TOC entry 326 (class 1259 OID 19469)
+-- TOC entry 229 (class 1259 OID 16553)
 -- Name: libro_diario_id_seq; Type: SEQUENCE; Schema: contabilidad; Owner: postgres
 --
 
@@ -391,8 +591,8 @@ CREATE SEQUENCE contabilidad.libro_diario_id_seq
 ALTER SEQUENCE contabilidad.libro_diario_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4421 (class 0 OID 0)
--- Dependencies: 326
+-- TOC entry 4543 (class 0 OID 0)
+-- Dependencies: 229
 -- Name: libro_diario_id_seq; Type: SEQUENCE OWNED BY; Schema: contabilidad; Owner: postgres
 --
 
@@ -400,27 +600,51 @@ ALTER SEQUENCE contabilidad.libro_diario_id_seq OWNED BY contabilidad.libro_diar
 
 
 --
--- TOC entry 279 (class 1259 OID 19041)
--- Name: metodos_pago; Type: TABLE; Schema: core; Owner: postgres
+-- TOC entry 343 (class 1259 OID 18109)
+-- Name: plan_cuentas; Type: TABLE; Schema: contabilidad; Owner: postgres
 --
 
-CREATE TABLE core.metodos_pago (
+CREATE TABLE contabilidad.plan_cuentas (
     id integer NOT NULL,
-    nombre character varying(50) NOT NULL,
+    codigo character varying(20) NOT NULL,
+    nombre character varying(100) NOT NULL,
+    tipo public.tipo_cuenta_contable_enum NOT NULL,
+    padre_id integer,
+    es_auxiliar boolean DEFAULT true,
+    restaurante_id integer,
     activo boolean DEFAULT true,
-    restaurante_id integer NOT NULL,
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
 
-ALTER TABLE core.metodos_pago OWNER TO postgres;
+ALTER TABLE contabilidad.plan_cuentas OWNER TO postgres;
 
 --
--- TOC entry 278 (class 1259 OID 19040)
--- Name: metodos_pago_id_seq; Type: SEQUENCE; Schema: core; Owner: postgres
+-- TOC entry 4544 (class 0 OID 0)
+-- Dependencies: 343
+-- Name: TABLE plan_cuentas; Type: COMMENT; Schema: contabilidad; Owner: postgres
 --
 
-CREATE SEQUENCE core.metodos_pago_id_seq
+COMMENT ON TABLE contabilidad.plan_cuentas IS 'Plan de Cuentas Contable. Estructura jerárquica (padre_id) que permite generar
+Balance General y Estado de Resultados agrupando por tipo de cuenta.
+Las cuentas globales (restaurante_id IS NULL) aplican a todos los restaurantes.';
+
+
+--
+-- TOC entry 4545 (class 0 OID 0)
+-- Dependencies: 343
+-- Name: COLUMN plan_cuentas.codigo; Type: COMMENT; Schema: contabilidad; Owner: postgres
+--
+
+COMMENT ON COLUMN contabilidad.plan_cuentas.codigo IS 'Código contable estándar. Ej: 1=Activo, 2=Pasivo, 3=Patrimonio, 4=Ingreso, 5=Costo, 6=Gasto';
+
+
+--
+-- TOC entry 342 (class 1259 OID 18108)
+-- Name: plan_cuentas_id_seq; Type: SEQUENCE; Schema: contabilidad; Owner: postgres
+--
+
+CREATE SEQUENCE contabilidad.plan_cuentas_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -429,19 +653,19 @@ CREATE SEQUENCE core.metodos_pago_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE core.metodos_pago_id_seq OWNER TO postgres;
+ALTER SEQUENCE contabilidad.plan_cuentas_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4422 (class 0 OID 0)
--- Dependencies: 278
--- Name: metodos_pago_id_seq; Type: SEQUENCE OWNED BY; Schema: core; Owner: postgres
+-- TOC entry 4546 (class 0 OID 0)
+-- Dependencies: 342
+-- Name: plan_cuentas_id_seq; Type: SEQUENCE OWNED BY; Schema: contabilidad; Owner: postgres
 --
 
-ALTER SEQUENCE core.metodos_pago_id_seq OWNED BY core.metodos_pago.id;
+ALTER SEQUENCE contabilidad.plan_cuentas_id_seq OWNED BY contabilidad.plan_cuentas.id;
 
 
 --
--- TOC entry 275 (class 1259 OID 19012)
+-- TOC entry 232 (class 1259 OID 16563)
 -- Name: restaurante; Type: TABLE; Schema: core; Owner: postgres
 --
 
@@ -466,7 +690,140 @@ CREATE TABLE core.restaurante (
 ALTER TABLE core.restaurante OWNER TO postgres;
 
 --
--- TOC entry 274 (class 1259 OID 19011)
+-- TOC entry 348 (class 1259 OID 18190)
+-- Name: v_balance_general; Type: VIEW; Schema: contabilidad; Owner: postgres
+--
+
+CREATE VIEW contabilidad.v_balance_general AS
+ SELECT r.id AS restaurante_id,
+    r.nombre AS restaurante,
+    pc.tipo,
+    pc.codigo,
+    pc.nombre AS cuenta,
+    COALESCE(sum(
+        CASE al.tipo_movimiento
+            WHEN 'debe'::text THEN
+            CASE
+                WHEN ((pc.tipo)::text = ANY (ARRAY['activo'::text, 'costo'::text, 'gasto'::text])) THEN al.monto
+                ELSE (- al.monto)
+            END
+            WHEN 'haber'::text THEN
+            CASE
+                WHEN ((pc.tipo)::text = ANY (ARRAY['activo'::text, 'costo'::text, 'gasto'::text])) THEN (- al.monto)
+                ELSE al.monto
+            END
+            ELSE NULL::numeric
+        END), (0)::numeric) AS saldo
+   FROM (((contabilidad.plan_cuentas pc
+     CROSS JOIN core.restaurante r)
+     LEFT JOIN contabilidad.asiento_lineas al ON (((al.cuenta_id = pc.id) AND (al.restaurante_id = r.id))))
+     LEFT JOIN contabilidad.asientos a ON (((a.id = al.asiento_id) AND (a.restaurante_id = r.id))))
+  WHERE (pc.es_auxiliar = true)
+  GROUP BY r.id, r.nombre, pc.tipo, pc.codigo, pc.nombre
+  ORDER BY pc.codigo;
+
+
+ALTER VIEW contabilidad.v_balance_general OWNER TO postgres;
+
+--
+-- TOC entry 4547 (class 0 OID 0)
+-- Dependencies: 348
+-- Name: VIEW v_balance_general; Type: COMMENT; Schema: contabilidad; Owner: postgres
+--
+
+COMMENT ON VIEW contabilidad.v_balance_general IS 'Vista del Balance General y Estado de Resultados. Filtrar por restaurante_id y rango de fechas
+usando JOIN con contabilidad.asientos.';
+
+
+--
+-- TOC entry 349 (class 1259 OID 18195)
+-- Name: v_estado_resultados; Type: VIEW; Schema: contabilidad; Owner: postgres
+--
+
+CREATE VIEW contabilidad.v_estado_resultados AS
+ SELECT al.restaurante_id,
+    a.fecha,
+    pc.tipo,
+    pc.nombre AS cuenta,
+    sum(
+        CASE al.tipo_movimiento
+            WHEN 'debe'::text THEN
+            CASE
+                WHEN ((pc.tipo)::text = ANY (ARRAY['costo'::text, 'gasto'::text])) THEN al.monto
+                ELSE (- al.monto)
+            END
+            WHEN 'haber'::text THEN
+            CASE
+                WHEN ((pc.tipo)::text = 'ingreso'::text) THEN al.monto
+                ELSE (- al.monto)
+            END
+            ELSE NULL::numeric
+        END) AS monto
+   FROM ((contabilidad.asiento_lineas al
+     JOIN contabilidad.asientos a ON ((a.id = al.asiento_id)))
+     JOIN contabilidad.plan_cuentas pc ON ((pc.id = al.cuenta_id)))
+  WHERE ((pc.tipo)::text = ANY (ARRAY['ingreso'::text, 'costo'::text, 'gasto'::text]))
+  GROUP BY al.restaurante_id, a.fecha, pc.tipo, pc.nombre
+  ORDER BY a.fecha, (pc.tipo)::text;
+
+
+ALTER VIEW contabilidad.v_estado_resultados OWNER TO postgres;
+
+--
+-- TOC entry 4548 (class 0 OID 0)
+-- Dependencies: 349
+-- Name: VIEW v_estado_resultados; Type: COMMENT; Schema: contabilidad; Owner: postgres
+--
+
+COMMENT ON VIEW contabilidad.v_estado_resultados IS 'Estado de Resultados por fecha. Para obtener el total de un período:
+SELECT tipo, cuenta, SUM(monto) FROM contabilidad.v_estado_resultados
+WHERE restaurante_id = X AND fecha BETWEEN inicio AND fin
+GROUP BY tipo, cuenta;';
+
+
+--
+-- TOC entry 230 (class 1259 OID 16554)
+-- Name: metodos_pago; Type: TABLE; Schema: core; Owner: postgres
+--
+
+CREATE TABLE core.metodos_pago (
+    id integer NOT NULL,
+    nombre character varying(50) NOT NULL,
+    activo boolean DEFAULT true,
+    restaurante_id integer NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE core.metodos_pago OWNER TO postgres;
+
+--
+-- TOC entry 231 (class 1259 OID 16562)
+-- Name: metodos_pago_id_seq; Type: SEQUENCE; Schema: core; Owner: postgres
+--
+
+CREATE SEQUENCE core.metodos_pago_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE core.metodos_pago_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4549 (class 0 OID 0)
+-- Dependencies: 231
+-- Name: metodos_pago_id_seq; Type: SEQUENCE OWNED BY; Schema: core; Owner: postgres
+--
+
+ALTER SEQUENCE core.metodos_pago_id_seq OWNED BY core.metodos_pago.id;
+
+
+--
+-- TOC entry 233 (class 1259 OID 16586)
 -- Name: restaurante_id_seq; Type: SEQUENCE; Schema: core; Owner: postgres
 --
 
@@ -482,8 +839,8 @@ CREATE SEQUENCE core.restaurante_id_seq
 ALTER SEQUENCE core.restaurante_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4423 (class 0 OID 0)
--- Dependencies: 274
+-- TOC entry 4550 (class 0 OID 0)
+-- Dependencies: 233
 -- Name: restaurante_id_seq; Type: SEQUENCE OWNED BY; Schema: core; Owner: postgres
 --
 
@@ -491,7 +848,7 @@ ALTER SEQUENCE core.restaurante_id_seq OWNED BY core.restaurante.id;
 
 
 --
--- TOC entry 281 (class 1259 OID 19053)
+-- TOC entry 234 (class 1259 OID 16587)
 -- Name: roles; Type: TABLE; Schema: core; Owner: postgres
 --
 
@@ -505,7 +862,7 @@ CREATE TABLE core.roles (
 ALTER TABLE core.roles OWNER TO postgres;
 
 --
--- TOC entry 280 (class 1259 OID 19052)
+-- TOC entry 235 (class 1259 OID 16594)
 -- Name: roles_id_seq; Type: SEQUENCE; Schema: core; Owner: postgres
 --
 
@@ -521,8 +878,8 @@ CREATE SEQUENCE core.roles_id_seq
 ALTER SEQUENCE core.roles_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4424 (class 0 OID 0)
--- Dependencies: 280
+-- TOC entry 4551 (class 0 OID 0)
+-- Dependencies: 235
 -- Name: roles_id_seq; Type: SEQUENCE OWNED BY; Schema: core; Owner: postgres
 --
 
@@ -530,7 +887,7 @@ ALTER SEQUENCE core.roles_id_seq OWNED BY core.roles.id;
 
 
 --
--- TOC entry 333 (class 1259 OID 19806)
+-- TOC entry 236 (class 1259 OID 16595)
 -- Name: tables; Type: TABLE; Schema: core; Owner: postgres
 --
 
@@ -545,7 +902,7 @@ CREATE TABLE core.tables (
 ALTER TABLE core.tables OWNER TO postgres;
 
 --
--- TOC entry 332 (class 1259 OID 19805)
+-- TOC entry 237 (class 1259 OID 16602)
 -- Name: tables_id_seq; Type: SEQUENCE; Schema: core; Owner: postgres
 --
 
@@ -561,8 +918,8 @@ CREATE SEQUENCE core.tables_id_seq
 ALTER SEQUENCE core.tables_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4425 (class 0 OID 0)
--- Dependencies: 332
+-- TOC entry 4552 (class 0 OID 0)
+-- Dependencies: 237
 -- Name: tables_id_seq; Type: SEQUENCE OWNED BY; Schema: core; Owner: postgres
 --
 
@@ -570,7 +927,7 @@ ALTER SEQUENCE core.tables_id_seq OWNED BY core.tables.id;
 
 
 --
--- TOC entry 277 (class 1259 OID 19031)
+-- TOC entry 238 (class 1259 OID 16603)
 -- Name: unidad_medida; Type: TABLE; Schema: core; Owner: postgres
 --
 
@@ -584,7 +941,7 @@ CREATE TABLE core.unidad_medida (
 ALTER TABLE core.unidad_medida OWNER TO postgres;
 
 --
--- TOC entry 276 (class 1259 OID 19030)
+-- TOC entry 239 (class 1259 OID 16609)
 -- Name: unidad_medida_id_seq; Type: SEQUENCE; Schema: core; Owner: postgres
 --
 
@@ -600,8 +957,8 @@ CREATE SEQUENCE core.unidad_medida_id_seq
 ALTER SEQUENCE core.unidad_medida_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4426 (class 0 OID 0)
--- Dependencies: 276
+-- TOC entry 4553 (class 0 OID 0)
+-- Dependencies: 239
 -- Name: unidad_medida_id_seq; Type: SEQUENCE OWNED BY; Schema: core; Owner: postgres
 --
 
@@ -609,7 +966,7 @@ ALTER SEQUENCE core.unidad_medida_id_seq OWNED BY core.unidad_medida.id;
 
 
 --
--- TOC entry 283 (class 1259 OID 19064)
+-- TOC entry 240 (class 1259 OID 16610)
 -- Name: usuarios; Type: TABLE; Schema: core; Owner: postgres
 --
 
@@ -630,7 +987,7 @@ CREATE TABLE core.usuarios (
 ALTER TABLE core.usuarios OWNER TO postgres;
 
 --
--- TOC entry 282 (class 1259 OID 19063)
+-- TOC entry 241 (class 1259 OID 16628)
 -- Name: usuarios_id_seq; Type: SEQUENCE; Schema: core; Owner: postgres
 --
 
@@ -646,8 +1003,8 @@ CREATE SEQUENCE core.usuarios_id_seq
 ALTER SEQUENCE core.usuarios_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4427 (class 0 OID 0)
--- Dependencies: 282
+-- TOC entry 4554 (class 0 OID 0)
+-- Dependencies: 241
 -- Name: usuarios_id_seq; Type: SEQUENCE OWNED BY; Schema: core; Owner: postgres
 --
 
@@ -655,7 +1012,7 @@ ALTER SEQUENCE core.usuarios_id_seq OWNED BY core.usuarios.id;
 
 
 --
--- TOC entry 323 (class 1259 OID 19433)
+-- TOC entry 242 (class 1259 OID 16629)
 -- Name: banco; Type: TABLE; Schema: finanzas; Owner: postgres
 --
 
@@ -674,7 +1031,7 @@ CREATE TABLE finanzas.banco (
 ALTER TABLE finanzas.banco OWNER TO postgres;
 
 --
--- TOC entry 322 (class 1259 OID 19432)
+-- TOC entry 243 (class 1259 OID 16640)
 -- Name: banco_id_seq; Type: SEQUENCE; Schema: finanzas; Owner: postgres
 --
 
@@ -690,8 +1047,8 @@ CREATE SEQUENCE finanzas.banco_id_seq
 ALTER SEQUENCE finanzas.banco_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4428 (class 0 OID 0)
--- Dependencies: 322
+-- TOC entry 4555 (class 0 OID 0)
+-- Dependencies: 243
 -- Name: banco_id_seq; Type: SEQUENCE OWNED BY; Schema: finanzas; Owner: postgres
 --
 
@@ -699,7 +1056,7 @@ ALTER SEQUENCE finanzas.banco_id_seq OWNED BY finanzas.banco.id;
 
 
 --
--- TOC entry 325 (class 1259 OID 19449)
+-- TOC entry 244 (class 1259 OID 16641)
 -- Name: banco_movimientos; Type: TABLE; Schema: finanzas; Owner: postgres
 --
 
@@ -721,8 +1078,8 @@ CREATE TABLE finanzas.banco_movimientos (
 ALTER TABLE finanzas.banco_movimientos OWNER TO postgres;
 
 --
--- TOC entry 4429 (class 0 OID 0)
--- Dependencies: 325
+-- TOC entry 4556 (class 0 OID 0)
+-- Dependencies: 244
 -- Name: TABLE banco_movimientos; Type: COMMENT; Schema: finanzas; Owner: postgres
 --
 
@@ -730,7 +1087,7 @@ COMMENT ON TABLE finanzas.banco_movimientos IS 'Movimientos bancarios con trazab
 
 
 --
--- TOC entry 324 (class 1259 OID 19448)
+-- TOC entry 245 (class 1259 OID 16655)
 -- Name: banco_movimientos_id_seq; Type: SEQUENCE; Schema: finanzas; Owner: postgres
 --
 
@@ -746,8 +1103,8 @@ CREATE SEQUENCE finanzas.banco_movimientos_id_seq
 ALTER SEQUENCE finanzas.banco_movimientos_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4430 (class 0 OID 0)
--- Dependencies: 324
+-- TOC entry 4557 (class 0 OID 0)
+-- Dependencies: 245
 -- Name: banco_movimientos_id_seq; Type: SEQUENCE OWNED BY; Schema: finanzas; Owner: postgres
 --
 
@@ -755,7 +1112,7 @@ ALTER SEQUENCE finanzas.banco_movimientos_id_seq OWNED BY finanzas.banco_movimie
 
 
 --
--- TOC entry 319 (class 1259 OID 19394)
+-- TOC entry 246 (class 1259 OID 16656)
 -- Name: caja; Type: TABLE; Schema: finanzas; Owner: postgres
 --
 
@@ -779,7 +1136,7 @@ CREATE TABLE finanzas.caja (
 ALTER TABLE finanzas.caja OWNER TO postgres;
 
 --
--- TOC entry 318 (class 1259 OID 19393)
+-- TOC entry 247 (class 1259 OID 16668)
 -- Name: caja_id_seq; Type: SEQUENCE; Schema: finanzas; Owner: postgres
 --
 
@@ -795,8 +1152,8 @@ CREATE SEQUENCE finanzas.caja_id_seq
 ALTER SEQUENCE finanzas.caja_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4431 (class 0 OID 0)
--- Dependencies: 318
+-- TOC entry 4558 (class 0 OID 0)
+-- Dependencies: 247
 -- Name: caja_id_seq; Type: SEQUENCE OWNED BY; Schema: finanzas; Owner: postgres
 --
 
@@ -804,7 +1161,7 @@ ALTER SEQUENCE finanzas.caja_id_seq OWNED BY finanzas.caja.id;
 
 
 --
--- TOC entry 321 (class 1259 OID 19412)
+-- TOC entry 248 (class 1259 OID 16669)
 -- Name: caja_movimientos; Type: TABLE; Schema: finanzas; Owner: postgres
 --
 
@@ -826,8 +1183,8 @@ CREATE TABLE finanzas.caja_movimientos (
 ALTER TABLE finanzas.caja_movimientos OWNER TO postgres;
 
 --
--- TOC entry 4432 (class 0 OID 0)
--- Dependencies: 321
+-- TOC entry 4559 (class 0 OID 0)
+-- Dependencies: 248
 -- Name: TABLE caja_movimientos; Type: COMMENT; Schema: finanzas; Owner: postgres
 --
 
@@ -835,7 +1192,7 @@ COMMENT ON TABLE finanzas.caja_movimientos IS 'Movimientos de efectivo con traza
 
 
 --
--- TOC entry 320 (class 1259 OID 19411)
+-- TOC entry 249 (class 1259 OID 16683)
 -- Name: caja_movimientos_id_seq; Type: SEQUENCE; Schema: finanzas; Owner: postgres
 --
 
@@ -851,8 +1208,8 @@ CREATE SEQUENCE finanzas.caja_movimientos_id_seq
 ALTER SEQUENCE finanzas.caja_movimientos_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4433 (class 0 OID 0)
--- Dependencies: 320
+-- TOC entry 4560 (class 0 OID 0)
+-- Dependencies: 249
 -- Name: caja_movimientos_id_seq; Type: SEQUENCE OWNED BY; Schema: finanzas; Owner: postgres
 --
 
@@ -860,7 +1217,7 @@ ALTER SEQUENCE finanzas.caja_movimientos_id_seq OWNED BY finanzas.caja_movimient
 
 
 --
--- TOC entry 317 (class 1259 OID 19376)
+-- TOC entry 250 (class 1259 OID 16684)
 -- Name: egresos; Type: TABLE; Schema: finanzas; Owner: postgres
 --
 
@@ -879,7 +1236,7 @@ CREATE TABLE finanzas.egresos (
 ALTER TABLE finanzas.egresos OWNER TO postgres;
 
 --
--- TOC entry 316 (class 1259 OID 19375)
+-- TOC entry 251 (class 1259 OID 16696)
 -- Name: egresos_id_seq; Type: SEQUENCE; Schema: finanzas; Owner: postgres
 --
 
@@ -895,8 +1252,8 @@ CREATE SEQUENCE finanzas.egresos_id_seq
 ALTER SEQUENCE finanzas.egresos_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4434 (class 0 OID 0)
--- Dependencies: 316
+-- TOC entry 4561 (class 0 OID 0)
+-- Dependencies: 251
 -- Name: egresos_id_seq; Type: SEQUENCE OWNED BY; Schema: finanzas; Owner: postgres
 --
 
@@ -904,7 +1261,86 @@ ALTER SEQUENCE finanzas.egresos_id_seq OWNED BY finanzas.egresos.id;
 
 
 --
--- TOC entry 285 (class 1259 OID 19088)
+-- TOC entry 341 (class 1259 OID 18085)
+-- Name: gastos_operativos; Type: TABLE; Schema: finanzas; Owner: postgres
+--
+
+CREATE TABLE finanzas.gastos_operativos (
+    id integer NOT NULL,
+    categoria public.categoria_gasto_enum NOT NULL,
+    descripcion character varying(255),
+    monto numeric(12,2) NOT NULL,
+    fecha date NOT NULL,
+    metodo_pago public.metodo_pago_enum DEFAULT 'efectivo'::public.metodo_pago_enum NOT NULL,
+    referencia character varying(100),
+    periodo_mes integer,
+    periodo_anio integer,
+    usuario_id integer,
+    restaurante_id integer NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT gastos_operativos_monto_check CHECK ((monto > (0)::numeric)),
+    CONSTRAINT gastos_operativos_periodo_mes_check CHECK (((periodo_mes >= 1) AND (periodo_mes <= 12)))
+);
+
+
+ALTER TABLE finanzas.gastos_operativos OWNER TO postgres;
+
+--
+-- TOC entry 4562 (class 0 OID 0)
+-- Dependencies: 341
+-- Name: TABLE gastos_operativos; Type: COMMENT; Schema: finanzas; Owner: postgres
+--
+
+COMMENT ON TABLE finanzas.gastos_operativos IS 'Gastos operativos fijos del restaurante. Según el enunciado académico solo se registran:
+agua, gas, electricidad, internet y alquiler. Cada registro genera un asiento contable automático
+en contabilidad.asientos (Debe: Gasto / Haber: Caja o Banco).';
+
+
+--
+-- TOC entry 4563 (class 0 OID 0)
+-- Dependencies: 341
+-- Name: COLUMN gastos_operativos.categoria; Type: COMMENT; Schema: finanzas; Owner: postgres
+--
+
+COMMENT ON COLUMN finanzas.gastos_operativos.categoria IS 'Una de las 5 categorías del enunciado: agua, gas, electricidad, internet, alquiler.';
+
+
+--
+-- TOC entry 4564 (class 0 OID 0)
+-- Dependencies: 341
+-- Name: COLUMN gastos_operativos.periodo_mes; Type: COMMENT; Schema: finanzas; Owner: postgres
+--
+
+COMMENT ON COLUMN finanzas.gastos_operativos.periodo_mes IS 'Mes al que corresponde el gasto (puede diferir de la fecha de pago). Usado en Estado de Resultados.';
+
+
+--
+-- TOC entry 340 (class 1259 OID 18084)
+-- Name: gastos_operativos_id_seq; Type: SEQUENCE; Schema: finanzas; Owner: postgres
+--
+
+CREATE SEQUENCE finanzas.gastos_operativos_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE finanzas.gastos_operativos_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4565 (class 0 OID 0)
+-- Dependencies: 340
+-- Name: gastos_operativos_id_seq; Type: SEQUENCE OWNED BY; Schema: finanzas; Owner: postgres
+--
+
+ALTER SEQUENCE finanzas.gastos_operativos_id_seq OWNED BY finanzas.gastos_operativos.id;
+
+
+--
+-- TOC entry 252 (class 1259 OID 16697)
 -- Name: categoria_egresos; Type: TABLE; Schema: inventario; Owner: postgres
 --
 
@@ -919,8 +1355,8 @@ CREATE TABLE inventario.categoria_egresos (
 ALTER TABLE inventario.categoria_egresos OWNER TO postgres;
 
 --
--- TOC entry 4435 (class 0 OID 0)
--- Dependencies: 285
+-- TOC entry 4566 (class 0 OID 0)
+-- Dependencies: 252
 -- Name: COLUMN categoria_egresos.nombre; Type: COMMENT; Schema: inventario; Owner: postgres
 --
 
@@ -928,7 +1364,7 @@ COMMENT ON COLUMN inventario.categoria_egresos.nombre IS 'Ej: proveedores, servi
 
 
 --
--- TOC entry 284 (class 1259 OID 19087)
+-- TOC entry 253 (class 1259 OID 16704)
 -- Name: categoria_egresos_id_seq; Type: SEQUENCE; Schema: inventario; Owner: postgres
 --
 
@@ -944,8 +1380,8 @@ CREATE SEQUENCE inventario.categoria_egresos_id_seq
 ALTER SEQUENCE inventario.categoria_egresos_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4436 (class 0 OID 0)
--- Dependencies: 284
+-- TOC entry 4567 (class 0 OID 0)
+-- Dependencies: 253
 -- Name: categoria_egresos_id_seq; Type: SEQUENCE OWNED BY; Schema: inventario; Owner: postgres
 --
 
@@ -953,7 +1389,7 @@ ALTER SEQUENCE inventario.categoria_egresos_id_seq OWNED BY inventario.categoria
 
 
 --
--- TOC entry 295 (class 1259 OID 19164)
+-- TOC entry 254 (class 1259 OID 16705)
 -- Name: compra_detalle; Type: TABLE; Schema: inventario; Owner: postgres
 --
 
@@ -973,8 +1409,8 @@ CREATE TABLE inventario.compra_detalle (
 ALTER TABLE inventario.compra_detalle OWNER TO postgres;
 
 --
--- TOC entry 4437 (class 0 OID 0)
--- Dependencies: 295
+-- TOC entry 4568 (class 0 OID 0)
+-- Dependencies: 254
 -- Name: COLUMN compra_detalle.factor_conversion; Type: COMMENT; Schema: inventario; Owner: postgres
 --
 
@@ -982,7 +1418,7 @@ COMMENT ON COLUMN inventario.compra_detalle.factor_conversion IS 'Multiplicador 
 
 
 --
--- TOC entry 294 (class 1259 OID 19163)
+-- TOC entry 255 (class 1259 OID 16717)
 -- Name: compra_detalle_id_seq; Type: SEQUENCE; Schema: inventario; Owner: postgres
 --
 
@@ -998,8 +1434,8 @@ CREATE SEQUENCE inventario.compra_detalle_id_seq
 ALTER SEQUENCE inventario.compra_detalle_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4438 (class 0 OID 0)
--- Dependencies: 294
+-- TOC entry 4569 (class 0 OID 0)
+-- Dependencies: 255
 -- Name: compra_detalle_id_seq; Type: SEQUENCE OWNED BY; Schema: inventario; Owner: postgres
 --
 
@@ -1007,7 +1443,7 @@ ALTER SEQUENCE inventario.compra_detalle_id_seq OWNED BY inventario.compra_detal
 
 
 --
--- TOC entry 293 (class 1259 OID 19148)
+-- TOC entry 256 (class 1259 OID 16718)
 -- Name: compras; Type: TABLE; Schema: inventario; Owner: postgres
 --
 
@@ -1028,7 +1464,7 @@ CREATE TABLE inventario.compras (
 ALTER TABLE inventario.compras OWNER TO postgres;
 
 --
--- TOC entry 292 (class 1259 OID 19147)
+-- TOC entry 257 (class 1259 OID 16728)
 -- Name: compras_id_seq; Type: SEQUENCE; Schema: inventario; Owner: postgres
 --
 
@@ -1044,8 +1480,8 @@ CREATE SEQUENCE inventario.compras_id_seq
 ALTER SEQUENCE inventario.compras_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4439 (class 0 OID 0)
--- Dependencies: 292
+-- TOC entry 4570 (class 0 OID 0)
+-- Dependencies: 257
 -- Name: compras_id_seq; Type: SEQUENCE OWNED BY; Schema: inventario; Owner: postgres
 --
 
@@ -1053,7 +1489,7 @@ ALTER SEQUENCE inventario.compras_id_seq OWNED BY inventario.compras.id;
 
 
 --
--- TOC entry 291 (class 1259 OID 19128)
+-- TOC entry 258 (class 1259 OID 16729)
 -- Name: ingredientes; Type: TABLE; Schema: inventario; Owner: postgres
 --
 
@@ -1074,8 +1510,8 @@ CREATE TABLE inventario.ingredientes (
 ALTER TABLE inventario.ingredientes OWNER TO postgres;
 
 --
--- TOC entry 4440 (class 0 OID 0)
--- Dependencies: 291
+-- TOC entry 4571 (class 0 OID 0)
+-- Dependencies: 258
 -- Name: TABLE ingredientes; Type: COMMENT; Schema: inventario; Owner: postgres
 --
 
@@ -1083,8 +1519,8 @@ COMMENT ON TABLE inventario.ingredientes IS 'Inventario de materias primas con c
 
 
 --
--- TOC entry 4441 (class 0 OID 0)
--- Dependencies: 291
+-- TOC entry 4572 (class 0 OID 0)
+-- Dependencies: 258
 -- Name: COLUMN ingredientes.merma_teorica_porcentaje; Type: COMMENT; Schema: inventario; Owner: postgres
 --
 
@@ -1092,7 +1528,7 @@ COMMENT ON COLUMN inventario.ingredientes.merma_teorica_porcentaje IS '% de pér
 
 
 --
--- TOC entry 290 (class 1259 OID 19127)
+-- TOC entry 259 (class 1259 OID 16742)
 -- Name: ingredientes_id_seq; Type: SEQUENCE; Schema: inventario; Owner: postgres
 --
 
@@ -1108,8 +1544,8 @@ CREATE SEQUENCE inventario.ingredientes_id_seq
 ALTER SEQUENCE inventario.ingredientes_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4442 (class 0 OID 0)
--- Dependencies: 290
+-- TOC entry 4573 (class 0 OID 0)
+-- Dependencies: 259
 -- Name: ingredientes_id_seq; Type: SEQUENCE OWNED BY; Schema: inventario; Owner: postgres
 --
 
@@ -1117,7 +1553,7 @@ ALTER SEQUENCE inventario.ingredientes_id_seq OWNED BY inventario.ingredientes.i
 
 
 --
--- TOC entry 297 (class 1259 OID 19182)
+-- TOC entry 260 (class 1259 OID 16743)
 -- Name: mermas; Type: TABLE; Schema: inventario; Owner: postgres
 --
 
@@ -1136,8 +1572,8 @@ CREATE TABLE inventario.mermas (
 ALTER TABLE inventario.mermas OWNER TO postgres;
 
 --
--- TOC entry 4443 (class 0 OID 0)
--- Dependencies: 297
+-- TOC entry 4574 (class 0 OID 0)
+-- Dependencies: 260
 -- Name: TABLE mermas; Type: COMMENT; Schema: inventario; Owner: postgres
 --
 
@@ -1145,7 +1581,7 @@ COMMENT ON TABLE inventario.mermas IS 'Registro de pérdidas de inventario para 
 
 
 --
--- TOC entry 296 (class 1259 OID 19181)
+-- TOC entry 261 (class 1259 OID 16757)
 -- Name: mermas_id_seq; Type: SEQUENCE; Schema: inventario; Owner: postgres
 --
 
@@ -1161,8 +1597,8 @@ CREATE SEQUENCE inventario.mermas_id_seq
 ALTER SEQUENCE inventario.mermas_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4444 (class 0 OID 0)
--- Dependencies: 296
+-- TOC entry 4575 (class 0 OID 0)
+-- Dependencies: 261
 -- Name: mermas_id_seq; Type: SEQUENCE OWNED BY; Schema: inventario; Owner: postgres
 --
 
@@ -1170,7 +1606,7 @@ ALTER SEQUENCE inventario.mermas_id_seq OWNED BY inventario.mermas.id;
 
 
 --
--- TOC entry 287 (class 1259 OID 19099)
+-- TOC entry 262 (class 1259 OID 16758)
 -- Name: proveedores; Type: TABLE; Schema: inventario; Owner: postgres
 --
 
@@ -1194,7 +1630,7 @@ CREATE TABLE inventario.proveedores (
 ALTER TABLE inventario.proveedores OWNER TO postgres;
 
 --
--- TOC entry 286 (class 1259 OID 19098)
+-- TOC entry 263 (class 1259 OID 16770)
 -- Name: proveedores_id_seq; Type: SEQUENCE; Schema: inventario; Owner: postgres
 --
 
@@ -1210,8 +1646,8 @@ CREATE SEQUENCE inventario.proveedores_id_seq
 ALTER SEQUENCE inventario.proveedores_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4445 (class 0 OID 0)
--- Dependencies: 286
+-- TOC entry 4576 (class 0 OID 0)
+-- Dependencies: 263
 -- Name: proveedores_id_seq; Type: SEQUENCE OWNED BY; Schema: inventario; Owner: postgres
 --
 
@@ -1219,7 +1655,7 @@ ALTER SEQUENCE inventario.proveedores_id_seq OWNED BY inventario.proveedores.id;
 
 
 --
--- TOC entry 289 (class 1259 OID 19117)
+-- TOC entry 264 (class 1259 OID 16771)
 -- Name: unidad_compra; Type: TABLE; Schema: inventario; Owner: postgres
 --
 
@@ -1234,7 +1670,7 @@ CREATE TABLE inventario.unidad_compra (
 ALTER TABLE inventario.unidad_compra OWNER TO postgres;
 
 --
--- TOC entry 288 (class 1259 OID 19116)
+-- TOC entry 265 (class 1259 OID 16778)
 -- Name: unidad_compra_id_seq; Type: SEQUENCE; Schema: inventario; Owner: postgres
 --
 
@@ -1250,8 +1686,8 @@ CREATE SEQUENCE inventario.unidad_compra_id_seq
 ALTER SEQUENCE inventario.unidad_compra_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4446 (class 0 OID 0)
--- Dependencies: 288
+-- TOC entry 4577 (class 0 OID 0)
+-- Dependencies: 265
 -- Name: unidad_compra_id_seq; Type: SEQUENCE OWNED BY; Schema: inventario; Owner: postgres
 --
 
@@ -1259,7 +1695,7 @@ ALTER SEQUENCE inventario.unidad_compra_id_seq OWNED BY inventario.unidad_compra
 
 
 --
--- TOC entry 329 (class 1259 OID 19781)
+-- TOC entry 266 (class 1259 OID 16779)
 -- Name: categories; Type: TABLE; Schema: inventory; Owner: postgres
 --
 
@@ -1272,7 +1708,7 @@ CREATE TABLE inventory.categories (
 ALTER TABLE inventory.categories OWNER TO postgres;
 
 --
--- TOC entry 328 (class 1259 OID 19780)
+-- TOC entry 267 (class 1259 OID 16784)
 -- Name: categories_id_seq; Type: SEQUENCE; Schema: inventory; Owner: postgres
 --
 
@@ -1288,8 +1724,8 @@ CREATE SEQUENCE inventory.categories_id_seq
 ALTER SEQUENCE inventory.categories_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4447 (class 0 OID 0)
--- Dependencies: 328
+-- TOC entry 4578 (class 0 OID 0)
+-- Dependencies: 267
 -- Name: categories_id_seq; Type: SEQUENCE OWNED BY; Schema: inventory; Owner: postgres
 --
 
@@ -1297,7 +1733,7 @@ ALTER SEQUENCE inventory.categories_id_seq OWNED BY inventory.categories.id;
 
 
 --
--- TOC entry 331 (class 1259 OID 19790)
+-- TOC entry 268 (class 1259 OID 16785)
 -- Name: products; Type: TABLE; Schema: inventory; Owner: postgres
 --
 
@@ -1314,7 +1750,7 @@ CREATE TABLE inventory.products (
 ALTER TABLE inventory.products OWNER TO postgres;
 
 --
--- TOC entry 330 (class 1259 OID 19789)
+-- TOC entry 269 (class 1259 OID 16792)
 -- Name: products_id_seq; Type: SEQUENCE; Schema: inventory; Owner: postgres
 --
 
@@ -1330,8 +1766,8 @@ CREATE SEQUENCE inventory.products_id_seq
 ALTER SEQUENCE inventory.products_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4448 (class 0 OID 0)
--- Dependencies: 330
+-- TOC entry 4579 (class 0 OID 0)
+-- Dependencies: 269
 -- Name: products_id_seq; Type: SEQUENCE OWNED BY; Schema: inventory; Owner: postgres
 --
 
@@ -1339,7 +1775,7 @@ ALTER SEQUENCE inventory.products_id_seq OWNED BY inventory.products.id;
 
 
 --
--- TOC entry 299 (class 1259 OID 19202)
+-- TOC entry 270 (class 1259 OID 16793)
 -- Name: categorias; Type: TABLE; Schema: menu; Owner: postgres
 --
 
@@ -1357,8 +1793,8 @@ CREATE TABLE menu.categorias (
 ALTER TABLE menu.categorias OWNER TO postgres;
 
 --
--- TOC entry 4449 (class 0 OID 0)
--- Dependencies: 299
+-- TOC entry 4580 (class 0 OID 0)
+-- Dependencies: 270
 -- Name: TABLE categorias; Type: COMMENT; Schema: menu; Owner: postgres
 --
 
@@ -1366,7 +1802,7 @@ COMMENT ON TABLE menu.categorias IS 'Categorías del menú: Entradas, Platos Fue
 
 
 --
--- TOC entry 298 (class 1259 OID 19201)
+-- TOC entry 271 (class 1259 OID 16803)
 -- Name: categorias_id_seq; Type: SEQUENCE; Schema: menu; Owner: postgres
 --
 
@@ -1382,8 +1818,8 @@ CREATE SEQUENCE menu.categorias_id_seq
 ALTER SEQUENCE menu.categorias_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4450 (class 0 OID 0)
--- Dependencies: 298
+-- TOC entry 4581 (class 0 OID 0)
+-- Dependencies: 271
 -- Name: categorias_id_seq; Type: SEQUENCE OWNED BY; Schema: menu; Owner: postgres
 --
 
@@ -1391,7 +1827,7 @@ ALTER SEQUENCE menu.categorias_id_seq OWNED BY menu.categorias.id;
 
 
 --
--- TOC entry 303 (class 1259 OID 19239)
+-- TOC entry 272 (class 1259 OID 16804)
 -- Name: receta_ingredientes; Type: TABLE; Schema: menu; Owner: postgres
 --
 
@@ -1407,7 +1843,7 @@ CREATE TABLE menu.receta_ingredientes (
 ALTER TABLE menu.receta_ingredientes OWNER TO postgres;
 
 --
--- TOC entry 302 (class 1259 OID 19238)
+-- TOC entry 273 (class 1259 OID 16812)
 -- Name: receta_ingredientes_id_seq; Type: SEQUENCE; Schema: menu; Owner: postgres
 --
 
@@ -1423,8 +1859,8 @@ CREATE SEQUENCE menu.receta_ingredientes_id_seq
 ALTER SEQUENCE menu.receta_ingredientes_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4451 (class 0 OID 0)
--- Dependencies: 302
+-- TOC entry 4582 (class 0 OID 0)
+-- Dependencies: 273
 -- Name: receta_ingredientes_id_seq; Type: SEQUENCE OWNED BY; Schema: menu; Owner: postgres
 --
 
@@ -1432,7 +1868,7 @@ ALTER SEQUENCE menu.receta_ingredientes_id_seq OWNED BY menu.receta_ingredientes
 
 
 --
--- TOC entry 301 (class 1259 OID 19217)
+-- TOC entry 274 (class 1259 OID 16813)
 -- Name: recetas; Type: TABLE; Schema: menu; Owner: postgres
 --
 
@@ -1456,8 +1892,8 @@ CREATE TABLE menu.recetas (
 ALTER TABLE menu.recetas OWNER TO postgres;
 
 --
--- TOC entry 4452 (class 0 OID 0)
--- Dependencies: 301
+-- TOC entry 4583 (class 0 OID 0)
+-- Dependencies: 274
 -- Name: TABLE recetas; Type: COMMENT; Schema: menu; Owner: postgres
 --
 
@@ -1465,7 +1901,7 @@ COMMENT ON TABLE menu.recetas IS 'Recetas estándar (BOM - Bill of Materials) de
 
 
 --
--- TOC entry 300 (class 1259 OID 19216)
+-- TOC entry 275 (class 1259 OID 16828)
 -- Name: recetas_id_seq; Type: SEQUENCE; Schema: menu; Owner: postgres
 --
 
@@ -1481,8 +1917,8 @@ CREATE SEQUENCE menu.recetas_id_seq
 ALTER SEQUENCE menu.recetas_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4453 (class 0 OID 0)
--- Dependencies: 300
+-- TOC entry 4584 (class 0 OID 0)
+-- Dependencies: 275
 -- Name: recetas_id_seq; Type: SEQUENCE OWNED BY; Schema: menu; Owner: postgres
 --
 
@@ -1490,7 +1926,43 @@ ALTER SEQUENCE menu.recetas_id_seq OWNED BY menu.recetas.id;
 
 
 --
--- TOC entry 315 (class 1259 OID 19349)
+-- TOC entry 351 (class 1259 OID 18204)
+-- Name: v_rentabilidad_platos; Type: VIEW; Schema: menu; Owner: postgres
+--
+
+CREATE VIEW menu.v_rentabilidad_platos AS
+ SELECT restaurante_id,
+    id AS receta_id,
+    nombre AS plato,
+    costo_produccion,
+    precio_sugerido,
+    precio_venta,
+        CASE
+            WHEN (precio_venta > (0)::numeric) THEN round((((precio_venta - costo_produccion) / precio_venta) * (100)::numeric), 2)
+            ELSE (0)::numeric
+        END AS margen_real_porcentaje,
+        CASE
+            WHEN (precio_venta > (0)::numeric) THEN (precio_venta - costo_produccion)
+            ELSE (0)::numeric
+        END AS utilidad_por_plato
+   FROM menu.recetas r
+  WHERE (activo = true);
+
+
+ALTER VIEW menu.v_rentabilidad_platos OWNER TO postgres;
+
+--
+-- TOC entry 4585 (class 0 OID 0)
+-- Dependencies: 351
+-- Name: VIEW v_rentabilidad_platos; Type: COMMENT; Schema: menu; Owner: postgres
+--
+
+COMMENT ON VIEW menu.v_rentabilidad_platos IS 'Reporte de rentabilidad por plato. Compara costo_produccion (CPP de ingredientes * cantidades)
+vs precio_venta. El campo costo_produccion debe actualizarse cuando cambia el CPP de un ingrediente.';
+
+
+--
+-- TOC entry 276 (class 1259 OID 16829)
 -- Name: facturas; Type: TABLE; Schema: operaciones; Owner: postgres
 --
 
@@ -1519,7 +1991,7 @@ CREATE TABLE operaciones.facturas (
 ALTER TABLE operaciones.facturas OWNER TO postgres;
 
 --
--- TOC entry 314 (class 1259 OID 19348)
+-- TOC entry 277 (class 1259 OID 16847)
 -- Name: facturas_id_seq; Type: SEQUENCE; Schema: operaciones; Owner: postgres
 --
 
@@ -1535,8 +2007,8 @@ CREATE SEQUENCE operaciones.facturas_id_seq
 ALTER SEQUENCE operaciones.facturas_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4454 (class 0 OID 0)
--- Dependencies: 314
+-- TOC entry 4586 (class 0 OID 0)
+-- Dependencies: 277
 -- Name: facturas_id_seq; Type: SEQUENCE OWNED BY; Schema: operaciones; Owner: postgres
 --
 
@@ -1544,7 +2016,7 @@ ALTER SEQUENCE operaciones.facturas_id_seq OWNED BY operaciones.facturas.id;
 
 
 --
--- TOC entry 305 (class 1259 OID 19255)
+-- TOC entry 278 (class 1259 OID 16848)
 -- Name: mesas; Type: TABLE; Schema: operaciones; Owner: postgres
 --
 
@@ -1563,7 +2035,7 @@ CREATE TABLE operaciones.mesas (
 ALTER TABLE operaciones.mesas OWNER TO postgres;
 
 --
--- TOC entry 304 (class 1259 OID 19254)
+-- TOC entry 279 (class 1259 OID 16858)
 -- Name: mesas_id_seq; Type: SEQUENCE; Schema: operaciones; Owner: postgres
 --
 
@@ -1579,8 +2051,8 @@ CREATE SEQUENCE operaciones.mesas_id_seq
 ALTER SEQUENCE operaciones.mesas_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4455 (class 0 OID 0)
--- Dependencies: 304
+-- TOC entry 4587 (class 0 OID 0)
+-- Dependencies: 279
 -- Name: mesas_id_seq; Type: SEQUENCE OWNED BY; Schema: operaciones; Owner: postgres
 --
 
@@ -1588,7 +2060,7 @@ ALTER SEQUENCE operaciones.mesas_id_seq OWNED BY operaciones.mesas.id;
 
 
 --
--- TOC entry 307 (class 1259 OID 19271)
+-- TOC entry 280 (class 1259 OID 16859)
 -- Name: meseros; Type: TABLE; Schema: operaciones; Owner: postgres
 --
 
@@ -1605,7 +2077,7 @@ CREATE TABLE operaciones.meseros (
 ALTER TABLE operaciones.meseros OWNER TO postgres;
 
 --
--- TOC entry 306 (class 1259 OID 19270)
+-- TOC entry 281 (class 1259 OID 16868)
 -- Name: meseros_id_seq; Type: SEQUENCE; Schema: operaciones; Owner: postgres
 --
 
@@ -1621,8 +2093,8 @@ CREATE SEQUENCE operaciones.meseros_id_seq
 ALTER SEQUENCE operaciones.meseros_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4456 (class 0 OID 0)
--- Dependencies: 306
+-- TOC entry 4588 (class 0 OID 0)
+-- Dependencies: 281
 -- Name: meseros_id_seq; Type: SEQUENCE OWNED BY; Schema: operaciones; Owner: postgres
 --
 
@@ -1630,7 +2102,7 @@ ALTER SEQUENCE operaciones.meseros_id_seq OWNED BY operaciones.meseros.id;
 
 
 --
--- TOC entry 313 (class 1259 OID 19331)
+-- TOC entry 282 (class 1259 OID 16869)
 -- Name: pedido_detalle; Type: TABLE; Schema: operaciones; Owner: postgres
 --
 
@@ -1649,8 +2121,8 @@ CREATE TABLE operaciones.pedido_detalle (
 ALTER TABLE operaciones.pedido_detalle OWNER TO postgres;
 
 --
--- TOC entry 4457 (class 0 OID 0)
--- Dependencies: 313
+-- TOC entry 4589 (class 0 OID 0)
+-- Dependencies: 282
 -- Name: COLUMN pedido_detalle.notas; Type: COMMENT; Schema: operaciones; Owner: postgres
 --
 
@@ -1658,7 +2130,7 @@ COMMENT ON COLUMN operaciones.pedido_detalle.notas IS 'Instrucciones para cocina
 
 
 --
--- TOC entry 312 (class 1259 OID 19330)
+-- TOC entry 283 (class 1259 OID 16881)
 -- Name: pedido_detalle_id_seq; Type: SEQUENCE; Schema: operaciones; Owner: postgres
 --
 
@@ -1674,8 +2146,8 @@ CREATE SEQUENCE operaciones.pedido_detalle_id_seq
 ALTER SEQUENCE operaciones.pedido_detalle_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4458 (class 0 OID 0)
--- Dependencies: 312
+-- TOC entry 4590 (class 0 OID 0)
+-- Dependencies: 283
 -- Name: pedido_detalle_id_seq; Type: SEQUENCE OWNED BY; Schema: operaciones; Owner: postgres
 --
 
@@ -1683,7 +2155,7 @@ ALTER SEQUENCE operaciones.pedido_detalle_id_seq OWNED BY operaciones.pedido_det
 
 
 --
--- TOC entry 311 (class 1259 OID 19304)
+-- TOC entry 284 (class 1259 OID 16882)
 -- Name: pedidos; Type: TABLE; Schema: operaciones; Owner: postgres
 --
 
@@ -1709,7 +2181,7 @@ CREATE TABLE operaciones.pedidos (
 ALTER TABLE operaciones.pedidos OWNER TO postgres;
 
 --
--- TOC entry 310 (class 1259 OID 19303)
+-- TOC entry 285 (class 1259 OID 16898)
 -- Name: pedidos_id_seq; Type: SEQUENCE; Schema: operaciones; Owner: postgres
 --
 
@@ -1725,8 +2197,8 @@ CREATE SEQUENCE operaciones.pedidos_id_seq
 ALTER SEQUENCE operaciones.pedidos_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4459 (class 0 OID 0)
--- Dependencies: 310
+-- TOC entry 4591 (class 0 OID 0)
+-- Dependencies: 285
 -- Name: pedidos_id_seq; Type: SEQUENCE OWNED BY; Schema: operaciones; Owner: postgres
 --
 
@@ -1734,7 +2206,7 @@ ALTER SEQUENCE operaciones.pedidos_id_seq OWNED BY operaciones.pedidos.id;
 
 
 --
--- TOC entry 309 (class 1259 OID 19285)
+-- TOC entry 286 (class 1259 OID 16899)
 -- Name: reservas; Type: TABLE; Schema: operaciones; Owner: postgres
 --
 
@@ -1756,7 +2228,7 @@ CREATE TABLE operaciones.reservas (
 ALTER TABLE operaciones.reservas OWNER TO postgres;
 
 --
--- TOC entry 308 (class 1259 OID 19284)
+-- TOC entry 287 (class 1259 OID 16912)
 -- Name: reservas_id_seq; Type: SEQUENCE; Schema: operaciones; Owner: postgres
 --
 
@@ -1772,8 +2244,8 @@ CREATE SEQUENCE operaciones.reservas_id_seq
 ALTER SEQUENCE operaciones.reservas_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4460 (class 0 OID 0)
--- Dependencies: 308
+-- TOC entry 4592 (class 0 OID 0)
+-- Dependencies: 287
 -- Name: reservas_id_seq; Type: SEQUENCE OWNED BY; Schema: operaciones; Owner: postgres
 --
 
@@ -1781,7 +2253,110 @@ ALTER SEQUENCE operaciones.reservas_id_seq OWNED BY operaciones.reservas.id;
 
 
 --
--- TOC entry 271 (class 1259 OID 16770)
+-- TOC entry 339 (class 1259 OID 18058)
+-- Name: transacciones_pago; Type: TABLE; Schema: operaciones; Owner: postgres
+--
+
+CREATE TABLE operaciones.transacciones_pago (
+    id integer NOT NULL,
+    pedido_id integer NOT NULL,
+    metodo public.metodo_pago_enum NOT NULL,
+    monto numeric(12,2) NOT NULL,
+    referencia character varying(100),
+    tasa_cambio numeric(12,4) DEFAULT 1,
+    usuario_id integer,
+    restaurante_id integer NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT transacciones_pago_monto_check CHECK ((monto > (0)::numeric))
+);
+
+
+ALTER TABLE operaciones.transacciones_pago OWNER TO postgres;
+
+--
+-- TOC entry 4593 (class 0 OID 0)
+-- Dependencies: 339
+-- Name: TABLE transacciones_pago; Type: COMMENT; Schema: operaciones; Owner: postgres
+--
+
+COMMENT ON TABLE operaciones.transacciones_pago IS 'Registro de método(s) de pago por pedido. Un pedido puede tener múltiples filas (pago mixto).
+Permite arqueo por método: SUM(monto) WHERE metodo = ''efectivo'' AND caja_id = X';
+
+
+--
+-- TOC entry 4594 (class 0 OID 0)
+-- Dependencies: 339
+-- Name: COLUMN transacciones_pago.referencia; Type: COMMENT; Schema: operaciones; Owner: postgres
+--
+
+COMMENT ON COLUMN operaciones.transacciones_pago.referencia IS 'Número de confirmación (pago móvil), últimos 4 dígitos (tarjeta) o identificador libre.';
+
+
+--
+-- TOC entry 4595 (class 0 OID 0)
+-- Dependencies: 339
+-- Name: COLUMN transacciones_pago.tasa_cambio; Type: COMMENT; Schema: operaciones; Owner: postgres
+--
+
+COMMENT ON COLUMN operaciones.transacciones_pago.tasa_cambio IS 'Aplica cuando metodo=divisa. Registra la tasa Bs/USD vigente al momento de la transacción para reportes contables correctos.';
+
+
+--
+-- TOC entry 338 (class 1259 OID 18057)
+-- Name: transacciones_pago_id_seq; Type: SEQUENCE; Schema: operaciones; Owner: postgres
+--
+
+CREATE SEQUENCE operaciones.transacciones_pago_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE operaciones.transacciones_pago_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4596 (class 0 OID 0)
+-- Dependencies: 338
+-- Name: transacciones_pago_id_seq; Type: SEQUENCE OWNED BY; Schema: operaciones; Owner: postgres
+--
+
+ALTER SEQUENCE operaciones.transacciones_pago_id_seq OWNED BY operaciones.transacciones_pago.id;
+
+
+--
+-- TOC entry 350 (class 1259 OID 18200)
+-- Name: v_arqueo_caja; Type: VIEW; Schema: operaciones; Owner: postgres
+--
+
+CREATE VIEW operaciones.v_arqueo_caja AS
+ SELECT restaurante_id,
+    date(created_at) AS fecha,
+    metodo AS metodo_pago,
+    count(id) AS num_transacciones,
+    sum(monto) AS total_recaudado
+   FROM operaciones.transacciones_pago tp
+  GROUP BY restaurante_id, (date(created_at)), metodo
+  ORDER BY restaurante_id, (date(created_at)), metodo;
+
+
+ALTER VIEW operaciones.v_arqueo_caja OWNER TO postgres;
+
+--
+-- TOC entry 4597 (class 0 OID 0)
+-- Dependencies: 350
+-- Name: VIEW v_arqueo_caja; Type: COMMENT; Schema: operaciones; Owner: postgres
+--
+
+COMMENT ON VIEW operaciones.v_arqueo_caja IS 'Resumen del arqueo de caja por día y método de pago.
+Filtra por restaurante_id y fecha para el cierre diario.
+Muestra cuánto se recaudó en efectivo, pago_movil, tarjeta y divisa por separado.';
+
+
+--
+-- TOC entry 288 (class 1259 OID 16913)
 -- Name: banco; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1798,7 +2373,7 @@ CREATE TABLE public.banco (
 ALTER TABLE public.banco OWNER TO postgres;
 
 --
--- TOC entry 270 (class 1259 OID 16769)
+-- TOC entry 289 (class 1259 OID 16922)
 -- Name: banco_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -1814,8 +2389,8 @@ CREATE SEQUENCE public.banco_id_seq
 ALTER SEQUENCE public.banco_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4461 (class 0 OID 0)
--- Dependencies: 270
+-- TOC entry 4598 (class 0 OID 0)
+-- Dependencies: 289
 -- Name: banco_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -1823,7 +2398,7 @@ ALTER SEQUENCE public.banco_id_seq OWNED BY public.banco.id;
 
 
 --
--- TOC entry 273 (class 1259 OID 16784)
+-- TOC entry 290 (class 1259 OID 16923)
 -- Name: banco_movimientos; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1843,8 +2418,8 @@ CREATE TABLE public.banco_movimientos (
 ALTER TABLE public.banco_movimientos OWNER TO postgres;
 
 --
--- TOC entry 4462 (class 0 OID 0)
--- Dependencies: 273
+-- TOC entry 4599 (class 0 OID 0)
+-- Dependencies: 290
 -- Name: TABLE banco_movimientos; Type: COMMENT; Schema: public; Owner: postgres
 --
 
@@ -1852,7 +2427,7 @@ COMMENT ON TABLE public.banco_movimientos IS 'Movimientos bancarios con trazabil
 
 
 --
--- TOC entry 272 (class 1259 OID 16783)
+-- TOC entry 291 (class 1259 OID 16934)
 -- Name: banco_movimientos_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -1868,8 +2443,8 @@ CREATE SEQUENCE public.banco_movimientos_id_seq
 ALTER SEQUENCE public.banco_movimientos_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4463 (class 0 OID 0)
--- Dependencies: 272
+-- TOC entry 4600 (class 0 OID 0)
+-- Dependencies: 291
 -- Name: banco_movimientos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -1877,7 +2452,7 @@ ALTER SEQUENCE public.banco_movimientos_id_seq OWNED BY public.banco_movimientos
 
 
 --
--- TOC entry 267 (class 1259 OID 16733)
+-- TOC entry 292 (class 1259 OID 16935)
 -- Name: caja; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1897,7 +2472,7 @@ CREATE TABLE public.caja (
 ALTER TABLE public.caja OWNER TO postgres;
 
 --
--- TOC entry 266 (class 1259 OID 16732)
+-- TOC entry 293 (class 1259 OID 16945)
 -- Name: caja_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -1913,8 +2488,8 @@ CREATE SEQUENCE public.caja_id_seq
 ALTER SEQUENCE public.caja_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4464 (class 0 OID 0)
--- Dependencies: 266
+-- TOC entry 4601 (class 0 OID 0)
+-- Dependencies: 293
 -- Name: caja_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -1922,7 +2497,7 @@ ALTER SEQUENCE public.caja_id_seq OWNED BY public.caja.id;
 
 
 --
--- TOC entry 269 (class 1259 OID 16750)
+-- TOC entry 294 (class 1259 OID 16946)
 -- Name: caja_movimientos; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1942,8 +2517,8 @@ CREATE TABLE public.caja_movimientos (
 ALTER TABLE public.caja_movimientos OWNER TO postgres;
 
 --
--- TOC entry 4465 (class 0 OID 0)
--- Dependencies: 269
+-- TOC entry 4602 (class 0 OID 0)
+-- Dependencies: 294
 -- Name: TABLE caja_movimientos; Type: COMMENT; Schema: public; Owner: postgres
 --
 
@@ -1951,7 +2526,7 @@ COMMENT ON TABLE public.caja_movimientos IS 'Movimientos de efectivo con trazabi
 
 
 --
--- TOC entry 268 (class 1259 OID 16749)
+-- TOC entry 295 (class 1259 OID 16957)
 -- Name: caja_movimientos_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -1967,8 +2542,8 @@ CREATE SEQUENCE public.caja_movimientos_id_seq
 ALTER SEQUENCE public.caja_movimientos_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4466 (class 0 OID 0)
--- Dependencies: 268
+-- TOC entry 4603 (class 0 OID 0)
+-- Dependencies: 295
 -- Name: caja_movimientos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -1976,7 +2551,7 @@ ALTER SEQUENCE public.caja_movimientos_id_seq OWNED BY public.caja_movimientos.i
 
 
 --
--- TOC entry 239 (class 1259 OID 16516)
+-- TOC entry 296 (class 1259 OID 16958)
 -- Name: categoria_egresos; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1990,7 +2565,7 @@ CREATE TABLE public.categoria_egresos (
 ALTER TABLE public.categoria_egresos OWNER TO postgres;
 
 --
--- TOC entry 238 (class 1259 OID 16515)
+-- TOC entry 297 (class 1259 OID 16964)
 -- Name: categoria_egresos_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -2006,8 +2581,8 @@ CREATE SEQUENCE public.categoria_egresos_id_seq
 ALTER SEQUENCE public.categoria_egresos_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4467 (class 0 OID 0)
--- Dependencies: 238
+-- TOC entry 4604 (class 0 OID 0)
+-- Dependencies: 297
 -- Name: categoria_egresos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -2015,7 +2590,7 @@ ALTER SEQUENCE public.categoria_egresos_id_seq OWNED BY public.categoria_egresos
 
 
 --
--- TOC entry 249 (class 1259 OID 16585)
+-- TOC entry 298 (class 1259 OID 16965)
 -- Name: compra_detalle; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2033,7 +2608,7 @@ CREATE TABLE public.compra_detalle (
 ALTER TABLE public.compra_detalle OWNER TO postgres;
 
 --
--- TOC entry 248 (class 1259 OID 16584)
+-- TOC entry 299 (class 1259 OID 16975)
 -- Name: compra_detalle_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -2049,8 +2624,8 @@ CREATE SEQUENCE public.compra_detalle_id_seq
 ALTER SEQUENCE public.compra_detalle_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4468 (class 0 OID 0)
--- Dependencies: 248
+-- TOC entry 4605 (class 0 OID 0)
+-- Dependencies: 299
 -- Name: compra_detalle_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -2058,7 +2633,7 @@ ALTER SEQUENCE public.compra_detalle_id_seq OWNED BY public.compra_detalle.id;
 
 
 --
--- TOC entry 247 (class 1259 OID 16572)
+-- TOC entry 300 (class 1259 OID 16976)
 -- Name: compras; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2075,7 +2650,7 @@ CREATE TABLE public.compras (
 ALTER TABLE public.compras OWNER TO postgres;
 
 --
--- TOC entry 246 (class 1259 OID 16571)
+-- TOC entry 301 (class 1259 OID 16983)
 -- Name: compras_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -2091,8 +2666,8 @@ CREATE SEQUENCE public.compras_id_seq
 ALTER SEQUENCE public.compras_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4469 (class 0 OID 0)
--- Dependencies: 246
+-- TOC entry 4606 (class 0 OID 0)
+-- Dependencies: 301
 -- Name: compras_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -2100,7 +2675,7 @@ ALTER SEQUENCE public.compras_id_seq OWNED BY public.compras.id;
 
 
 --
--- TOC entry 265 (class 1259 OID 16716)
+-- TOC entry 302 (class 1259 OID 16984)
 -- Name: egresos; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2118,7 +2693,7 @@ CREATE TABLE public.egresos (
 ALTER TABLE public.egresos OWNER TO postgres;
 
 --
--- TOC entry 264 (class 1259 OID 16715)
+-- TOC entry 303 (class 1259 OID 16995)
 -- Name: egresos_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -2134,8 +2709,8 @@ CREATE SEQUENCE public.egresos_id_seq
 ALTER SEQUENCE public.egresos_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4470 (class 0 OID 0)
--- Dependencies: 264
+-- TOC entry 4607 (class 0 OID 0)
+-- Dependencies: 303
 -- Name: egresos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -2143,7 +2718,7 @@ ALTER SEQUENCE public.egresos_id_seq OWNED BY public.egresos.id;
 
 
 --
--- TOC entry 263 (class 1259 OID 16696)
+-- TOC entry 304 (class 1259 OID 16996)
 -- Name: facturas; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2162,7 +2737,7 @@ CREATE TABLE public.facturas (
 ALTER TABLE public.facturas OWNER TO postgres;
 
 --
--- TOC entry 262 (class 1259 OID 16695)
+-- TOC entry 305 (class 1259 OID 17007)
 -- Name: facturas_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -2178,8 +2753,8 @@ CREATE SEQUENCE public.facturas_id_seq
 ALTER SEQUENCE public.facturas_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4471 (class 0 OID 0)
--- Dependencies: 262
+-- TOC entry 4608 (class 0 OID 0)
+-- Dependencies: 305
 -- Name: facturas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -2187,7 +2762,7 @@ ALTER SEQUENCE public.facturas_id_seq OWNED BY public.facturas.id;
 
 
 --
--- TOC entry 245 (class 1259 OID 16556)
+-- TOC entry 306 (class 1259 OID 17008)
 -- Name: ingredientes; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2205,8 +2780,8 @@ CREATE TABLE public.ingredientes (
 ALTER TABLE public.ingredientes OWNER TO postgres;
 
 --
--- TOC entry 4472 (class 0 OID 0)
--- Dependencies: 245
+-- TOC entry 4609 (class 0 OID 0)
+-- Dependencies: 306
 -- Name: TABLE ingredientes; Type: COMMENT; Schema: public; Owner: postgres
 --
 
@@ -2214,7 +2789,7 @@ COMMENT ON TABLE public.ingredientes IS 'Inventario de materias primas con costo
 
 
 --
--- TOC entry 244 (class 1259 OID 16555)
+-- TOC entry 307 (class 1259 OID 17018)
 -- Name: ingredientes_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -2230,8 +2805,8 @@ CREATE SEQUENCE public.ingredientes_id_seq
 ALTER SEQUENCE public.ingredientes_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4473 (class 0 OID 0)
--- Dependencies: 244
+-- TOC entry 4610 (class 0 OID 0)
+-- Dependencies: 307
 -- Name: ingredientes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -2239,7 +2814,7 @@ ALTER SEQUENCE public.ingredientes_id_seq OWNED BY public.ingredientes.id;
 
 
 --
--- TOC entry 255 (class 1259 OID 16636)
+-- TOC entry 308 (class 1259 OID 17019)
 -- Name: mesas; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2255,7 +2830,7 @@ CREATE TABLE public.mesas (
 ALTER TABLE public.mesas OWNER TO postgres;
 
 --
--- TOC entry 254 (class 1259 OID 16635)
+-- TOC entry 309 (class 1259 OID 17026)
 -- Name: mesas_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -2271,8 +2846,8 @@ CREATE SEQUENCE public.mesas_id_seq
 ALTER SEQUENCE public.mesas_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4474 (class 0 OID 0)
--- Dependencies: 254
+-- TOC entry 4611 (class 0 OID 0)
+-- Dependencies: 309
 -- Name: mesas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -2280,7 +2855,7 @@ ALTER SEQUENCE public.mesas_id_seq OWNED BY public.mesas.id;
 
 
 --
--- TOC entry 257 (class 1259 OID 16650)
+-- TOC entry 310 (class 1259 OID 17027)
 -- Name: meseros; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2295,7 +2870,7 @@ CREATE TABLE public.meseros (
 ALTER TABLE public.meseros OWNER TO postgres;
 
 --
--- TOC entry 256 (class 1259 OID 16649)
+-- TOC entry 311 (class 1259 OID 17034)
 -- Name: meseros_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -2311,8 +2886,8 @@ CREATE SEQUENCE public.meseros_id_seq
 ALTER SEQUENCE public.meseros_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4475 (class 0 OID 0)
--- Dependencies: 256
+-- TOC entry 4612 (class 0 OID 0)
+-- Dependencies: 311
 -- Name: meseros_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -2320,7 +2895,7 @@ ALTER SEQUENCE public.meseros_id_seq OWNED BY public.meseros.id;
 
 
 --
--- TOC entry 233 (class 1259 OID 16478)
+-- TOC entry 312 (class 1259 OID 17035)
 -- Name: metodos_pago; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2334,7 +2909,7 @@ CREATE TABLE public.metodos_pago (
 ALTER TABLE public.metodos_pago OWNER TO postgres;
 
 --
--- TOC entry 232 (class 1259 OID 16477)
+-- TOC entry 313 (class 1259 OID 17041)
 -- Name: metodos_pago_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -2350,8 +2925,8 @@ CREATE SEQUENCE public.metodos_pago_id_seq
 ALTER SEQUENCE public.metodos_pago_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4476 (class 0 OID 0)
--- Dependencies: 232
+-- TOC entry 4613 (class 0 OID 0)
+-- Dependencies: 313
 -- Name: metodos_pago_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -2359,7 +2934,7 @@ ALTER SEQUENCE public.metodos_pago_id_seq OWNED BY public.metodos_pago.id;
 
 
 --
--- TOC entry 336 (class 1259 OID 19958)
+-- TOC entry 314 (class 1259 OID 17042)
 -- Name: order_items; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2378,7 +2953,7 @@ CREATE TABLE public.order_items (
 ALTER TABLE public.order_items OWNER TO postgres;
 
 --
--- TOC entry 337 (class 1259 OID 19983)
+-- TOC entry 315 (class 1259 OID 17054)
 -- Name: orders; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2400,7 +2975,7 @@ CREATE TABLE public.orders (
 ALTER TABLE public.orders OWNER TO postgres;
 
 --
--- TOC entry 261 (class 1259 OID 16680)
+-- TOC entry 316 (class 1259 OID 17071)
 -- Name: pedido_detalle; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2418,7 +2993,7 @@ CREATE TABLE public.pedido_detalle (
 ALTER TABLE public.pedido_detalle OWNER TO postgres;
 
 --
--- TOC entry 260 (class 1259 OID 16679)
+-- TOC entry 317 (class 1259 OID 17081)
 -- Name: pedido_detalle_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -2434,8 +3009,8 @@ CREATE SEQUENCE public.pedido_detalle_id_seq
 ALTER SEQUENCE public.pedido_detalle_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4477 (class 0 OID 0)
--- Dependencies: 260
+-- TOC entry 4614 (class 0 OID 0)
+-- Dependencies: 317
 -- Name: pedido_detalle_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -2443,7 +3018,7 @@ ALTER SEQUENCE public.pedido_detalle_id_seq OWNED BY public.pedido_detalle.id;
 
 
 --
--- TOC entry 259 (class 1259 OID 16662)
+-- TOC entry 318 (class 1259 OID 17082)
 -- Name: pedidos; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2462,7 +3037,7 @@ CREATE TABLE public.pedidos (
 ALTER TABLE public.pedidos OWNER TO postgres;
 
 --
--- TOC entry 258 (class 1259 OID 16661)
+-- TOC entry 319 (class 1259 OID 17090)
 -- Name: pedidos_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -2478,8 +3053,8 @@ CREATE SEQUENCE public.pedidos_id_seq
 ALTER SEQUENCE public.pedidos_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4478 (class 0 OID 0)
--- Dependencies: 258
+-- TOC entry 4615 (class 0 OID 0)
+-- Dependencies: 319
 -- Name: pedidos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -2487,7 +3062,7 @@ ALTER SEQUENCE public.pedidos_id_seq OWNED BY public.pedidos.id;
 
 
 --
--- TOC entry 241 (class 1259 OID 16526)
+-- TOC entry 320 (class 1259 OID 17091)
 -- Name: proveedores; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2511,7 +3086,7 @@ CREATE TABLE public.proveedores (
 ALTER TABLE public.proveedores OWNER TO postgres;
 
 --
--- TOC entry 240 (class 1259 OID 16525)
+-- TOC entry 321 (class 1259 OID 17103)
 -- Name: proveedores_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -2527,8 +3102,8 @@ CREATE SEQUENCE public.proveedores_id_seq
 ALTER SEQUENCE public.proveedores_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4479 (class 0 OID 0)
--- Dependencies: 240
+-- TOC entry 4616 (class 0 OID 0)
+-- Dependencies: 321
 -- Name: proveedores_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -2536,7 +3111,7 @@ ALTER SEQUENCE public.proveedores_id_seq OWNED BY public.proveedores.id;
 
 
 --
--- TOC entry 253 (class 1259 OID 16620)
+-- TOC entry 322 (class 1259 OID 17104)
 -- Name: receta_ingredientes; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2552,7 +3127,7 @@ CREATE TABLE public.receta_ingredientes (
 ALTER TABLE public.receta_ingredientes OWNER TO postgres;
 
 --
--- TOC entry 252 (class 1259 OID 16619)
+-- TOC entry 323 (class 1259 OID 17112)
 -- Name: receta_ingredientes_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -2568,8 +3143,8 @@ CREATE SEQUENCE public.receta_ingredientes_id_seq
 ALTER SEQUENCE public.receta_ingredientes_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4480 (class 0 OID 0)
--- Dependencies: 252
+-- TOC entry 4617 (class 0 OID 0)
+-- Dependencies: 323
 -- Name: receta_ingredientes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -2577,7 +3152,7 @@ ALTER SEQUENCE public.receta_ingredientes_id_seq OWNED BY public.receta_ingredie
 
 
 --
--- TOC entry 251 (class 1259 OID 16601)
+-- TOC entry 324 (class 1259 OID 17113)
 -- Name: recetas; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2597,8 +3172,8 @@ CREATE TABLE public.recetas (
 ALTER TABLE public.recetas OWNER TO postgres;
 
 --
--- TOC entry 4481 (class 0 OID 0)
--- Dependencies: 251
+-- TOC entry 4618 (class 0 OID 0)
+-- Dependencies: 324
 -- Name: TABLE recetas; Type: COMMENT; Schema: public; Owner: postgres
 --
 
@@ -2606,7 +3181,7 @@ COMMENT ON TABLE public.recetas IS 'Recetas estándar (BOM - Bill of Materials)'
 
 
 --
--- TOC entry 250 (class 1259 OID 16600)
+-- TOC entry 325 (class 1259 OID 17126)
 -- Name: recetas_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -2622,8 +3197,8 @@ CREATE SEQUENCE public.recetas_id_seq
 ALTER SEQUENCE public.recetas_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4482 (class 0 OID 0)
--- Dependencies: 250
+-- TOC entry 4619 (class 0 OID 0)
+-- Dependencies: 325
 -- Name: recetas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -2631,7 +3206,7 @@ ALTER SEQUENCE public.recetas_id_seq OWNED BY public.recetas.id;
 
 
 --
--- TOC entry 229 (class 1259 OID 16456)
+-- TOC entry 326 (class 1259 OID 17127)
 -- Name: restaurante; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2647,8 +3222,8 @@ CREATE TABLE public.restaurante (
 ALTER TABLE public.restaurante OWNER TO postgres;
 
 --
--- TOC entry 4483 (class 0 OID 0)
--- Dependencies: 229
+-- TOC entry 4620 (class 0 OID 0)
+-- Dependencies: 326
 -- Name: TABLE restaurante; Type: COMMENT; Schema: public; Owner: postgres
 --
 
@@ -2656,7 +3231,7 @@ COMMENT ON TABLE public.restaurante IS 'Tabla base para multi-tenencia';
 
 
 --
--- TOC entry 228 (class 1259 OID 16455)
+-- TOC entry 327 (class 1259 OID 17135)
 -- Name: restaurante_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -2672,8 +3247,8 @@ CREATE SEQUENCE public.restaurante_id_seq
 ALTER SEQUENCE public.restaurante_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4484 (class 0 OID 0)
--- Dependencies: 228
+-- TOC entry 4621 (class 0 OID 0)
+-- Dependencies: 327
 -- Name: restaurante_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -2681,7 +3256,7 @@ ALTER SEQUENCE public.restaurante_id_seq OWNED BY public.restaurante.id;
 
 
 --
--- TOC entry 235 (class 1259 OID 16488)
+-- TOC entry 328 (class 1259 OID 17136)
 -- Name: roles; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2695,7 +3270,7 @@ CREATE TABLE public.roles (
 ALTER TABLE public.roles OWNER TO postgres;
 
 --
--- TOC entry 234 (class 1259 OID 16487)
+-- TOC entry 329 (class 1259 OID 17142)
 -- Name: roles_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -2711,8 +3286,8 @@ CREATE SEQUENCE public.roles_id_seq
 ALTER SEQUENCE public.roles_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4485 (class 0 OID 0)
--- Dependencies: 234
+-- TOC entry 4622 (class 0 OID 0)
+-- Dependencies: 329
 -- Name: roles_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -2720,7 +3295,7 @@ ALTER SEQUENCE public.roles_id_seq OWNED BY public.roles.id;
 
 
 --
--- TOC entry 243 (class 1259 OID 16546)
+-- TOC entry 330 (class 1259 OID 17143)
 -- Name: unidad_compra; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2734,7 +3309,7 @@ CREATE TABLE public.unidad_compra (
 ALTER TABLE public.unidad_compra OWNER TO postgres;
 
 --
--- TOC entry 242 (class 1259 OID 16545)
+-- TOC entry 331 (class 1259 OID 17149)
 -- Name: unidad_compra_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -2750,8 +3325,8 @@ CREATE SEQUENCE public.unidad_compra_id_seq
 ALTER SEQUENCE public.unidad_compra_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4486 (class 0 OID 0)
--- Dependencies: 242
+-- TOC entry 4623 (class 0 OID 0)
+-- Dependencies: 331
 -- Name: unidad_compra_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -2759,7 +3334,7 @@ ALTER SEQUENCE public.unidad_compra_id_seq OWNED BY public.unidad_compra.id;
 
 
 --
--- TOC entry 231 (class 1259 OID 16468)
+-- TOC entry 332 (class 1259 OID 17150)
 -- Name: unidad_medida; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2773,7 +3348,7 @@ CREATE TABLE public.unidad_medida (
 ALTER TABLE public.unidad_medida OWNER TO postgres;
 
 --
--- TOC entry 230 (class 1259 OID 16467)
+-- TOC entry 333 (class 1259 OID 17156)
 -- Name: unidad_medida_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -2789,8 +3364,8 @@ CREATE SEQUENCE public.unidad_medida_id_seq
 ALTER SEQUENCE public.unidad_medida_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4487 (class 0 OID 0)
--- Dependencies: 230
+-- TOC entry 4624 (class 0 OID 0)
+-- Dependencies: 333
 -- Name: unidad_medida_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -2798,7 +3373,7 @@ ALTER SEQUENCE public.unidad_medida_id_seq OWNED BY public.unidad_medida.id;
 
 
 --
--- TOC entry 237 (class 1259 OID 16498)
+-- TOC entry 334 (class 1259 OID 17157)
 -- Name: usuarios; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -2816,7 +3391,7 @@ CREATE TABLE public.usuarios (
 ALTER TABLE public.usuarios OWNER TO postgres;
 
 --
--- TOC entry 236 (class 1259 OID 16497)
+-- TOC entry 335 (class 1259 OID 17167)
 -- Name: usuarios_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -2832,8 +3407,8 @@ CREATE SEQUENCE public.usuarios_id_seq
 ALTER SEQUENCE public.usuarios_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4488 (class 0 OID 0)
--- Dependencies: 236
+-- TOC entry 4625 (class 0 OID 0)
+-- Dependencies: 335
 -- Name: usuarios_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
@@ -2841,7 +3416,7 @@ ALTER SEQUENCE public.usuarios_id_seq OWNED BY public.usuarios.id;
 
 
 --
--- TOC entry 335 (class 1259 OID 19860)
+-- TOC entry 336 (class 1259 OID 17168)
 -- Name: order_items; Type: TABLE; Schema: sales; Owner: postgres
 --
 
@@ -2860,7 +3435,7 @@ CREATE TABLE sales.order_items (
 ALTER TABLE sales.order_items OWNER TO postgres;
 
 --
--- TOC entry 334 (class 1259 OID 19834)
+-- TOC entry 337 (class 1259 OID 17177)
 -- Name: orders; Type: TABLE; Schema: sales; Owner: postgres
 --
 
@@ -2882,7 +3457,23 @@ CREATE TABLE sales.orders (
 ALTER TABLE sales.orders OWNER TO postgres;
 
 --
--- TOC entry 3807 (class 2604 OID 20230)
+-- TOC entry 3899 (class 2604 OID 18162)
+-- Name: asiento_lineas id; Type: DEFAULT; Schema: contabilidad; Owner: postgres
+--
+
+ALTER TABLE ONLY contabilidad.asiento_lineas ALTER COLUMN id SET DEFAULT nextval('contabilidad.asiento_lineas_id_seq'::regclass);
+
+
+--
+-- TOC entry 3895 (class 2604 OID 18139)
+-- Name: asientos id; Type: DEFAULT; Schema: contabilidad; Owner: postgres
+--
+
+ALTER TABLE ONLY contabilidad.asientos ALTER COLUMN id SET DEFAULT nextval('contabilidad.asientos_id_seq'::regclass);
+
+
+--
+-- TOC entry 3713 (class 2604 OID 17968)
 -- Name: libro_diario id; Type: DEFAULT; Schema: contabilidad; Owner: postgres
 --
 
@@ -2890,7 +3481,15 @@ ALTER TABLE ONLY contabilidad.libro_diario ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
--- TOC entry 3716 (class 2604 OID 20231)
+-- TOC entry 3891 (class 2604 OID 18112)
+-- Name: plan_cuentas id; Type: DEFAULT; Schema: contabilidad; Owner: postgres
+--
+
+ALTER TABLE ONLY contabilidad.plan_cuentas ALTER COLUMN id SET DEFAULT nextval('contabilidad.plan_cuentas_id_seq'::regclass);
+
+
+--
+-- TOC entry 3717 (class 2604 OID 17969)
 -- Name: metodos_pago id; Type: DEFAULT; Schema: core; Owner: postgres
 --
 
@@ -2898,7 +3497,7 @@ ALTER TABLE ONLY core.metodos_pago ALTER COLUMN id SET DEFAULT nextval('core.met
 
 
 --
--- TOC entry 3706 (class 2604 OID 20232)
+-- TOC entry 3720 (class 2604 OID 17970)
 -- Name: restaurante id; Type: DEFAULT; Schema: core; Owner: postgres
 --
 
@@ -2906,7 +3505,7 @@ ALTER TABLE ONLY core.restaurante ALTER COLUMN id SET DEFAULT nextval('core.rest
 
 
 --
--- TOC entry 3719 (class 2604 OID 20233)
+-- TOC entry 3729 (class 2604 OID 17971)
 -- Name: roles id; Type: DEFAULT; Schema: core; Owner: postgres
 --
 
@@ -2914,7 +3513,7 @@ ALTER TABLE ONLY core.roles ALTER COLUMN id SET DEFAULT nextval('core.roles_id_s
 
 
 --
--- TOC entry 3814 (class 2604 OID 20234)
+-- TOC entry 3731 (class 2604 OID 17972)
 -- Name: tables id; Type: DEFAULT; Schema: core; Owner: postgres
 --
 
@@ -2922,7 +3521,7 @@ ALTER TABLE ONLY core.tables ALTER COLUMN id SET DEFAULT nextval('core.tables_id
 
 
 --
--- TOC entry 3715 (class 2604 OID 20235)
+-- TOC entry 3734 (class 2604 OID 17973)
 -- Name: unidad_medida id; Type: DEFAULT; Schema: core; Owner: postgres
 --
 
@@ -2930,7 +3529,7 @@ ALTER TABLE ONLY core.unidad_medida ALTER COLUMN id SET DEFAULT nextval('core.un
 
 
 --
--- TOC entry 3721 (class 2604 OID 20236)
+-- TOC entry 3735 (class 2604 OID 17974)
 -- Name: usuarios id; Type: DEFAULT; Schema: core; Owner: postgres
 --
 
@@ -2938,7 +3537,7 @@ ALTER TABLE ONLY core.usuarios ALTER COLUMN id SET DEFAULT nextval('core.usuario
 
 
 --
--- TOC entry 3800 (class 2604 OID 20237)
+-- TOC entry 3739 (class 2604 OID 17975)
 -- Name: banco id; Type: DEFAULT; Schema: finanzas; Owner: postgres
 --
 
@@ -2946,7 +3545,7 @@ ALTER TABLE ONLY finanzas.banco ALTER COLUMN id SET DEFAULT nextval('finanzas.ba
 
 
 --
--- TOC entry 3805 (class 2604 OID 20238)
+-- TOC entry 3744 (class 2604 OID 17976)
 -- Name: banco_movimientos id; Type: DEFAULT; Schema: finanzas; Owner: postgres
 --
 
@@ -2954,7 +3553,7 @@ ALTER TABLE ONLY finanzas.banco_movimientos ALTER COLUMN id SET DEFAULT nextval(
 
 
 --
--- TOC entry 3795 (class 2604 OID 20239)
+-- TOC entry 3746 (class 2604 OID 17977)
 -- Name: caja id; Type: DEFAULT; Schema: finanzas; Owner: postgres
 --
 
@@ -2962,7 +3561,7 @@ ALTER TABLE ONLY finanzas.caja ALTER COLUMN id SET DEFAULT nextval('finanzas.caj
 
 
 --
--- TOC entry 3798 (class 2604 OID 20240)
+-- TOC entry 3749 (class 2604 OID 17978)
 -- Name: caja_movimientos id; Type: DEFAULT; Schema: finanzas; Owner: postgres
 --
 
@@ -2970,7 +3569,7 @@ ALTER TABLE ONLY finanzas.caja_movimientos ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
--- TOC entry 3793 (class 2604 OID 20241)
+-- TOC entry 3751 (class 2604 OID 17979)
 -- Name: egresos id; Type: DEFAULT; Schema: finanzas; Owner: postgres
 --
 
@@ -2978,7 +3577,15 @@ ALTER TABLE ONLY finanzas.egresos ALTER COLUMN id SET DEFAULT nextval('finanzas.
 
 
 --
--- TOC entry 3725 (class 2604 OID 20242)
+-- TOC entry 3888 (class 2604 OID 18088)
+-- Name: gastos_operativos id; Type: DEFAULT; Schema: finanzas; Owner: postgres
+--
+
+ALTER TABLE ONLY finanzas.gastos_operativos ALTER COLUMN id SET DEFAULT nextval('finanzas.gastos_operativos_id_seq'::regclass);
+
+
+--
+-- TOC entry 3753 (class 2604 OID 17980)
 -- Name: categoria_egresos id; Type: DEFAULT; Schema: inventario; Owner: postgres
 --
 
@@ -2986,7 +3593,7 @@ ALTER TABLE ONLY inventario.categoria_egresos ALTER COLUMN id SET DEFAULT nextva
 
 
 --
--- TOC entry 3744 (class 2604 OID 20243)
+-- TOC entry 3755 (class 2604 OID 17981)
 -- Name: compra_detalle id; Type: DEFAULT; Schema: inventario; Owner: postgres
 --
 
@@ -2994,7 +3601,7 @@ ALTER TABLE ONLY inventario.compra_detalle ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
--- TOC entry 3740 (class 2604 OID 20244)
+-- TOC entry 3757 (class 2604 OID 17982)
 -- Name: compras id; Type: DEFAULT; Schema: inventario; Owner: postgres
 --
 
@@ -3002,7 +3609,7 @@ ALTER TABLE ONLY inventario.compras ALTER COLUMN id SET DEFAULT nextval('inventa
 
 
 --
--- TOC entry 3733 (class 2604 OID 20245)
+-- TOC entry 3761 (class 2604 OID 17983)
 -- Name: ingredientes id; Type: DEFAULT; Schema: inventario; Owner: postgres
 --
 
@@ -3010,7 +3617,7 @@ ALTER TABLE ONLY inventario.ingredientes ALTER COLUMN id SET DEFAULT nextval('in
 
 
 --
--- TOC entry 3746 (class 2604 OID 20246)
+-- TOC entry 3768 (class 2604 OID 17984)
 -- Name: mermas id; Type: DEFAULT; Schema: inventario; Owner: postgres
 --
 
@@ -3018,7 +3625,7 @@ ALTER TABLE ONLY inventario.mermas ALTER COLUMN id SET DEFAULT nextval('inventar
 
 
 --
--- TOC entry 3727 (class 2604 OID 20247)
+-- TOC entry 3771 (class 2604 OID 17985)
 -- Name: proveedores id; Type: DEFAULT; Schema: inventario; Owner: postgres
 --
 
@@ -3026,7 +3633,7 @@ ALTER TABLE ONLY inventario.proveedores ALTER COLUMN id SET DEFAULT nextval('inv
 
 
 --
--- TOC entry 3731 (class 2604 OID 20248)
+-- TOC entry 3775 (class 2604 OID 17986)
 -- Name: unidad_compra id; Type: DEFAULT; Schema: inventario; Owner: postgres
 --
 
@@ -3034,7 +3641,7 @@ ALTER TABLE ONLY inventario.unidad_compra ALTER COLUMN id SET DEFAULT nextval('i
 
 
 --
--- TOC entry 3811 (class 2604 OID 20249)
+-- TOC entry 3777 (class 2604 OID 17987)
 -- Name: categories id; Type: DEFAULT; Schema: inventory; Owner: postgres
 --
 
@@ -3042,7 +3649,7 @@ ALTER TABLE ONLY inventory.categories ALTER COLUMN id SET DEFAULT nextval('inven
 
 
 --
--- TOC entry 3812 (class 2604 OID 20250)
+-- TOC entry 3778 (class 2604 OID 17988)
 -- Name: products id; Type: DEFAULT; Schema: inventory; Owner: postgres
 --
 
@@ -3050,7 +3657,7 @@ ALTER TABLE ONLY inventory.products ALTER COLUMN id SET DEFAULT nextval('invento
 
 
 --
--- TOC entry 3749 (class 2604 OID 20251)
+-- TOC entry 3780 (class 2604 OID 17989)
 -- Name: categorias id; Type: DEFAULT; Schema: menu; Owner: postgres
 --
 
@@ -3058,7 +3665,7 @@ ALTER TABLE ONLY menu.categorias ALTER COLUMN id SET DEFAULT nextval('menu.categ
 
 
 --
--- TOC entry 3762 (class 2604 OID 20252)
+-- TOC entry 3785 (class 2604 OID 17990)
 -- Name: receta_ingredientes id; Type: DEFAULT; Schema: menu; Owner: postgres
 --
 
@@ -3066,7 +3673,7 @@ ALTER TABLE ONLY menu.receta_ingredientes ALTER COLUMN id SET DEFAULT nextval('m
 
 
 --
--- TOC entry 3754 (class 2604 OID 20253)
+-- TOC entry 3786 (class 2604 OID 17991)
 -- Name: recetas id; Type: DEFAULT; Schema: menu; Owner: postgres
 --
 
@@ -3074,7 +3681,7 @@ ALTER TABLE ONLY menu.recetas ALTER COLUMN id SET DEFAULT nextval('menu.recetas_
 
 
 --
--- TOC entry 3786 (class 2604 OID 20254)
+-- TOC entry 3794 (class 2604 OID 17992)
 -- Name: facturas id; Type: DEFAULT; Schema: operaciones; Owner: postgres
 --
 
@@ -3082,7 +3689,7 @@ ALTER TABLE ONLY operaciones.facturas ALTER COLUMN id SET DEFAULT nextval('opera
 
 
 --
--- TOC entry 3763 (class 2604 OID 20255)
+-- TOC entry 3801 (class 2604 OID 17993)
 -- Name: mesas id; Type: DEFAULT; Schema: operaciones; Owner: postgres
 --
 
@@ -3090,7 +3697,7 @@ ALTER TABLE ONLY operaciones.mesas ALTER COLUMN id SET DEFAULT nextval('operacio
 
 
 --
--- TOC entry 3767 (class 2604 OID 20256)
+-- TOC entry 3805 (class 2604 OID 17994)
 -- Name: meseros id; Type: DEFAULT; Schema: operaciones; Owner: postgres
 --
 
@@ -3098,7 +3705,7 @@ ALTER TABLE ONLY operaciones.meseros ALTER COLUMN id SET DEFAULT nextval('operac
 
 
 --
--- TOC entry 3785 (class 2604 OID 20257)
+-- TOC entry 3809 (class 2604 OID 17995)
 -- Name: pedido_detalle id; Type: DEFAULT; Schema: operaciones; Owner: postgres
 --
 
@@ -3106,7 +3713,7 @@ ALTER TABLE ONLY operaciones.pedido_detalle ALTER COLUMN id SET DEFAULT nextval(
 
 
 --
--- TOC entry 3775 (class 2604 OID 20258)
+-- TOC entry 3810 (class 2604 OID 17996)
 -- Name: pedidos id; Type: DEFAULT; Schema: operaciones; Owner: postgres
 --
 
@@ -3114,7 +3721,7 @@ ALTER TABLE ONLY operaciones.pedidos ALTER COLUMN id SET DEFAULT nextval('operac
 
 
 --
--- TOC entry 3771 (class 2604 OID 20259)
+-- TOC entry 3820 (class 2604 OID 17997)
 -- Name: reservas id; Type: DEFAULT; Schema: operaciones; Owner: postgres
 --
 
@@ -3122,7 +3729,15 @@ ALTER TABLE ONLY operaciones.reservas ALTER COLUMN id SET DEFAULT nextval('opera
 
 
 --
--- TOC entry 3702 (class 2604 OID 20260)
+-- TOC entry 3885 (class 2604 OID 18061)
+-- Name: transacciones_pago id; Type: DEFAULT; Schema: operaciones; Owner: postgres
+--
+
+ALTER TABLE ONLY operaciones.transacciones_pago ALTER COLUMN id SET DEFAULT nextval('operaciones.transacciones_pago_id_seq'::regclass);
+
+
+--
+-- TOC entry 3824 (class 2604 OID 17998)
 -- Name: banco id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3130,7 +3745,7 @@ ALTER TABLE ONLY public.banco ALTER COLUMN id SET DEFAULT nextval('public.banco_
 
 
 --
--- TOC entry 3705 (class 2604 OID 20261)
+-- TOC entry 3827 (class 2604 OID 17999)
 -- Name: banco_movimientos id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3138,7 +3753,7 @@ ALTER TABLE ONLY public.banco_movimientos ALTER COLUMN id SET DEFAULT nextval('p
 
 
 --
--- TOC entry 3700 (class 2604 OID 20262)
+-- TOC entry 3828 (class 2604 OID 18000)
 -- Name: caja id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3146,7 +3761,7 @@ ALTER TABLE ONLY public.caja ALTER COLUMN id SET DEFAULT nextval('public.caja_id
 
 
 --
--- TOC entry 3701 (class 2604 OID 20263)
+-- TOC entry 3829 (class 2604 OID 18001)
 -- Name: caja_movimientos id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3154,7 +3769,7 @@ ALTER TABLE ONLY public.caja_movimientos ALTER COLUMN id SET DEFAULT nextval('pu
 
 
 --
--- TOC entry 3672 (class 2604 OID 20264)
+-- TOC entry 3830 (class 2604 OID 18002)
 -- Name: categoria_egresos id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3162,7 +3777,7 @@ ALTER TABLE ONLY public.categoria_egresos ALTER COLUMN id SET DEFAULT nextval('p
 
 
 --
--- TOC entry 3683 (class 2604 OID 20265)
+-- TOC entry 3831 (class 2604 OID 18003)
 -- Name: compra_detalle id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3170,7 +3785,7 @@ ALTER TABLE ONLY public.compra_detalle ALTER COLUMN id SET DEFAULT nextval('publ
 
 
 --
--- TOC entry 3682 (class 2604 OID 20266)
+-- TOC entry 3832 (class 2604 OID 18004)
 -- Name: compras id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3178,7 +3793,7 @@ ALTER TABLE ONLY public.compras ALTER COLUMN id SET DEFAULT nextval('public.comp
 
 
 --
--- TOC entry 3699 (class 2604 OID 20267)
+-- TOC entry 3833 (class 2604 OID 18005)
 -- Name: egresos id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3186,7 +3801,7 @@ ALTER TABLE ONLY public.egresos ALTER COLUMN id SET DEFAULT nextval('public.egre
 
 
 --
--- TOC entry 3697 (class 2604 OID 20268)
+-- TOC entry 3834 (class 2604 OID 18006)
 -- Name: facturas id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3194,7 +3809,7 @@ ALTER TABLE ONLY public.facturas ALTER COLUMN id SET DEFAULT nextval('public.fac
 
 
 --
--- TOC entry 3678 (class 2604 OID 20269)
+-- TOC entry 3836 (class 2604 OID 18007)
 -- Name: ingredientes id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3202,7 +3817,7 @@ ALTER TABLE ONLY public.ingredientes ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
--- TOC entry 3691 (class 2604 OID 20270)
+-- TOC entry 3840 (class 2604 OID 18008)
 -- Name: mesas id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3210,7 +3825,7 @@ ALTER TABLE ONLY public.mesas ALTER COLUMN id SET DEFAULT nextval('public.mesas_
 
 
 --
--- TOC entry 3692 (class 2604 OID 20271)
+-- TOC entry 3841 (class 2604 OID 18009)
 -- Name: meseros id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3218,7 +3833,7 @@ ALTER TABLE ONLY public.meseros ALTER COLUMN id SET DEFAULT nextval('public.mese
 
 
 --
--- TOC entry 3668 (class 2604 OID 20272)
+-- TOC entry 3843 (class 2604 OID 18010)
 -- Name: metodos_pago id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3226,7 +3841,7 @@ ALTER TABLE ONLY public.metodos_pago ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
--- TOC entry 3696 (class 2604 OID 20273)
+-- TOC entry 3853 (class 2604 OID 18011)
 -- Name: pedido_detalle id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3234,7 +3849,7 @@ ALTER TABLE ONLY public.pedido_detalle ALTER COLUMN id SET DEFAULT nextval('publ
 
 
 --
--- TOC entry 3694 (class 2604 OID 20274)
+-- TOC entry 3854 (class 2604 OID 18012)
 -- Name: pedidos id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3242,7 +3857,7 @@ ALTER TABLE ONLY public.pedidos ALTER COLUMN id SET DEFAULT nextval('public.pedi
 
 
 --
--- TOC entry 3673 (class 2604 OID 20275)
+-- TOC entry 3856 (class 2604 OID 18013)
 -- Name: proveedores id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3250,7 +3865,7 @@ ALTER TABLE ONLY public.proveedores ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
--- TOC entry 3690 (class 2604 OID 20276)
+-- TOC entry 3860 (class 2604 OID 18014)
 -- Name: receta_ingredientes id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3258,7 +3873,7 @@ ALTER TABLE ONLY public.receta_ingredientes ALTER COLUMN id SET DEFAULT nextval(
 
 
 --
--- TOC entry 3684 (class 2604 OID 20277)
+-- TOC entry 3861 (class 2604 OID 18015)
 -- Name: recetas id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3266,7 +3881,7 @@ ALTER TABLE ONLY public.recetas ALTER COLUMN id SET DEFAULT nextval('public.rece
 
 
 --
--- TOC entry 3663 (class 2604 OID 20278)
+-- TOC entry 3867 (class 2604 OID 18016)
 -- Name: restaurante id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3274,7 +3889,7 @@ ALTER TABLE ONLY public.restaurante ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
--- TOC entry 3669 (class 2604 OID 20279)
+-- TOC entry 3871 (class 2604 OID 18017)
 -- Name: roles id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3282,7 +3897,7 @@ ALTER TABLE ONLY public.roles ALTER COLUMN id SET DEFAULT nextval('public.roles_
 
 
 --
--- TOC entry 3677 (class 2604 OID 20280)
+-- TOC entry 3872 (class 2604 OID 18018)
 -- Name: unidad_compra id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3290,7 +3905,7 @@ ALTER TABLE ONLY public.unidad_compra ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
--- TOC entry 3667 (class 2604 OID 20281)
+-- TOC entry 3873 (class 2604 OID 18019)
 -- Name: unidad_medida id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3298,7 +3913,7 @@ ALTER TABLE ONLY public.unidad_medida ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
--- TOC entry 3670 (class 2604 OID 20282)
+-- TOC entry 3874 (class 2604 OID 18020)
 -- Name: usuarios id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -3306,28 +3921,112 @@ ALTER TABLE ONLY public.usuarios ALTER COLUMN id SET DEFAULT nextval('public.usu
 
 
 --
--- TOC entry 4402 (class 0 OID 19470)
--- Dependencies: 327
+-- TOC entry 4526 (class 0 OID 18159)
+-- Dependencies: 347
+-- Data for Name: asiento_lineas; Type: TABLE DATA; Schema: contabilidad; Owner: postgres
+--
+
+COPY contabilidad.asiento_lineas (id, asiento_id, cuenta_id, tipo_movimiento, monto, descripcion, restaurante_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 4524 (class 0 OID 18136)
+-- Dependencies: 345
+-- Data for Name: asientos; Type: TABLE DATA; Schema: contabilidad; Owner: postgres
+--
+
+COPY contabilidad.asientos (id, fecha, descripcion, origen_tipo, origen_id, total_debe, total_haber, restaurante_id, creado_por, created_at) FROM stdin;
+\.
+
+
+--
+-- TOC entry 4407 (class 0 OID 16540)
+-- Dependencies: 228
 -- Data for Name: libro_diario; Type: TABLE DATA; Schema: contabilidad; Owner: postgres
 --
 
 COPY contabilidad.libro_diario (id, fecha, descripcion, tipo, debe, haber, referencia_tipo, referencia_id, restaurante_id, created_at) FROM stdin;
+1	2026-04-04	Ingreso a Caja/Bancos por Venta	venta	7.15	0.00	venta	13	1	2026-04-04 00:02:27.408462
+2	2026-04-04	Ingresos por Ventas	venta	0.00	7.15	venta	13	1	2026-04-04 00:02:27.408462
+3	2026-04-04	Costo de Ventas	costo_venta	0.00	0.00	venta	13	1	2026-04-04 00:02:27.408462
+4	2026-04-04	Inventario	costo_venta	0.00	0.00	venta	13	1	2026-04-04 00:02:27.408462
+5	2026-04-04	Ingreso a Caja/Bancos por Venta	venta	10.45	0.00	venta	14	1	2026-04-04 00:12:52.31896
+6	2026-04-04	Ingresos por Ventas	venta	0.00	10.45	venta	14	1	2026-04-04 00:12:52.31896
+7	2026-04-04	Costo de Ventas	costo_venta	0.00	0.00	venta	14	1	2026-04-04 00:12:52.31896
+8	2026-04-04	Inventario	costo_venta	0.00	0.00	venta	14	1	2026-04-04 00:12:52.31896
+9	2026-04-04	Ingreso a Caja/Bancos por Venta	venta	10.45	0.00	venta	15	1	2026-04-04 00:16:00.581704
+10	2026-04-04	Ingresos por Ventas	venta	0.00	10.45	venta	15	1	2026-04-04 00:16:00.581704
+11	2026-04-04	Costo de Ventas	costo_venta	0.00	0.00	venta	15	1	2026-04-04 00:16:00.581704
+12	2026-04-04	Inventario	costo_venta	0.00	0.00	venta	15	1	2026-04-04 00:16:00.581704
+13	2026-04-04	Ingreso a Caja/Bancos por Venta	venta	5.50	0.00	venta	16	1	2026-04-04 00:19:26.132213
+14	2026-04-04	Ingresos por Ventas	venta	0.00	5.50	venta	16	1	2026-04-04 00:19:26.132213
+15	2026-04-04	Costo de Ventas	costo_venta	0.00	0.00	venta	16	1	2026-04-04 00:19:26.132213
+16	2026-04-04	Inventario	costo_venta	0.00	0.00	venta	16	1	2026-04-04 00:19:26.132213
+17	2026-04-04	Ingreso a Caja/Bancos por Venta	venta	5.50	0.00	venta	17	1	2026-04-04 00:31:51.480405
+18	2026-04-04	Ingresos por Ventas	venta	0.00	5.50	venta	17	1	2026-04-04 00:31:51.480405
+19	2026-04-04	Costo de Ventas	costo_venta	0.00	0.00	venta	17	1	2026-04-04 00:31:51.480405
+20	2026-04-04	Inventario	costo_venta	0.00	0.00	venta	17	1	2026-04-04 00:31:51.480405
+21	2026-04-04	Ingreso a Caja/Bancos por Venta	venta	28.60	0.00	venta	18	1	2026-04-04 00:33:29.339811
+22	2026-04-04	Ingresos por Ventas	venta	0.00	28.60	venta	18	1	2026-04-04 00:33:29.339811
+23	2026-04-04	Costo de Ventas	costo_venta	0.00	0.00	venta	18	1	2026-04-04 00:33:29.339811
+24	2026-04-04	Inventario	costo_venta	0.00	0.00	venta	18	1	2026-04-04 00:33:29.339811
+25	2026-04-04	Ingreso a Caja/Bancos por Venta	venta	9.90	0.00	venta	19	1	2026-04-04 00:33:51.007441
+26	2026-04-04	Ingresos por Ventas	venta	0.00	9.90	venta	19	1	2026-04-04 00:33:51.007441
+27	2026-04-04	Costo de Ventas	costo_venta	0.00	0.00	venta	19	1	2026-04-04 00:33:51.007441
+28	2026-04-04	Inventario	costo_venta	0.00	0.00	venta	19	1	2026-04-04 00:33:51.007441
 \.
 
 
 --
--- TOC entry 4354 (class 0 OID 19041)
--- Dependencies: 279
+-- TOC entry 4522 (class 0 OID 18109)
+-- Dependencies: 343
+-- Data for Name: plan_cuentas; Type: TABLE DATA; Schema: contabilidad; Owner: postgres
+--
+
+COPY contabilidad.plan_cuentas (id, codigo, nombre, tipo, padre_id, es_auxiliar, restaurante_id, activo, created_at) FROM stdin;
+1	1	ACTIVOS	activo	\N	f	\N	t	2026-03-31 21:43:41.142979
+6	2	PASIVOS	pasivo	\N	f	\N	t	2026-03-31 21:43:41.142979
+9	3	PATRIMONIO	patrimonio	\N	f	\N	t	2026-03-31 21:43:41.142979
+13	4	INGRESOS	ingreso	\N	f	\N	t	2026-03-31 21:43:41.142979
+15	5	COSTOS DE VENTA	costo	\N	f	\N	t	2026-03-31 21:43:41.142979
+17	6	GASTOS OPERATIVOS	gasto	\N	f	\N	t	2026-03-31 21:43:41.142979
+2	1.1	Activos Corrientes	activo	1	f	\N	t	2026-03-31 21:43:41.142979
+3	1.1.01	Caja	activo	2	t	\N	t	2026-03-31 21:43:41.142979
+4	1.1.02	Banco	activo	2	t	\N	t	2026-03-31 21:43:41.142979
+5	1.1.03	Inventario de Insumos	activo	2	t	\N	t	2026-03-31 21:43:41.142979
+7	2.1	Pasivos Corrientes	pasivo	6	f	\N	t	2026-03-31 21:43:41.142979
+8	2.1.01	Cuentas por Pagar a Proveedores	pasivo	7	t	\N	t	2026-03-31 21:43:41.142979
+10	3.1.01	Capital Social	patrimonio	9	t	\N	t	2026-03-31 21:43:41.142979
+11	3.1.02	Utilidades Acumuladas	patrimonio	9	t	\N	t	2026-03-31 21:43:41.142979
+12	3.1.03	Utilidad / Pérdida del Ejercicio	patrimonio	9	t	\N	t	2026-03-31 21:43:41.142979
+14	4.1.01	Ingresos por Ventas	ingreso	13	t	\N	t	2026-03-31 21:43:41.142979
+16	5.1.01	Costo de Ventas (Ingredientes)	costo	15	t	\N	t	2026-03-31 21:43:41.142979
+18	6.1.01	Gasto Agua	gasto	17	t	\N	t	2026-03-31 21:43:41.142979
+19	6.1.02	Gasto Gas	gasto	17	t	\N	t	2026-03-31 21:43:41.142979
+20	6.1.03	Gasto Electricidad	gasto	17	t	\N	t	2026-03-31 21:43:41.142979
+21	6.1.04	Gasto Internet	gasto	17	t	\N	t	2026-03-31 21:43:41.142979
+22	6.1.05	Gasto Alquiler	gasto	17	t	\N	t	2026-03-31 21:43:41.142979
+\.
+
+
+--
+-- TOC entry 4409 (class 0 OID 16554)
+-- Dependencies: 230
 -- Data for Name: metodos_pago; Type: TABLE DATA; Schema: core; Owner: postgres
 --
 
 COPY core.metodos_pago (id, nombre, activo, restaurante_id, created_at) FROM stdin;
+1	Efectivo	t	1	2026-04-01 14:48:28.891424
+2	Pago Movil	t	1	2026-04-01 14:48:39.610028
+3	Tarjeta Debito/Credito	t	1	2026-04-01 14:48:42.919442
+4	Divisa (USD/EUR)	t	1	2026-04-01 14:48:45.589603
 \.
 
 
 --
--- TOC entry 4350 (class 0 OID 19012)
--- Dependencies: 275
+-- TOC entry 4411 (class 0 OID 16563)
+-- Dependencies: 232
 -- Data for Name: restaurante; Type: TABLE DATA; Schema: core; Owner: postgres
 --
 
@@ -3347,8 +4046,8 @@ COPY core.restaurante (id, nombre, direccion, telefono, email, logo_url, moneda,
 
 
 --
--- TOC entry 4356 (class 0 OID 19053)
--- Dependencies: 281
+-- TOC entry 4413 (class 0 OID 16587)
+-- Dependencies: 234
 -- Data for Name: roles; Type: TABLE DATA; Schema: core; Owner: postgres
 --
 
@@ -3357,12 +4056,13 @@ COPY core.roles (id, nombre, created_at) FROM stdin;
 2	cajero	2026-03-24 20:21:54.161944
 3	mesero	2026-03-24 20:22:05.04884
 4	cocina	2026-03-24 20:22:15.689054
+5	super_admin	2026-03-31 21:43:41.176333
 \.
 
 
 --
--- TOC entry 4408 (class 0 OID 19806)
--- Dependencies: 333
+-- TOC entry 4415 (class 0 OID 16595)
+-- Dependencies: 236
 -- Data for Name: tables; Type: TABLE DATA; Schema: core; Owner: postgres
 --
 
@@ -3381,18 +4081,23 @@ COPY core.tables (id, nombre, capacidad, status) FROM stdin;
 
 
 --
--- TOC entry 4352 (class 0 OID 19031)
--- Dependencies: 277
+-- TOC entry 4417 (class 0 OID 16603)
+-- Dependencies: 238
 -- Data for Name: unidad_medida; Type: TABLE DATA; Schema: core; Owner: postgres
 --
 
 COPY core.unidad_medida (id, nombre, abreviatura) FROM stdin;
+1	Gramos	g
+2	Litros	L
+3	Kilogramos	kg
+4	Unidades	und
+5	Mililitros	ml
 \.
 
 
 --
--- TOC entry 4358 (class 0 OID 19064)
--- Dependencies: 283
+-- TOC entry 4419 (class 0 OID 16610)
+-- Dependencies: 240
 -- Data for Name: usuarios; Type: TABLE DATA; Schema: core; Owner: postgres
 --
 
@@ -3404,8 +4109,8 @@ COPY core.usuarios (id, restaurante_id, rol_id, nombre, email, username, passwor
 
 
 --
--- TOC entry 4398 (class 0 OID 19433)
--- Dependencies: 323
+-- TOC entry 4421 (class 0 OID 16629)
+-- Dependencies: 242
 -- Data for Name: banco; Type: TABLE DATA; Schema: finanzas; Owner: postgres
 --
 
@@ -3414,8 +4119,8 @@ COPY finanzas.banco (id, nombre_banco, numero_cuenta, saldo_actual, activo, rest
 
 
 --
--- TOC entry 4400 (class 0 OID 19449)
--- Dependencies: 325
+-- TOC entry 4423 (class 0 OID 16641)
+-- Dependencies: 244
 -- Data for Name: banco_movimientos; Type: TABLE DATA; Schema: finanzas; Owner: postgres
 --
 
@@ -3424,8 +4129,8 @@ COPY finanzas.banco_movimientos (id, banco_id, fecha_hora, tipo, monto, concepto
 
 
 --
--- TOC entry 4394 (class 0 OID 19394)
--- Dependencies: 319
+-- TOC entry 4425 (class 0 OID 16656)
+-- Dependencies: 246
 -- Data for Name: caja; Type: TABLE DATA; Schema: finanzas; Owner: postgres
 --
 
@@ -3434,8 +4139,8 @@ COPY finanzas.caja (id, fecha_apertura, fecha_cierre, monto_inicial, monto_final
 
 
 --
--- TOC entry 4396 (class 0 OID 19412)
--- Dependencies: 321
+-- TOC entry 4427 (class 0 OID 16669)
+-- Dependencies: 248
 -- Data for Name: caja_movimientos; Type: TABLE DATA; Schema: finanzas; Owner: postgres
 --
 
@@ -3444,8 +4149,8 @@ COPY finanzas.caja_movimientos (id, caja_id, fecha_hora, tipo, monto, concepto, 
 
 
 --
--- TOC entry 4392 (class 0 OID 19376)
--- Dependencies: 317
+-- TOC entry 4429 (class 0 OID 16684)
+-- Dependencies: 250
 -- Data for Name: egresos; Type: TABLE DATA; Schema: finanzas; Owner: postgres
 --
 
@@ -3454,8 +4159,18 @@ COPY finanzas.egresos (id, fecha, monto, categoria_id, razon, descripcion, resta
 
 
 --
--- TOC entry 4360 (class 0 OID 19088)
--- Dependencies: 285
+-- TOC entry 4520 (class 0 OID 18085)
+-- Dependencies: 341
+-- Data for Name: gastos_operativos; Type: TABLE DATA; Schema: finanzas; Owner: postgres
+--
+
+COPY finanzas.gastos_operativos (id, categoria, descripcion, monto, fecha, metodo_pago, referencia, periodo_mes, periodo_anio, usuario_id, restaurante_id, created_at) FROM stdin;
+\.
+
+
+--
+-- TOC entry 4431 (class 0 OID 16697)
+-- Dependencies: 252
 -- Data for Name: categoria_egresos; Type: TABLE DATA; Schema: inventario; Owner: postgres
 --
 
@@ -3464,8 +4179,8 @@ COPY inventario.categoria_egresos (id, nombre, restaurante_id, created_at) FROM 
 
 
 --
--- TOC entry 4370 (class 0 OID 19164)
--- Dependencies: 295
+-- TOC entry 4433 (class 0 OID 16705)
+-- Dependencies: 254
 -- Data for Name: compra_detalle; Type: TABLE DATA; Schema: inventario; Owner: postgres
 --
 
@@ -3474,8 +4189,8 @@ COPY inventario.compra_detalle (id, compra_id, ingrediente_id, cantidad_compra, 
 
 
 --
--- TOC entry 4368 (class 0 OID 19148)
--- Dependencies: 293
+-- TOC entry 4435 (class 0 OID 16718)
+-- Dependencies: 256
 -- Data for Name: compras; Type: TABLE DATA; Schema: inventario; Owner: postgres
 --
 
@@ -3484,8 +4199,8 @@ COPY inventario.compras (id, fecha, numero_factura_proveedor, total, estado_pago
 
 
 --
--- TOC entry 4366 (class 0 OID 19128)
--- Dependencies: 291
+-- TOC entry 4437 (class 0 OID 16729)
+-- Dependencies: 258
 -- Data for Name: ingredientes; Type: TABLE DATA; Schema: inventario; Owner: postgres
 --
 
@@ -3494,8 +4209,8 @@ COPY inventario.ingredientes (id, nombre, cantidad_disponible, cantidad_minima, 
 
 
 --
--- TOC entry 4372 (class 0 OID 19182)
--- Dependencies: 297
+-- TOC entry 4439 (class 0 OID 16743)
+-- Dependencies: 260
 -- Data for Name: mermas; Type: TABLE DATA; Schema: inventario; Owner: postgres
 --
 
@@ -3504,8 +4219,8 @@ COPY inventario.mermas (id, ingrediente_id, cantidad, tipo, razon, reportado_por
 
 
 --
--- TOC entry 4362 (class 0 OID 19099)
--- Dependencies: 287
+-- TOC entry 4441 (class 0 OID 16758)
+-- Dependencies: 262
 -- Data for Name: proveedores; Type: TABLE DATA; Schema: inventario; Owner: postgres
 --
 
@@ -3514,8 +4229,8 @@ COPY inventario.proveedores (id, identificacion, nombre, telefono, email, direcc
 
 
 --
--- TOC entry 4364 (class 0 OID 19117)
--- Dependencies: 289
+-- TOC entry 4443 (class 0 OID 16771)
+-- Dependencies: 264
 -- Data for Name: unidad_compra; Type: TABLE DATA; Schema: inventario; Owner: postgres
 --
 
@@ -3524,8 +4239,8 @@ COPY inventario.unidad_compra (id, nombre, restaurante_id, created_at) FROM stdi
 
 
 --
--- TOC entry 4404 (class 0 OID 19781)
--- Dependencies: 329
+-- TOC entry 4445 (class 0 OID 16779)
+-- Dependencies: 266
 -- Data for Name: categories; Type: TABLE DATA; Schema: inventory; Owner: postgres
 --
 
@@ -3541,8 +4256,8 @@ COPY inventory.categories (id, nombre) FROM stdin;
 
 
 --
--- TOC entry 4406 (class 0 OID 19790)
--- Dependencies: 331
+-- TOC entry 4447 (class 0 OID 16785)
+-- Dependencies: 268
 -- Data for Name: products; Type: TABLE DATA; Schema: inventory; Owner: postgres
 --
 
@@ -3582,8 +4297,8 @@ COPY inventory.products (id, nombre, precio_venta, categoria_id, imagen_url, act
 
 
 --
--- TOC entry 4374 (class 0 OID 19202)
--- Dependencies: 299
+-- TOC entry 4449 (class 0 OID 16793)
+-- Dependencies: 270
 -- Data for Name: categorias; Type: TABLE DATA; Schema: menu; Owner: postgres
 --
 
@@ -3596,8 +4311,8 @@ COPY menu.categorias (id, nombre, orden, activo, restaurante_id, created_at, upd
 
 
 --
--- TOC entry 4378 (class 0 OID 19239)
--- Dependencies: 303
+-- TOC entry 4451 (class 0 OID 16804)
+-- Dependencies: 272
 -- Data for Name: receta_ingredientes; Type: TABLE DATA; Schema: menu; Owner: postgres
 --
 
@@ -3606,8 +4321,8 @@ COPY menu.receta_ingredientes (id, receta_id, ingrediente_id, cantidad, restaura
 
 
 --
--- TOC entry 4376 (class 0 OID 19217)
--- Dependencies: 301
+-- TOC entry 4453 (class 0 OID 16813)
+-- Dependencies: 274
 -- Data for Name: recetas; Type: TABLE DATA; Schema: menu; Owner: postgres
 --
 
@@ -3620,8 +4335,8 @@ COPY menu.recetas (id, nombre, descripcion, categoria_id, imagen_url, costo_prod
 
 
 --
--- TOC entry 4390 (class 0 OID 19349)
--- Dependencies: 315
+-- TOC entry 4455 (class 0 OID 16829)
+-- Dependencies: 276
 -- Data for Name: facturas; Type: TABLE DATA; Schema: operaciones; Owner: postgres
 --
 
@@ -3630,21 +4345,21 @@ COPY operaciones.facturas (id, numero_factura, pedido_id, metodo_pago_id, usuari
 
 
 --
--- TOC entry 4380 (class 0 OID 19255)
--- Dependencies: 305
+-- TOC entry 4457 (class 0 OID 16848)
+-- Dependencies: 278
 -- Data for Name: mesas; Type: TABLE DATA; Schema: operaciones; Owner: postgres
 --
 
 COPY operaciones.mesas (id, numero, nombre, capacidad, estado, restaurante_id, created_at, updated_at) FROM stdin;
 2	2	Mesa 2	4	libre	1	2026-03-24 19:31:17.54503	2026-03-24 19:31:17.54503
-1	1	Mesa 1	4	ocupada	1	2026-03-24 19:31:17.54503	2026-03-24 19:38:02.017175
-3	3	Mesa 3	6	ocupada	1	2026-03-24 19:31:17.54503	2026-03-24 19:38:21.838216
+1	1	Mesa 1	4	libre	1	2026-03-24 19:31:17.54503	2026-04-04 00:31:51.480405
+3	3	Mesa 3	6	libre	1	2026-03-24 19:31:17.54503	2026-04-04 00:33:51.007441
 \.
 
 
 --
--- TOC entry 4382 (class 0 OID 19271)
--- Dependencies: 307
+-- TOC entry 4459 (class 0 OID 16859)
+-- Dependencies: 280
 -- Data for Name: meseros; Type: TABLE DATA; Schema: operaciones; Owner: postgres
 --
 
@@ -3653,8 +4368,8 @@ COPY operaciones.meseros (id, nombre, activo, restaurante_id, created_at, update
 
 
 --
--- TOC entry 4388 (class 0 OID 19331)
--- Dependencies: 313
+-- TOC entry 4461 (class 0 OID 16869)
+-- Dependencies: 282
 -- Data for Name: pedido_detalle; Type: TABLE DATA; Schema: operaciones; Owner: postgres
 --
 
@@ -3673,12 +4388,23 @@ COPY operaciones.pedido_detalle (id, pedido_id, receta_id, cantidad, precio_unit
 12	4	3	4	3.00	12.00	\N	1
 13	4	1	4	6.50	26.00	\N	1
 14	4	2	2	9.50	19.00	\N	1
+15	5	4	3	5.00	15.00	\N	1
+16	5	2	2	9.50	19.00	\N	1
+17	5	3	4	3.00	12.00	\N	1
+18	5	1	4	6.50	26.00	\N	1
+22	13	1	1	6.50	6.50	\N	1
+23	14	2	1	9.50	9.50	\N	1
+24	15	2	1	9.50	9.50	\N	1
+25	16	4	1	5.00	5.00	Socket Test	1
+26	17	4	1	5.00	5.00	Real-Time Validation	1
+27	18	1	4	6.50	26.00	\N	1
+28	19	3	3	3.00	9.00	\N	1
 \.
 
 
 --
--- TOC entry 4386 (class 0 OID 19304)
--- Dependencies: 311
+-- TOC entry 4463 (class 0 OID 16882)
+-- Dependencies: 284
 -- Data for Name: pedidos; Type: TABLE DATA; Schema: operaciones; Owner: postgres
 --
 
@@ -3687,12 +4413,20 @@ COPY operaciones.pedidos (id, codigo, mesa_id, mesero_id, cliente, estado, estad
 2	PED-20260324-0002	1	\N	\N	pendiente	abierta	2026-03-24 19:37:56.254636	24.00	0.00	2.40	26.40	1	2026-03-24 19:37:56.254636	2026-03-24 19:37:56.254636
 3	PED-20260324-0003	1	\N	\N	pendiente	abierta	2026-03-24 19:38:02.017175	24.00	0.00	2.40	26.40	1	2026-03-24 19:38:02.017175	2026-03-24 19:38:02.017175
 4	PED-20260324-0004	3	\N	\N	pendiente	abierta	2026-03-24 19:38:21.838216	67.00	0.00	6.70	73.70	1	2026-03-24 19:38:21.838216	2026-03-24 19:38:21.838216
+5	PED-20260331-0001	1	\N	\N	pendiente	abierta	2026-03-31 16:13:25.688786	72.00	0.00	7.20	79.20	1	2026-03-31 16:13:25.688786	2026-03-31 16:13:25.688786
+13	PED-20260404-0001	\N	\N	\N	pendiente	pagada	2026-04-04 00:02:27.408462	6.50	0.00	0.65	7.15	1	2026-04-04 00:02:27.408462	2026-04-04 00:02:27.408462
+14	PED-20260404-0002	\N	\N	\N	pendiente	pagada	2026-04-04 00:12:52.31896	9.50	0.00	0.95	10.45	1	2026-04-04 00:12:52.31896	2026-04-04 00:12:52.31896
+15	PED-20260404-0003	\N	\N	\N	pendiente	pagada	2026-04-04 00:16:00.581704	9.50	0.00	0.95	10.45	1	2026-04-04 00:16:00.581704	2026-04-04 00:16:00.581704
+16	PED-20260404-0004	1	\N	\N	pendiente	pagada	2026-04-04 00:19:26.132213	5.00	0.00	0.50	5.50	1	2026-04-04 00:19:26.132213	2026-04-04 00:19:26.132213
+17	PED-20260404-0005	1	\N	\N	pendiente	pagada	2026-04-04 00:31:51.480405	5.00	0.00	0.50	5.50	1	2026-04-04 00:31:51.480405	2026-04-04 00:31:51.480405
+18	PED-20260404-0006	\N	\N	\N	pendiente	pagada	2026-04-04 00:33:29.339811	26.00	0.00	2.60	28.60	1	2026-04-04 00:33:29.339811	2026-04-04 00:33:29.339811
+19	PED-20260404-0007	3	\N	\N	pendiente	pagada	2026-04-04 00:33:51.007441	9.00	0.00	0.90	9.90	1	2026-04-04 00:33:51.007441	2026-04-04 00:33:51.007441
 \.
 
 
 --
--- TOC entry 4384 (class 0 OID 19285)
--- Dependencies: 309
+-- TOC entry 4465 (class 0 OID 16899)
+-- Dependencies: 286
 -- Data for Name: reservas; Type: TABLE DATA; Schema: operaciones; Owner: postgres
 --
 
@@ -3701,8 +4435,25 @@ COPY operaciones.reservas (id, mesa_id, cliente_nombre, cliente_telefono, fecha_
 
 
 --
--- TOC entry 4346 (class 0 OID 16770)
--- Dependencies: 271
+-- TOC entry 4518 (class 0 OID 18058)
+-- Dependencies: 339
+-- Data for Name: transacciones_pago; Type: TABLE DATA; Schema: operaciones; Owner: postgres
+--
+
+COPY operaciones.transacciones_pago (id, pedido_id, metodo, monto, referencia, tasa_cambio, usuario_id, restaurante_id, created_at) FROM stdin;
+1	13	efectivo	100.00	\N	1.0000	\N	1	2026-04-04 00:02:27.408462
+2	14	divisa	10.64	\N	1.0000	\N	1	2026-04-04 00:12:52.31896
+3	15	divisa	10.64	\N	1.0000	\N	1	2026-04-04 00:16:00.581704
+4	16	efectivo	100.00	\N	1.0000	\N	1	2026-04-04 00:19:26.132213
+5	17	efectivo	100.00	\N	1.0000	\N	1	2026-04-04 00:31:51.480405
+6	18	efectivo	29.12	\N	1.0000	\N	1	2026-04-04 00:33:29.339811
+7	19	divisa	10.08	\N	1.0000	\N	1	2026-04-04 00:33:51.007441
+\.
+
+
+--
+-- TOC entry 4467 (class 0 OID 16913)
+-- Dependencies: 288
 -- Data for Name: banco; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3711,8 +4462,8 @@ COPY public.banco (id, nombre_banco, numero_cuenta, saldo_actual, activo, restau
 
 
 --
--- TOC entry 4348 (class 0 OID 16784)
--- Dependencies: 273
+-- TOC entry 4469 (class 0 OID 16923)
+-- Dependencies: 290
 -- Data for Name: banco_movimientos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3721,8 +4472,8 @@ COPY public.banco_movimientos (id, banco_id, fecha_hora, monto, concepto, refere
 
 
 --
--- TOC entry 4342 (class 0 OID 16733)
--- Dependencies: 267
+-- TOC entry 4471 (class 0 OID 16935)
+-- Dependencies: 292
 -- Data for Name: caja; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3731,8 +4482,8 @@ COPY public.caja (id, fecha_apertura, fecha_cierre, monto_inicial, monto_final, 
 
 
 --
--- TOC entry 4344 (class 0 OID 16750)
--- Dependencies: 269
+-- TOC entry 4473 (class 0 OID 16946)
+-- Dependencies: 294
 -- Data for Name: caja_movimientos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3741,8 +4492,8 @@ COPY public.caja_movimientos (id, caja_id, fecha_hora, monto, concepto, referenc
 
 
 --
--- TOC entry 4314 (class 0 OID 16516)
--- Dependencies: 239
+-- TOC entry 4475 (class 0 OID 16958)
+-- Dependencies: 296
 -- Data for Name: categoria_egresos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3751,8 +4502,8 @@ COPY public.categoria_egresos (id, nombre, restaurante_id) FROM stdin;
 
 
 --
--- TOC entry 4324 (class 0 OID 16585)
--- Dependencies: 249
+-- TOC entry 4477 (class 0 OID 16965)
+-- Dependencies: 298
 -- Data for Name: compra_detalle; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3761,8 +4512,8 @@ COPY public.compra_detalle (id, compra_id, ingrediente_id, cantidad, precio_unit
 
 
 --
--- TOC entry 4322 (class 0 OID 16572)
--- Dependencies: 247
+-- TOC entry 4479 (class 0 OID 16976)
+-- Dependencies: 300
 -- Data for Name: compras; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3771,8 +4522,8 @@ COPY public.compras (id, fecha, total, descripcion, proveedor_id, restaurante_id
 
 
 --
--- TOC entry 4340 (class 0 OID 16716)
--- Dependencies: 265
+-- TOC entry 4481 (class 0 OID 16984)
+-- Dependencies: 302
 -- Data for Name: egresos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3781,8 +4532,8 @@ COPY public.egresos (id, fecha, monto, categoria_id, razon, descripcion, restaur
 
 
 --
--- TOC entry 4338 (class 0 OID 16696)
--- Dependencies: 263
+-- TOC entry 4483 (class 0 OID 16996)
+-- Dependencies: 304
 -- Data for Name: facturas; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3791,8 +4542,8 @@ COPY public.facturas (id, numero_factura, pedido_id, fecha, subtotal, impuestos,
 
 
 --
--- TOC entry 4320 (class 0 OID 16556)
--- Dependencies: 245
+-- TOC entry 4485 (class 0 OID 17008)
+-- Dependencies: 306
 -- Data for Name: ingredientes; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3801,8 +4552,8 @@ COPY public.ingredientes (id, nombre, cantidad_disponible, cantidad_minima, unid
 
 
 --
--- TOC entry 4330 (class 0 OID 16636)
--- Dependencies: 255
+-- TOC entry 4487 (class 0 OID 17019)
+-- Dependencies: 308
 -- Data for Name: mesas; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3811,8 +4562,8 @@ COPY public.mesas (id, numero, nombre, capacidad, restaurante_id) FROM stdin;
 
 
 --
--- TOC entry 4332 (class 0 OID 16650)
--- Dependencies: 257
+-- TOC entry 4489 (class 0 OID 17027)
+-- Dependencies: 310
 -- Data for Name: meseros; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3821,8 +4572,8 @@ COPY public.meseros (id, nombre, activo, restaurante_id) FROM stdin;
 
 
 --
--- TOC entry 4308 (class 0 OID 16478)
--- Dependencies: 233
+-- TOC entry 4491 (class 0 OID 17035)
+-- Dependencies: 312
 -- Data for Name: metodos_pago; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3831,8 +4582,8 @@ COPY public.metodos_pago (id, nombre, restaurante_id) FROM stdin;
 
 
 --
--- TOC entry 4411 (class 0 OID 19958)
--- Dependencies: 336
+-- TOC entry 4493 (class 0 OID 17042)
+-- Dependencies: 314
 -- Data for Name: order_items; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3841,8 +4592,8 @@ COPY public.order_items (id, order_id, product_id, quantity, unit_price, subtota
 
 
 --
--- TOC entry 4412 (class 0 OID 19983)
--- Dependencies: 337
+-- TOC entry 4494 (class 0 OID 17054)
+-- Dependencies: 315
 -- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3851,8 +4602,8 @@ COPY public.orders (id, restaurant_id, user_id, table_id, status, subtotal, tax_
 
 
 --
--- TOC entry 4336 (class 0 OID 16680)
--- Dependencies: 261
+-- TOC entry 4495 (class 0 OID 17071)
+-- Dependencies: 316
 -- Data for Name: pedido_detalle; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3861,8 +4612,8 @@ COPY public.pedido_detalle (id, pedido_id, receta_id, cantidad, precio_unitario,
 
 
 --
--- TOC entry 4334 (class 0 OID 16662)
--- Dependencies: 259
+-- TOC entry 4497 (class 0 OID 17082)
+-- Dependencies: 318
 -- Data for Name: pedidos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3871,8 +4622,8 @@ COPY public.pedidos (id, codigo, mesa_id, mesero_id, cliente, fecha_hora, total,
 
 
 --
--- TOC entry 4316 (class 0 OID 16526)
--- Dependencies: 241
+-- TOC entry 4499 (class 0 OID 17091)
+-- Dependencies: 320
 -- Data for Name: proveedores; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3881,8 +4632,8 @@ COPY public.proveedores (id, identificacion, nombre, telefono, email, direccion,
 
 
 --
--- TOC entry 4328 (class 0 OID 16620)
--- Dependencies: 253
+-- TOC entry 4501 (class 0 OID 17104)
+-- Dependencies: 322
 -- Data for Name: receta_ingredientes; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3891,8 +4642,8 @@ COPY public.receta_ingredientes (id, receta_id, ingrediente_id, cantidad, restau
 
 
 --
--- TOC entry 4326 (class 0 OID 16601)
--- Dependencies: 251
+-- TOC entry 4503 (class 0 OID 17113)
+-- Dependencies: 324
 -- Data for Name: recetas; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3901,8 +4652,8 @@ COPY public.recetas (id, nombre, descripcion, costo_produccion, precio_sugerido,
 
 
 --
--- TOC entry 4304 (class 0 OID 16456)
--- Dependencies: 229
+-- TOC entry 4505 (class 0 OID 17127)
+-- Dependencies: 326
 -- Data for Name: restaurante; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3911,8 +4662,8 @@ COPY public.restaurante (id, nombre, patrimonio_inicial, created_at, updated_at)
 
 
 --
--- TOC entry 4310 (class 0 OID 16488)
--- Dependencies: 235
+-- TOC entry 4507 (class 0 OID 17136)
+-- Dependencies: 328
 -- Data for Name: roles; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3921,8 +4672,8 @@ COPY public.roles (id, nombre, restaurante_id) FROM stdin;
 
 
 --
--- TOC entry 4318 (class 0 OID 16546)
--- Dependencies: 243
+-- TOC entry 4509 (class 0 OID 17143)
+-- Dependencies: 330
 -- Data for Name: unidad_compra; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3931,8 +4682,8 @@ COPY public.unidad_compra (id, nombre, restaurante_id) FROM stdin;
 
 
 --
--- TOC entry 4306 (class 0 OID 16468)
--- Dependencies: 231
+-- TOC entry 4511 (class 0 OID 17150)
+-- Dependencies: 332
 -- Data for Name: unidad_medida; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3941,8 +4692,8 @@ COPY public.unidad_medida (id, nombre, abreviatura) FROM stdin;
 
 
 --
--- TOC entry 4312 (class 0 OID 16498)
--- Dependencies: 237
+-- TOC entry 4513 (class 0 OID 17157)
+-- Dependencies: 334
 -- Data for Name: usuarios; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -3951,8 +4702,8 @@ COPY public.usuarios (id, restaurante_id, rol_id, nombre, email, username, activ
 
 
 --
--- TOC entry 4410 (class 0 OID 19860)
--- Dependencies: 335
+-- TOC entry 4515 (class 0 OID 17168)
+-- Dependencies: 336
 -- Data for Name: order_items; Type: TABLE DATA; Schema: sales; Owner: postgres
 --
 
@@ -3961,8 +4712,8 @@ COPY sales.order_items (id, order_id, product_id, quantity, unit_price, subtotal
 
 
 --
--- TOC entry 4409 (class 0 OID 19834)
--- Dependencies: 334
+-- TOC entry 4516 (class 0 OID 17177)
+-- Dependencies: 337
 -- Data for Name: orders; Type: TABLE DATA; Schema: sales; Owner: postgres
 --
 
@@ -3971,26 +4722,53 @@ COPY sales.orders (id, restaurant_id, user_id, table_id, status, subtotal, tax_a
 
 
 --
--- TOC entry 4489 (class 0 OID 0)
--- Dependencies: 326
+-- TOC entry 4626 (class 0 OID 0)
+-- Dependencies: 346
+-- Name: asiento_lineas_id_seq; Type: SEQUENCE SET; Schema: contabilidad; Owner: postgres
+--
+
+SELECT pg_catalog.setval('contabilidad.asiento_lineas_id_seq', 1, false);
+
+
+--
+-- TOC entry 4627 (class 0 OID 0)
+-- Dependencies: 344
+-- Name: asientos_id_seq; Type: SEQUENCE SET; Schema: contabilidad; Owner: postgres
+--
+
+SELECT pg_catalog.setval('contabilidad.asientos_id_seq', 1, false);
+
+
+--
+-- TOC entry 4628 (class 0 OID 0)
+-- Dependencies: 229
 -- Name: libro_diario_id_seq; Type: SEQUENCE SET; Schema: contabilidad; Owner: postgres
 --
 
-SELECT pg_catalog.setval('contabilidad.libro_diario_id_seq', 1, false);
+SELECT pg_catalog.setval('contabilidad.libro_diario_id_seq', 28, true);
 
 
 --
--- TOC entry 4490 (class 0 OID 0)
--- Dependencies: 278
+-- TOC entry 4629 (class 0 OID 0)
+-- Dependencies: 342
+-- Name: plan_cuentas_id_seq; Type: SEQUENCE SET; Schema: contabilidad; Owner: postgres
+--
+
+SELECT pg_catalog.setval('contabilidad.plan_cuentas_id_seq', 22, true);
+
+
+--
+-- TOC entry 4630 (class 0 OID 0)
+-- Dependencies: 231
 -- Name: metodos_pago_id_seq; Type: SEQUENCE SET; Schema: core; Owner: postgres
 --
 
-SELECT pg_catalog.setval('core.metodos_pago_id_seq', 1, false);
+SELECT pg_catalog.setval('core.metodos_pago_id_seq', 4, true);
 
 
 --
--- TOC entry 4491 (class 0 OID 0)
--- Dependencies: 274
+-- TOC entry 4631 (class 0 OID 0)
+-- Dependencies: 233
 -- Name: restaurante_id_seq; Type: SEQUENCE SET; Schema: core; Owner: postgres
 --
 
@@ -3998,17 +4776,17 @@ SELECT pg_catalog.setval('core.restaurante_id_seq', 11, true);
 
 
 --
--- TOC entry 4492 (class 0 OID 0)
--- Dependencies: 280
+-- TOC entry 4632 (class 0 OID 0)
+-- Dependencies: 235
 -- Name: roles_id_seq; Type: SEQUENCE SET; Schema: core; Owner: postgres
 --
 
-SELECT pg_catalog.setval('core.roles_id_seq', 4, true);
+SELECT pg_catalog.setval('core.roles_id_seq', 5, true);
 
 
 --
--- TOC entry 4493 (class 0 OID 0)
--- Dependencies: 332
+-- TOC entry 4633 (class 0 OID 0)
+-- Dependencies: 237
 -- Name: tables_id_seq; Type: SEQUENCE SET; Schema: core; Owner: postgres
 --
 
@@ -4016,17 +4794,17 @@ SELECT pg_catalog.setval('core.tables_id_seq', 10, true);
 
 
 --
--- TOC entry 4494 (class 0 OID 0)
--- Dependencies: 276
+-- TOC entry 4634 (class 0 OID 0)
+-- Dependencies: 239
 -- Name: unidad_medida_id_seq; Type: SEQUENCE SET; Schema: core; Owner: postgres
 --
 
-SELECT pg_catalog.setval('core.unidad_medida_id_seq', 1, false);
+SELECT pg_catalog.setval('core.unidad_medida_id_seq', 5, true);
 
 
 --
--- TOC entry 4495 (class 0 OID 0)
--- Dependencies: 282
+-- TOC entry 4635 (class 0 OID 0)
+-- Dependencies: 241
 -- Name: usuarios_id_seq; Type: SEQUENCE SET; Schema: core; Owner: postgres
 --
 
@@ -4034,8 +4812,8 @@ SELECT pg_catalog.setval('core.usuarios_id_seq', 3, true);
 
 
 --
--- TOC entry 4496 (class 0 OID 0)
--- Dependencies: 322
+-- TOC entry 4636 (class 0 OID 0)
+-- Dependencies: 243
 -- Name: banco_id_seq; Type: SEQUENCE SET; Schema: finanzas; Owner: postgres
 --
 
@@ -4043,8 +4821,8 @@ SELECT pg_catalog.setval('finanzas.banco_id_seq', 1, false);
 
 
 --
--- TOC entry 4497 (class 0 OID 0)
--- Dependencies: 324
+-- TOC entry 4637 (class 0 OID 0)
+-- Dependencies: 245
 -- Name: banco_movimientos_id_seq; Type: SEQUENCE SET; Schema: finanzas; Owner: postgres
 --
 
@@ -4052,8 +4830,8 @@ SELECT pg_catalog.setval('finanzas.banco_movimientos_id_seq', 1, false);
 
 
 --
--- TOC entry 4498 (class 0 OID 0)
--- Dependencies: 318
+-- TOC entry 4638 (class 0 OID 0)
+-- Dependencies: 247
 -- Name: caja_id_seq; Type: SEQUENCE SET; Schema: finanzas; Owner: postgres
 --
 
@@ -4061,8 +4839,8 @@ SELECT pg_catalog.setval('finanzas.caja_id_seq', 1, false);
 
 
 --
--- TOC entry 4499 (class 0 OID 0)
--- Dependencies: 320
+-- TOC entry 4639 (class 0 OID 0)
+-- Dependencies: 249
 -- Name: caja_movimientos_id_seq; Type: SEQUENCE SET; Schema: finanzas; Owner: postgres
 --
 
@@ -4070,8 +4848,8 @@ SELECT pg_catalog.setval('finanzas.caja_movimientos_id_seq', 1, false);
 
 
 --
--- TOC entry 4500 (class 0 OID 0)
--- Dependencies: 316
+-- TOC entry 4640 (class 0 OID 0)
+-- Dependencies: 251
 -- Name: egresos_id_seq; Type: SEQUENCE SET; Schema: finanzas; Owner: postgres
 --
 
@@ -4079,8 +4857,17 @@ SELECT pg_catalog.setval('finanzas.egresos_id_seq', 1, false);
 
 
 --
--- TOC entry 4501 (class 0 OID 0)
--- Dependencies: 284
+-- TOC entry 4641 (class 0 OID 0)
+-- Dependencies: 340
+-- Name: gastos_operativos_id_seq; Type: SEQUENCE SET; Schema: finanzas; Owner: postgres
+--
+
+SELECT pg_catalog.setval('finanzas.gastos_operativos_id_seq', 1, false);
+
+
+--
+-- TOC entry 4642 (class 0 OID 0)
+-- Dependencies: 253
 -- Name: categoria_egresos_id_seq; Type: SEQUENCE SET; Schema: inventario; Owner: postgres
 --
 
@@ -4088,8 +4875,8 @@ SELECT pg_catalog.setval('inventario.categoria_egresos_id_seq', 1, false);
 
 
 --
--- TOC entry 4502 (class 0 OID 0)
--- Dependencies: 294
+-- TOC entry 4643 (class 0 OID 0)
+-- Dependencies: 255
 -- Name: compra_detalle_id_seq; Type: SEQUENCE SET; Schema: inventario; Owner: postgres
 --
 
@@ -4097,8 +4884,8 @@ SELECT pg_catalog.setval('inventario.compra_detalle_id_seq', 1, false);
 
 
 --
--- TOC entry 4503 (class 0 OID 0)
--- Dependencies: 292
+-- TOC entry 4644 (class 0 OID 0)
+-- Dependencies: 257
 -- Name: compras_id_seq; Type: SEQUENCE SET; Schema: inventario; Owner: postgres
 --
 
@@ -4106,8 +4893,8 @@ SELECT pg_catalog.setval('inventario.compras_id_seq', 1, false);
 
 
 --
--- TOC entry 4504 (class 0 OID 0)
--- Dependencies: 290
+-- TOC entry 4645 (class 0 OID 0)
+-- Dependencies: 259
 -- Name: ingredientes_id_seq; Type: SEQUENCE SET; Schema: inventario; Owner: postgres
 --
 
@@ -4115,8 +4902,8 @@ SELECT pg_catalog.setval('inventario.ingredientes_id_seq', 1, false);
 
 
 --
--- TOC entry 4505 (class 0 OID 0)
--- Dependencies: 296
+-- TOC entry 4646 (class 0 OID 0)
+-- Dependencies: 261
 -- Name: mermas_id_seq; Type: SEQUENCE SET; Schema: inventario; Owner: postgres
 --
 
@@ -4124,8 +4911,8 @@ SELECT pg_catalog.setval('inventario.mermas_id_seq', 1, false);
 
 
 --
--- TOC entry 4506 (class 0 OID 0)
--- Dependencies: 286
+-- TOC entry 4647 (class 0 OID 0)
+-- Dependencies: 263
 -- Name: proveedores_id_seq; Type: SEQUENCE SET; Schema: inventario; Owner: postgres
 --
 
@@ -4133,8 +4920,8 @@ SELECT pg_catalog.setval('inventario.proveedores_id_seq', 1, false);
 
 
 --
--- TOC entry 4507 (class 0 OID 0)
--- Dependencies: 288
+-- TOC entry 4648 (class 0 OID 0)
+-- Dependencies: 265
 -- Name: unidad_compra_id_seq; Type: SEQUENCE SET; Schema: inventario; Owner: postgres
 --
 
@@ -4142,8 +4929,8 @@ SELECT pg_catalog.setval('inventario.unidad_compra_id_seq', 1, false);
 
 
 --
--- TOC entry 4508 (class 0 OID 0)
--- Dependencies: 328
+-- TOC entry 4649 (class 0 OID 0)
+-- Dependencies: 267
 -- Name: categories_id_seq; Type: SEQUENCE SET; Schema: inventory; Owner: postgres
 --
 
@@ -4151,8 +4938,8 @@ SELECT pg_catalog.setval('inventory.categories_id_seq', 7, true);
 
 
 --
--- TOC entry 4509 (class 0 OID 0)
--- Dependencies: 330
+-- TOC entry 4650 (class 0 OID 0)
+-- Dependencies: 269
 -- Name: products_id_seq; Type: SEQUENCE SET; Schema: inventory; Owner: postgres
 --
 
@@ -4160,8 +4947,8 @@ SELECT pg_catalog.setval('inventory.products_id_seq', 31, true);
 
 
 --
--- TOC entry 4510 (class 0 OID 0)
--- Dependencies: 298
+-- TOC entry 4651 (class 0 OID 0)
+-- Dependencies: 271
 -- Name: categorias_id_seq; Type: SEQUENCE SET; Schema: menu; Owner: postgres
 --
 
@@ -4169,8 +4956,8 @@ SELECT pg_catalog.setval('menu.categorias_id_seq', 4, true);
 
 
 --
--- TOC entry 4511 (class 0 OID 0)
--- Dependencies: 302
+-- TOC entry 4652 (class 0 OID 0)
+-- Dependencies: 273
 -- Name: receta_ingredientes_id_seq; Type: SEQUENCE SET; Schema: menu; Owner: postgres
 --
 
@@ -4178,8 +4965,8 @@ SELECT pg_catalog.setval('menu.receta_ingredientes_id_seq', 1, false);
 
 
 --
--- TOC entry 4512 (class 0 OID 0)
--- Dependencies: 300
+-- TOC entry 4653 (class 0 OID 0)
+-- Dependencies: 275
 -- Name: recetas_id_seq; Type: SEQUENCE SET; Schema: menu; Owner: postgres
 --
 
@@ -4187,8 +4974,8 @@ SELECT pg_catalog.setval('menu.recetas_id_seq', 4, true);
 
 
 --
--- TOC entry 4513 (class 0 OID 0)
--- Dependencies: 314
+-- TOC entry 4654 (class 0 OID 0)
+-- Dependencies: 277
 -- Name: facturas_id_seq; Type: SEQUENCE SET; Schema: operaciones; Owner: postgres
 --
 
@@ -4196,8 +4983,8 @@ SELECT pg_catalog.setval('operaciones.facturas_id_seq', 1, false);
 
 
 --
--- TOC entry 4514 (class 0 OID 0)
--- Dependencies: 304
+-- TOC entry 4655 (class 0 OID 0)
+-- Dependencies: 279
 -- Name: mesas_id_seq; Type: SEQUENCE SET; Schema: operaciones; Owner: postgres
 --
 
@@ -4205,8 +4992,8 @@ SELECT pg_catalog.setval('operaciones.mesas_id_seq', 3, true);
 
 
 --
--- TOC entry 4515 (class 0 OID 0)
--- Dependencies: 306
+-- TOC entry 4656 (class 0 OID 0)
+-- Dependencies: 281
 -- Name: meseros_id_seq; Type: SEQUENCE SET; Schema: operaciones; Owner: postgres
 --
 
@@ -4214,26 +5001,26 @@ SELECT pg_catalog.setval('operaciones.meseros_id_seq', 1, false);
 
 
 --
--- TOC entry 4516 (class 0 OID 0)
--- Dependencies: 312
+-- TOC entry 4657 (class 0 OID 0)
+-- Dependencies: 283
 -- Name: pedido_detalle_id_seq; Type: SEQUENCE SET; Schema: operaciones; Owner: postgres
 --
 
-SELECT pg_catalog.setval('operaciones.pedido_detalle_id_seq', 14, true);
+SELECT pg_catalog.setval('operaciones.pedido_detalle_id_seq', 28, true);
 
 
 --
--- TOC entry 4517 (class 0 OID 0)
--- Dependencies: 310
+-- TOC entry 4658 (class 0 OID 0)
+-- Dependencies: 285
 -- Name: pedidos_id_seq; Type: SEQUENCE SET; Schema: operaciones; Owner: postgres
 --
 
-SELECT pg_catalog.setval('operaciones.pedidos_id_seq', 4, true);
+SELECT pg_catalog.setval('operaciones.pedidos_id_seq', 19, true);
 
 
 --
--- TOC entry 4518 (class 0 OID 0)
--- Dependencies: 308
+-- TOC entry 4659 (class 0 OID 0)
+-- Dependencies: 287
 -- Name: reservas_id_seq; Type: SEQUENCE SET; Schema: operaciones; Owner: postgres
 --
 
@@ -4241,8 +5028,17 @@ SELECT pg_catalog.setval('operaciones.reservas_id_seq', 1, false);
 
 
 --
--- TOC entry 4519 (class 0 OID 0)
--- Dependencies: 270
+-- TOC entry 4660 (class 0 OID 0)
+-- Dependencies: 338
+-- Name: transacciones_pago_id_seq; Type: SEQUENCE SET; Schema: operaciones; Owner: postgres
+--
+
+SELECT pg_catalog.setval('operaciones.transacciones_pago_id_seq', 7, true);
+
+
+--
+-- TOC entry 4661 (class 0 OID 0)
+-- Dependencies: 289
 -- Name: banco_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4250,8 +5046,8 @@ SELECT pg_catalog.setval('public.banco_id_seq', 1, false);
 
 
 --
--- TOC entry 4520 (class 0 OID 0)
--- Dependencies: 272
+-- TOC entry 4662 (class 0 OID 0)
+-- Dependencies: 291
 -- Name: banco_movimientos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4259,8 +5055,8 @@ SELECT pg_catalog.setval('public.banco_movimientos_id_seq', 1, false);
 
 
 --
--- TOC entry 4521 (class 0 OID 0)
--- Dependencies: 266
+-- TOC entry 4663 (class 0 OID 0)
+-- Dependencies: 293
 -- Name: caja_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4268,8 +5064,8 @@ SELECT pg_catalog.setval('public.caja_id_seq', 1, false);
 
 
 --
--- TOC entry 4522 (class 0 OID 0)
--- Dependencies: 268
+-- TOC entry 4664 (class 0 OID 0)
+-- Dependencies: 295
 -- Name: caja_movimientos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4277,8 +5073,8 @@ SELECT pg_catalog.setval('public.caja_movimientos_id_seq', 1, false);
 
 
 --
--- TOC entry 4523 (class 0 OID 0)
--- Dependencies: 238
+-- TOC entry 4665 (class 0 OID 0)
+-- Dependencies: 297
 -- Name: categoria_egresos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4286,8 +5082,8 @@ SELECT pg_catalog.setval('public.categoria_egresos_id_seq', 1, false);
 
 
 --
--- TOC entry 4524 (class 0 OID 0)
--- Dependencies: 248
+-- TOC entry 4666 (class 0 OID 0)
+-- Dependencies: 299
 -- Name: compra_detalle_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4295,8 +5091,8 @@ SELECT pg_catalog.setval('public.compra_detalle_id_seq', 1, false);
 
 
 --
--- TOC entry 4525 (class 0 OID 0)
--- Dependencies: 246
+-- TOC entry 4667 (class 0 OID 0)
+-- Dependencies: 301
 -- Name: compras_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4304,8 +5100,8 @@ SELECT pg_catalog.setval('public.compras_id_seq', 1, false);
 
 
 --
--- TOC entry 4526 (class 0 OID 0)
--- Dependencies: 264
+-- TOC entry 4668 (class 0 OID 0)
+-- Dependencies: 303
 -- Name: egresos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4313,8 +5109,8 @@ SELECT pg_catalog.setval('public.egresos_id_seq', 1, false);
 
 
 --
--- TOC entry 4527 (class 0 OID 0)
--- Dependencies: 262
+-- TOC entry 4669 (class 0 OID 0)
+-- Dependencies: 305
 -- Name: facturas_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4322,8 +5118,8 @@ SELECT pg_catalog.setval('public.facturas_id_seq', 1, false);
 
 
 --
--- TOC entry 4528 (class 0 OID 0)
--- Dependencies: 244
+-- TOC entry 4670 (class 0 OID 0)
+-- Dependencies: 307
 -- Name: ingredientes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4331,8 +5127,8 @@ SELECT pg_catalog.setval('public.ingredientes_id_seq', 1, false);
 
 
 --
--- TOC entry 4529 (class 0 OID 0)
--- Dependencies: 254
+-- TOC entry 4671 (class 0 OID 0)
+-- Dependencies: 309
 -- Name: mesas_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4340,8 +5136,8 @@ SELECT pg_catalog.setval('public.mesas_id_seq', 1, false);
 
 
 --
--- TOC entry 4530 (class 0 OID 0)
--- Dependencies: 256
+-- TOC entry 4672 (class 0 OID 0)
+-- Dependencies: 311
 -- Name: meseros_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4349,8 +5145,8 @@ SELECT pg_catalog.setval('public.meseros_id_seq', 1, false);
 
 
 --
--- TOC entry 4531 (class 0 OID 0)
--- Dependencies: 232
+-- TOC entry 4673 (class 0 OID 0)
+-- Dependencies: 313
 -- Name: metodos_pago_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4358,8 +5154,8 @@ SELECT pg_catalog.setval('public.metodos_pago_id_seq', 1, false);
 
 
 --
--- TOC entry 4532 (class 0 OID 0)
--- Dependencies: 260
+-- TOC entry 4674 (class 0 OID 0)
+-- Dependencies: 317
 -- Name: pedido_detalle_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4367,8 +5163,8 @@ SELECT pg_catalog.setval('public.pedido_detalle_id_seq', 1, false);
 
 
 --
--- TOC entry 4533 (class 0 OID 0)
--- Dependencies: 258
+-- TOC entry 4675 (class 0 OID 0)
+-- Dependencies: 319
 -- Name: pedidos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4376,8 +5172,8 @@ SELECT pg_catalog.setval('public.pedidos_id_seq', 1, false);
 
 
 --
--- TOC entry 4534 (class 0 OID 0)
--- Dependencies: 240
+-- TOC entry 4676 (class 0 OID 0)
+-- Dependencies: 321
 -- Name: proveedores_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4385,8 +5181,8 @@ SELECT pg_catalog.setval('public.proveedores_id_seq', 1, false);
 
 
 --
--- TOC entry 4535 (class 0 OID 0)
--- Dependencies: 252
+-- TOC entry 4677 (class 0 OID 0)
+-- Dependencies: 323
 -- Name: receta_ingredientes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4394,8 +5190,8 @@ SELECT pg_catalog.setval('public.receta_ingredientes_id_seq', 1, false);
 
 
 --
--- TOC entry 4536 (class 0 OID 0)
--- Dependencies: 250
+-- TOC entry 4678 (class 0 OID 0)
+-- Dependencies: 325
 -- Name: recetas_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4403,8 +5199,8 @@ SELECT pg_catalog.setval('public.recetas_id_seq', 1, false);
 
 
 --
--- TOC entry 4537 (class 0 OID 0)
--- Dependencies: 228
+-- TOC entry 4679 (class 0 OID 0)
+-- Dependencies: 327
 -- Name: restaurante_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4412,8 +5208,8 @@ SELECT pg_catalog.setval('public.restaurante_id_seq', 1, false);
 
 
 --
--- TOC entry 4538 (class 0 OID 0)
--- Dependencies: 234
+-- TOC entry 4680 (class 0 OID 0)
+-- Dependencies: 329
 -- Name: roles_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4421,8 +5217,8 @@ SELECT pg_catalog.setval('public.roles_id_seq', 1, false);
 
 
 --
--- TOC entry 4539 (class 0 OID 0)
--- Dependencies: 242
+-- TOC entry 4681 (class 0 OID 0)
+-- Dependencies: 331
 -- Name: unidad_compra_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4430,8 +5226,8 @@ SELECT pg_catalog.setval('public.unidad_compra_id_seq', 1, false);
 
 
 --
--- TOC entry 4540 (class 0 OID 0)
--- Dependencies: 230
+-- TOC entry 4682 (class 0 OID 0)
+-- Dependencies: 333
 -- Name: unidad_medida_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4439,8 +5235,8 @@ SELECT pg_catalog.setval('public.unidad_medida_id_seq', 1, false);
 
 
 --
--- TOC entry 4541 (class 0 OID 0)
--- Dependencies: 236
+-- TOC entry 4683 (class 0 OID 0)
+-- Dependencies: 335
 -- Name: usuarios_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -4448,7 +5244,25 @@ SELECT pg_catalog.setval('public.usuarios_id_seq', 1, false);
 
 
 --
--- TOC entry 4029 (class 2606 OID 19485)
+-- TOC entry 4132 (class 2606 OID 18172)
+-- Name: asiento_lineas asiento_lineas_pkey; Type: CONSTRAINT; Schema: contabilidad; Owner: postgres
+--
+
+ALTER TABLE ONLY contabilidad.asiento_lineas
+    ADD CONSTRAINT asiento_lineas_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4128 (class 2606 OID 18150)
+-- Name: asientos asientos_pkey; Type: CONSTRAINT; Schema: contabilidad; Owner: postgres
+--
+
+ALTER TABLE ONLY contabilidad.asientos
+    ADD CONSTRAINT asientos_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3909 (class 2606 OID 17245)
 -- Name: libro_diario libro_diario_pkey; Type: CONSTRAINT; Schema: contabilidad; Owner: postgres
 --
 
@@ -4457,7 +5271,25 @@ ALTER TABLE ONLY contabilidad.libro_diario
 
 
 --
--- TOC entry 3927 (class 2606 OID 19051)
+-- TOC entry 4124 (class 2606 OID 18123)
+-- Name: plan_cuentas plan_cuentas_codigo_restaurante_unique; Type: CONSTRAINT; Schema: contabilidad; Owner: postgres
+--
+
+ALTER TABLE ONLY contabilidad.plan_cuentas
+    ADD CONSTRAINT plan_cuentas_codigo_restaurante_unique UNIQUE (codigo, restaurante_id);
+
+
+--
+-- TOC entry 4126 (class 2606 OID 18121)
+-- Name: plan_cuentas plan_cuentas_pkey; Type: CONSTRAINT; Schema: contabilidad; Owner: postgres
+--
+
+ALTER TABLE ONLY contabilidad.plan_cuentas
+    ADD CONSTRAINT plan_cuentas_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3911 (class 2606 OID 17247)
 -- Name: metodos_pago metodos_pago_pkey; Type: CONSTRAINT; Schema: core; Owner: postgres
 --
 
@@ -4466,7 +5298,7 @@ ALTER TABLE ONLY core.metodos_pago
 
 
 --
--- TOC entry 3923 (class 2606 OID 19029)
+-- TOC entry 3913 (class 2606 OID 17249)
 -- Name: restaurante restaurante_pkey; Type: CONSTRAINT; Schema: core; Owner: postgres
 --
 
@@ -4475,7 +5307,7 @@ ALTER TABLE ONLY core.restaurante
 
 
 --
--- TOC entry 3929 (class 2606 OID 19062)
+-- TOC entry 3915 (class 2606 OID 17251)
 -- Name: roles roles_pkey; Type: CONSTRAINT; Schema: core; Owner: postgres
 --
 
@@ -4484,7 +5316,7 @@ ALTER TABLE ONLY core.roles
 
 
 --
--- TOC entry 4035 (class 2606 OID 19815)
+-- TOC entry 3917 (class 2606 OID 17253)
 -- Name: tables tables_pkey; Type: CONSTRAINT; Schema: core; Owner: postgres
 --
 
@@ -4493,7 +5325,7 @@ ALTER TABLE ONLY core.tables
 
 
 --
--- TOC entry 3925 (class 2606 OID 19039)
+-- TOC entry 3919 (class 2606 OID 17255)
 -- Name: unidad_medida unidad_medida_pkey; Type: CONSTRAINT; Schema: core; Owner: postgres
 --
 
@@ -4502,7 +5334,7 @@ ALTER TABLE ONLY core.unidad_medida
 
 
 --
--- TOC entry 3931 (class 2606 OID 19081)
+-- TOC entry 3921 (class 2606 OID 17257)
 -- Name: usuarios usuarios_pkey; Type: CONSTRAINT; Schema: core; Owner: postgres
 --
 
@@ -4511,7 +5343,7 @@ ALTER TABLE ONLY core.usuarios
 
 
 --
--- TOC entry 3933 (class 2606 OID 19083)
+-- TOC entry 3923 (class 2606 OID 17259)
 -- Name: usuarios usuarios_username_key; Type: CONSTRAINT; Schema: core; Owner: postgres
 --
 
@@ -4520,7 +5352,7 @@ ALTER TABLE ONLY core.usuarios
 
 
 --
--- TOC entry 4021 (class 2606 OID 19465)
+-- TOC entry 3928 (class 2606 OID 17261)
 -- Name: banco_movimientos banco_movimientos_pkey; Type: CONSTRAINT; Schema: finanzas; Owner: postgres
 --
 
@@ -4529,7 +5361,7 @@ ALTER TABLE ONLY finanzas.banco_movimientos
 
 
 --
--- TOC entry 4018 (class 2606 OID 19446)
+-- TOC entry 3925 (class 2606 OID 17263)
 -- Name: banco banco_pkey; Type: CONSTRAINT; Schema: finanzas; Owner: postgres
 --
 
@@ -4538,7 +5370,7 @@ ALTER TABLE ONLY finanzas.banco
 
 
 --
--- TOC entry 4013 (class 2606 OID 19428)
+-- TOC entry 3937 (class 2606 OID 17265)
 -- Name: caja_movimientos caja_movimientos_pkey; Type: CONSTRAINT; Schema: finanzas; Owner: postgres
 --
 
@@ -4547,7 +5379,7 @@ ALTER TABLE ONLY finanzas.caja_movimientos
 
 
 --
--- TOC entry 4009 (class 2606 OID 19408)
+-- TOC entry 3933 (class 2606 OID 17267)
 -- Name: caja caja_pkey; Type: CONSTRAINT; Schema: finanzas; Owner: postgres
 --
 
@@ -4556,7 +5388,7 @@ ALTER TABLE ONLY finanzas.caja
 
 
 --
--- TOC entry 4005 (class 2606 OID 19390)
+-- TOC entry 3942 (class 2606 OID 17269)
 -- Name: egresos egresos_pkey; Type: CONSTRAINT; Schema: finanzas; Owner: postgres
 --
 
@@ -4565,7 +5397,16 @@ ALTER TABLE ONLY finanzas.egresos
 
 
 --
--- TOC entry 3935 (class 2606 OID 19097)
+-- TOC entry 4119 (class 2606 OID 18100)
+-- Name: gastos_operativos gastos_operativos_pkey; Type: CONSTRAINT; Schema: finanzas; Owner: postgres
+--
+
+ALTER TABLE ONLY finanzas.gastos_operativos
+    ADD CONSTRAINT gastos_operativos_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3946 (class 2606 OID 17271)
 -- Name: categoria_egresos categoria_egresos_pkey; Type: CONSTRAINT; Schema: inventario; Owner: postgres
 --
 
@@ -4574,7 +5415,7 @@ ALTER TABLE ONLY inventario.categoria_egresos
 
 
 --
--- TOC entry 3952 (class 2606 OID 19178)
+-- TOC entry 3948 (class 2606 OID 17273)
 -- Name: compra_detalle compra_detalle_pkey; Type: CONSTRAINT; Schema: inventario; Owner: postgres
 --
 
@@ -4583,7 +5424,7 @@ ALTER TABLE ONLY inventario.compra_detalle
 
 
 --
--- TOC entry 3948 (class 2606 OID 19160)
+-- TOC entry 3952 (class 2606 OID 17275)
 -- Name: compras compras_pkey; Type: CONSTRAINT; Schema: inventario; Owner: postgres
 --
 
@@ -4592,7 +5433,7 @@ ALTER TABLE ONLY inventario.compras
 
 
 --
--- TOC entry 3946 (class 2606 OID 19143)
+-- TOC entry 3959 (class 2606 OID 17277)
 -- Name: ingredientes ingredientes_pkey; Type: CONSTRAINT; Schema: inventario; Owner: postgres
 --
 
@@ -4601,7 +5442,7 @@ ALTER TABLE ONLY inventario.ingredientes
 
 
 --
--- TOC entry 3958 (class 2606 OID 19198)
+-- TOC entry 3963 (class 2606 OID 17279)
 -- Name: mermas mermas_pkey; Type: CONSTRAINT; Schema: inventario; Owner: postgres
 --
 
@@ -4610,7 +5451,7 @@ ALTER TABLE ONLY inventario.mermas
 
 
 --
--- TOC entry 3939 (class 2606 OID 19113)
+-- TOC entry 3967 (class 2606 OID 17281)
 -- Name: proveedores proveedores_pkey; Type: CONSTRAINT; Schema: inventario; Owner: postgres
 --
 
@@ -4619,7 +5460,7 @@ ALTER TABLE ONLY inventario.proveedores
 
 
 --
--- TOC entry 3941 (class 2606 OID 19126)
+-- TOC entry 3969 (class 2606 OID 17283)
 -- Name: unidad_compra unidad_compra_pkey; Type: CONSTRAINT; Schema: inventario; Owner: postgres
 --
 
@@ -4628,7 +5469,7 @@ ALTER TABLE ONLY inventario.unidad_compra
 
 
 --
--- TOC entry 4031 (class 2606 OID 19788)
+-- TOC entry 3971 (class 2606 OID 17285)
 -- Name: categories categories_pkey; Type: CONSTRAINT; Schema: inventory; Owner: postgres
 --
 
@@ -4637,7 +5478,7 @@ ALTER TABLE ONLY inventory.categories
 
 
 --
--- TOC entry 4033 (class 2606 OID 19799)
+-- TOC entry 3973 (class 2606 OID 17287)
 -- Name: products products_pkey; Type: CONSTRAINT; Schema: inventory; Owner: postgres
 --
 
@@ -4646,7 +5487,7 @@ ALTER TABLE ONLY inventory.products
 
 
 --
--- TOC entry 3960 (class 2606 OID 19214)
+-- TOC entry 3975 (class 2606 OID 17289)
 -- Name: categorias categorias_pkey; Type: CONSTRAINT; Schema: menu; Owner: postgres
 --
 
@@ -4655,7 +5496,7 @@ ALTER TABLE ONLY menu.categorias
 
 
 --
--- TOC entry 3970 (class 2606 OID 19249)
+-- TOC entry 3980 (class 2606 OID 17291)
 -- Name: receta_ingredientes receta_ingredientes_pkey; Type: CONSTRAINT; Schema: menu; Owner: postgres
 --
 
@@ -4664,7 +5505,7 @@ ALTER TABLE ONLY menu.receta_ingredientes
 
 
 --
--- TOC entry 3972 (class 2606 OID 19251)
+-- TOC entry 3982 (class 2606 OID 17293)
 -- Name: receta_ingredientes receta_ingredientes_receta_id_ingrediente_id_key; Type: CONSTRAINT; Schema: menu; Owner: postgres
 --
 
@@ -4673,7 +5514,7 @@ ALTER TABLE ONLY menu.receta_ingredientes
 
 
 --
--- TOC entry 3966 (class 2606 OID 19234)
+-- TOC entry 3987 (class 2606 OID 17295)
 -- Name: recetas recetas_pkey; Type: CONSTRAINT; Schema: menu; Owner: postgres
 --
 
@@ -4682,7 +5523,7 @@ ALTER TABLE ONLY menu.recetas
 
 
 --
--- TOC entry 3998 (class 2606 OID 19371)
+-- TOC entry 3989 (class 2606 OID 17297)
 -- Name: facturas facturas_numero_factura_key; Type: CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -4691,7 +5532,7 @@ ALTER TABLE ONLY operaciones.facturas
 
 
 --
--- TOC entry 4000 (class 2606 OID 19369)
+-- TOC entry 3991 (class 2606 OID 17299)
 -- Name: facturas facturas_pkey; Type: CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -4700,7 +5541,7 @@ ALTER TABLE ONLY operaciones.facturas
 
 
 --
--- TOC entry 3976 (class 2606 OID 19267)
+-- TOC entry 3998 (class 2606 OID 17301)
 -- Name: mesas mesas_pkey; Type: CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -4709,7 +5550,7 @@ ALTER TABLE ONLY operaciones.mesas
 
 
 --
--- TOC entry 3979 (class 2606 OID 19282)
+-- TOC entry 4001 (class 2606 OID 17303)
 -- Name: meseros meseros_pkey; Type: CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -4718,7 +5559,7 @@ ALTER TABLE ONLY operaciones.meseros
 
 
 --
--- TOC entry 3996 (class 2606 OID 19345)
+-- TOC entry 4005 (class 2606 OID 17305)
 -- Name: pedido_detalle pedido_detalle_pkey; Type: CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -4727,7 +5568,7 @@ ALTER TABLE ONLY operaciones.pedido_detalle
 
 
 --
--- TOC entry 3990 (class 2606 OID 19324)
+-- TOC entry 4012 (class 2606 OID 17307)
 -- Name: pedidos pedidos_codigo_key; Type: CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -4736,7 +5577,7 @@ ALTER TABLE ONLY operaciones.pedidos
 
 
 --
--- TOC entry 3992 (class 2606 OID 19322)
+-- TOC entry 4014 (class 2606 OID 17309)
 -- Name: pedidos pedidos_pkey; Type: CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -4745,7 +5586,7 @@ ALTER TABLE ONLY operaciones.pedidos
 
 
 --
--- TOC entry 3983 (class 2606 OID 19300)
+-- TOC entry 4018 (class 2606 OID 17311)
 -- Name: reservas reservas_pkey; Type: CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -4754,7 +5595,16 @@ ALTER TABLE ONLY operaciones.reservas
 
 
 --
--- TOC entry 4041 (class 2606 OID 19971)
+-- TOC entry 4117 (class 2606 OID 18071)
+-- Name: transacciones_pago transacciones_pago_pkey; Type: CONSTRAINT; Schema: operaciones; Owner: postgres
+--
+
+ALTER TABLE ONLY operaciones.transacciones_pago
+    ADD CONSTRAINT transacciones_pago_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4067 (class 2606 OID 17313)
 -- Name: order_items PK_005269d8574e6fac0493715c308; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4763,7 +5613,7 @@ ALTER TABLE ONLY public.order_items
 
 
 --
--- TOC entry 4043 (class 2606 OID 20001)
+-- TOC entry 4069 (class 2606 OID 17315)
 -- Name: orders PK_710e2d4957aa5878dfe94e4ac2f; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4772,7 +5622,7 @@ ALTER TABLE ONLY public.orders
 
 
 --
--- TOC entry 3919 (class 2606 OID 16799)
+-- TOC entry 4023 (class 2606 OID 17317)
 -- Name: banco_movimientos banco_movimientos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4781,7 +5631,7 @@ ALTER TABLE ONLY public.banco_movimientos
 
 
 --
--- TOC entry 3916 (class 2606 OID 16781)
+-- TOC entry 4020 (class 2606 OID 17319)
 -- Name: banco banco_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4790,7 +5640,7 @@ ALTER TABLE ONLY public.banco
 
 
 --
--- TOC entry 3912 (class 2606 OID 16765)
+-- TOC entry 4030 (class 2606 OID 17321)
 -- Name: caja_movimientos caja_movimientos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4799,7 +5649,7 @@ ALTER TABLE ONLY public.caja_movimientos
 
 
 --
--- TOC entry 3909 (class 2606 OID 16746)
+-- TOC entry 4027 (class 2606 OID 17323)
 -- Name: caja caja_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4808,7 +5658,7 @@ ALTER TABLE ONLY public.caja
 
 
 --
--- TOC entry 3850 (class 2606 OID 16524)
+-- TOC entry 4034 (class 2606 OID 17325)
 -- Name: categoria_egresos categoria_egresos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4817,7 +5667,7 @@ ALTER TABLE ONLY public.categoria_egresos
 
 
 --
--- TOC entry 3869 (class 2606 OID 16597)
+-- TOC entry 4036 (class 2606 OID 17327)
 -- Name: compra_detalle compra_detalle_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4826,7 +5676,7 @@ ALTER TABLE ONLY public.compra_detalle
 
 
 --
--- TOC entry 3864 (class 2606 OID 16581)
+-- TOC entry 4040 (class 2606 OID 17329)
 -- Name: compras compras_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4835,7 +5685,7 @@ ALTER TABLE ONLY public.compras
 
 
 --
--- TOC entry 3905 (class 2606 OID 16729)
+-- TOC entry 4045 (class 2606 OID 17331)
 -- Name: egresos egresos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4844,7 +5694,7 @@ ALTER TABLE ONLY public.egresos
 
 
 --
--- TOC entry 3899 (class 2606 OID 16712)
+-- TOC entry 4049 (class 2606 OID 17333)
 -- Name: facturas facturas_numero_factura_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4853,7 +5703,7 @@ ALTER TABLE ONLY public.facturas
 
 
 --
--- TOC entry 3901 (class 2606 OID 16710)
+-- TOC entry 4051 (class 2606 OID 17335)
 -- Name: facturas facturas_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4862,7 +5712,7 @@ ALTER TABLE ONLY public.facturas
 
 
 --
--- TOC entry 3862 (class 2606 OID 16568)
+-- TOC entry 4057 (class 2606 OID 17337)
 -- Name: ingredientes ingredientes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4871,7 +5721,7 @@ ALTER TABLE ONLY public.ingredientes
 
 
 --
--- TOC entry 3884 (class 2606 OID 16646)
+-- TOC entry 4060 (class 2606 OID 17339)
 -- Name: mesas mesas_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4880,7 +5730,7 @@ ALTER TABLE ONLY public.mesas
 
 
 --
--- TOC entry 3887 (class 2606 OID 16659)
+-- TOC entry 4063 (class 2606 OID 17341)
 -- Name: meseros meseros_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4889,7 +5739,7 @@ ALTER TABLE ONLY public.meseros
 
 
 --
--- TOC entry 3840 (class 2606 OID 16486)
+-- TOC entry 4065 (class 2606 OID 17343)
 -- Name: metodos_pago metodos_pago_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4898,7 +5748,7 @@ ALTER TABLE ONLY public.metodos_pago
 
 
 --
--- TOC entry 3897 (class 2606 OID 16692)
+-- TOC entry 4073 (class 2606 OID 17345)
 -- Name: pedido_detalle pedido_detalle_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4907,7 +5757,7 @@ ALTER TABLE ONLY public.pedido_detalle
 
 
 --
--- TOC entry 3891 (class 2606 OID 16675)
+-- TOC entry 4077 (class 2606 OID 17347)
 -- Name: pedidos pedidos_codigo_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4916,7 +5766,7 @@ ALTER TABLE ONLY public.pedidos
 
 
 --
--- TOC entry 3893 (class 2606 OID 16673)
+-- TOC entry 4079 (class 2606 OID 17349)
 -- Name: pedidos pedidos_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4925,7 +5775,7 @@ ALTER TABLE ONLY public.pedidos
 
 
 --
--- TOC entry 3854 (class 2606 OID 16542)
+-- TOC entry 4083 (class 2606 OID 17351)
 -- Name: proveedores proveedores_identificacion_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4934,7 +5784,7 @@ ALTER TABLE ONLY public.proveedores
 
 
 --
--- TOC entry 3856 (class 2606 OID 16540)
+-- TOC entry 4085 (class 2606 OID 17353)
 -- Name: proveedores proveedores_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4943,7 +5793,7 @@ ALTER TABLE ONLY public.proveedores
 
 
 --
--- TOC entry 3879 (class 2606 OID 16630)
+-- TOC entry 4089 (class 2606 OID 17355)
 -- Name: receta_ingredientes receta_ingredientes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4952,7 +5802,7 @@ ALTER TABLE ONLY public.receta_ingredientes
 
 
 --
--- TOC entry 3881 (class 2606 OID 16632)
+-- TOC entry 4091 (class 2606 OID 17357)
 -- Name: receta_ingredientes receta_ingredientes_receta_id_ingrediente_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4961,7 +5811,7 @@ ALTER TABLE ONLY public.receta_ingredientes
 
 
 --
--- TOC entry 3875 (class 2606 OID 16616)
+-- TOC entry 4095 (class 2606 OID 17359)
 -- Name: recetas recetas_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4970,7 +5820,7 @@ ALTER TABLE ONLY public.recetas
 
 
 --
--- TOC entry 3836 (class 2606 OID 16466)
+-- TOC entry 4097 (class 2606 OID 17361)
 -- Name: restaurante restaurante_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4979,7 +5829,7 @@ ALTER TABLE ONLY public.restaurante
 
 
 --
--- TOC entry 3842 (class 2606 OID 16496)
+-- TOC entry 4099 (class 2606 OID 17363)
 -- Name: roles roles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4988,7 +5838,7 @@ ALTER TABLE ONLY public.roles
 
 
 --
--- TOC entry 3858 (class 2606 OID 16554)
+-- TOC entry 4101 (class 2606 OID 17365)
 -- Name: unidad_compra unidad_compra_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -4997,7 +5847,7 @@ ALTER TABLE ONLY public.unidad_compra
 
 
 --
--- TOC entry 3838 (class 2606 OID 16476)
+-- TOC entry 4103 (class 2606 OID 17367)
 -- Name: unidad_medida unidad_medida_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -5006,7 +5856,7 @@ ALTER TABLE ONLY public.unidad_medida
 
 
 --
--- TOC entry 3846 (class 2606 OID 16510)
+-- TOC entry 4107 (class 2606 OID 17369)
 -- Name: usuarios usuarios_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -5015,7 +5865,7 @@ ALTER TABLE ONLY public.usuarios
 
 
 --
--- TOC entry 3848 (class 2606 OID 16512)
+-- TOC entry 4109 (class 2606 OID 17371)
 -- Name: usuarios usuarios_username_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -5024,7 +5874,7 @@ ALTER TABLE ONLY public.usuarios
 
 
 --
--- TOC entry 4039 (class 2606 OID 19870)
+-- TOC entry 4111 (class 2606 OID 17373)
 -- Name: order_items order_items_pkey; Type: CONSTRAINT; Schema: sales; Owner: postgres
 --
 
@@ -5033,7 +5883,7 @@ ALTER TABLE ONLY sales.order_items
 
 
 --
--- TOC entry 4037 (class 2606 OID 19849)
+-- TOC entry 4113 (class 2606 OID 17375)
 -- Name: orders orders_pkey; Type: CONSTRAINT; Schema: sales; Owner: postgres
 --
 
@@ -5042,7 +5892,39 @@ ALTER TABLE ONLY sales.orders
 
 
 --
--- TOC entry 4025 (class 1259 OID 19486)
+-- TOC entry 4133 (class 1259 OID 18188)
+-- Name: idx_asiento_lineas_asiento; Type: INDEX; Schema: contabilidad; Owner: postgres
+--
+
+CREATE INDEX idx_asiento_lineas_asiento ON contabilidad.asiento_lineas USING btree (asiento_id);
+
+
+--
+-- TOC entry 4134 (class 1259 OID 18189)
+-- Name: idx_asiento_lineas_cuenta; Type: INDEX; Schema: contabilidad; Owner: postgres
+--
+
+CREATE INDEX idx_asiento_lineas_cuenta ON contabilidad.asiento_lineas USING btree (cuenta_id, restaurante_id);
+
+
+--
+-- TOC entry 4129 (class 1259 OID 18156)
+-- Name: idx_asientos_fecha; Type: INDEX; Schema: contabilidad; Owner: postgres
+--
+
+CREATE INDEX idx_asientos_fecha ON contabilidad.asientos USING btree (fecha, restaurante_id);
+
+
+--
+-- TOC entry 4130 (class 1259 OID 18157)
+-- Name: idx_asientos_origen; Type: INDEX; Schema: contabilidad; Owner: postgres
+--
+
+CREATE INDEX idx_asientos_origen ON contabilidad.asientos USING btree (origen_tipo, origen_id);
+
+
+--
+-- TOC entry 3905 (class 1259 OID 17376)
 -- Name: idx_libro_fecha; Type: INDEX; Schema: contabilidad; Owner: postgres
 --
 
@@ -5050,7 +5932,7 @@ CREATE INDEX idx_libro_fecha ON contabilidad.libro_diario USING btree (fecha);
 
 
 --
--- TOC entry 4026 (class 1259 OID 19488)
+-- TOC entry 3906 (class 1259 OID 17377)
 -- Name: idx_libro_referencia; Type: INDEX; Schema: contabilidad; Owner: postgres
 --
 
@@ -5058,7 +5940,7 @@ CREATE INDEX idx_libro_referencia ON contabilidad.libro_diario USING btree (refe
 
 
 --
--- TOC entry 4027 (class 1259 OID 19487)
+-- TOC entry 3907 (class 1259 OID 17378)
 -- Name: idx_libro_tipo; Type: INDEX; Schema: contabilidad; Owner: postgres
 --
 
@@ -5066,7 +5948,15 @@ CREATE INDEX idx_libro_tipo ON contabilidad.libro_diario USING btree (tipo);
 
 
 --
--- TOC entry 4019 (class 1259 OID 19447)
+-- TOC entry 4122 (class 1259 OID 18134)
+-- Name: idx_plan_cuentas_tipo; Type: INDEX; Schema: contabilidad; Owner: postgres
+--
+
+CREATE INDEX idx_plan_cuentas_tipo ON contabilidad.plan_cuentas USING btree (tipo);
+
+
+--
+-- TOC entry 3926 (class 1259 OID 17379)
 -- Name: idx_banco_activo; Type: INDEX; Schema: finanzas; Owner: postgres
 --
 
@@ -5074,7 +5964,7 @@ CREATE INDEX idx_banco_activo ON finanzas.banco USING btree (activo);
 
 
 --
--- TOC entry 4022 (class 1259 OID 19468)
+-- TOC entry 3929 (class 1259 OID 17380)
 -- Name: idx_banco_mov_banco; Type: INDEX; Schema: finanzas; Owner: postgres
 --
 
@@ -5082,7 +5972,7 @@ CREATE INDEX idx_banco_mov_banco ON finanzas.banco_movimientos USING btree (banc
 
 
 --
--- TOC entry 4023 (class 1259 OID 19466)
+-- TOC entry 3930 (class 1259 OID 17381)
 -- Name: idx_banco_mov_fecha; Type: INDEX; Schema: finanzas; Owner: postgres
 --
 
@@ -5090,7 +5980,7 @@ CREATE INDEX idx_banco_mov_fecha ON finanzas.banco_movimientos USING btree (fech
 
 
 --
--- TOC entry 4024 (class 1259 OID 19467)
+-- TOC entry 3931 (class 1259 OID 17382)
 -- Name: idx_banco_mov_referencia; Type: INDEX; Schema: finanzas; Owner: postgres
 --
 
@@ -5098,7 +5988,7 @@ CREATE INDEX idx_banco_mov_referencia ON finanzas.banco_movimientos USING btree 
 
 
 --
--- TOC entry 4010 (class 1259 OID 19409)
+-- TOC entry 3934 (class 1259 OID 17383)
 -- Name: idx_caja_estado; Type: INDEX; Schema: finanzas; Owner: postgres
 --
 
@@ -5106,7 +5996,7 @@ CREATE INDEX idx_caja_estado ON finanzas.caja USING btree (estado);
 
 
 --
--- TOC entry 4011 (class 1259 OID 19410)
+-- TOC entry 3935 (class 1259 OID 17384)
 -- Name: idx_caja_fechas; Type: INDEX; Schema: finanzas; Owner: postgres
 --
 
@@ -5114,7 +6004,7 @@ CREATE INDEX idx_caja_fechas ON finanzas.caja USING btree (fecha_apertura, fecha
 
 
 --
--- TOC entry 4014 (class 1259 OID 19431)
+-- TOC entry 3938 (class 1259 OID 17385)
 -- Name: idx_caja_mov_caja; Type: INDEX; Schema: finanzas; Owner: postgres
 --
 
@@ -5122,7 +6012,7 @@ CREATE INDEX idx_caja_mov_caja ON finanzas.caja_movimientos USING btree (caja_id
 
 
 --
--- TOC entry 4015 (class 1259 OID 19429)
+-- TOC entry 3939 (class 1259 OID 17386)
 -- Name: idx_caja_mov_fecha; Type: INDEX; Schema: finanzas; Owner: postgres
 --
 
@@ -5130,7 +6020,7 @@ CREATE INDEX idx_caja_mov_fecha ON finanzas.caja_movimientos USING btree (fecha_
 
 
 --
--- TOC entry 4016 (class 1259 OID 19430)
+-- TOC entry 3940 (class 1259 OID 17387)
 -- Name: idx_caja_mov_referencia; Type: INDEX; Schema: finanzas; Owner: postgres
 --
 
@@ -5138,7 +6028,7 @@ CREATE INDEX idx_caja_mov_referencia ON finanzas.caja_movimientos USING btree (r
 
 
 --
--- TOC entry 4006 (class 1259 OID 19392)
+-- TOC entry 3943 (class 1259 OID 17388)
 -- Name: idx_egresos_categoria; Type: INDEX; Schema: finanzas; Owner: postgres
 --
 
@@ -5146,7 +6036,7 @@ CREATE INDEX idx_egresos_categoria ON finanzas.egresos USING btree (categoria_id
 
 
 --
--- TOC entry 4007 (class 1259 OID 19391)
+-- TOC entry 3944 (class 1259 OID 17389)
 -- Name: idx_egresos_fecha; Type: INDEX; Schema: finanzas; Owner: postgres
 --
 
@@ -5154,7 +6044,23 @@ CREATE INDEX idx_egresos_fecha ON finanzas.egresos USING btree (fecha);
 
 
 --
--- TOC entry 3953 (class 1259 OID 19179)
+-- TOC entry 4120 (class 1259 OID 18107)
+-- Name: idx_gastos_categoria; Type: INDEX; Schema: finanzas; Owner: postgres
+--
+
+CREATE INDEX idx_gastos_categoria ON finanzas.gastos_operativos USING btree (categoria, restaurante_id);
+
+
+--
+-- TOC entry 4121 (class 1259 OID 18106)
+-- Name: idx_gastos_restaurante_fecha; Type: INDEX; Schema: finanzas; Owner: postgres
+--
+
+CREATE INDEX idx_gastos_restaurante_fecha ON finanzas.gastos_operativos USING btree (restaurante_id, fecha);
+
+
+--
+-- TOC entry 3949 (class 1259 OID 17390)
 -- Name: idx_compra_detalle_compra; Type: INDEX; Schema: inventario; Owner: postgres
 --
 
@@ -5162,7 +6068,7 @@ CREATE INDEX idx_compra_detalle_compra ON inventario.compra_detalle USING btree 
 
 
 --
--- TOC entry 3954 (class 1259 OID 19180)
+-- TOC entry 3950 (class 1259 OID 17391)
 -- Name: idx_compra_detalle_ingrediente; Type: INDEX; Schema: inventario; Owner: postgres
 --
 
@@ -5170,7 +6076,7 @@ CREATE INDEX idx_compra_detalle_ingrediente ON inventario.compra_detalle USING b
 
 
 --
--- TOC entry 3949 (class 1259 OID 19161)
+-- TOC entry 3953 (class 1259 OID 17392)
 -- Name: idx_compras_fecha; Type: INDEX; Schema: inventario; Owner: postgres
 --
 
@@ -5178,7 +6084,7 @@ CREATE INDEX idx_compras_fecha ON inventario.compras USING btree (fecha);
 
 
 --
--- TOC entry 3950 (class 1259 OID 19162)
+-- TOC entry 3954 (class 1259 OID 17393)
 -- Name: idx_compras_proveedor; Type: INDEX; Schema: inventario; Owner: postgres
 --
 
@@ -5186,7 +6092,7 @@ CREATE INDEX idx_compras_proveedor ON inventario.compras USING btree (proveedor_
 
 
 --
--- TOC entry 3942 (class 1259 OID 19144)
+-- TOC entry 3955 (class 1259 OID 17394)
 -- Name: idx_ingredientes_nombre; Type: INDEX; Schema: inventario; Owner: postgres
 --
 
@@ -5194,7 +6100,7 @@ CREATE INDEX idx_ingredientes_nombre ON inventario.ingredientes USING btree (nom
 
 
 --
--- TOC entry 3943 (class 1259 OID 19146)
+-- TOC entry 3956 (class 1259 OID 17395)
 -- Name: idx_ingredientes_restaurante; Type: INDEX; Schema: inventario; Owner: postgres
 --
 
@@ -5202,7 +6108,7 @@ CREATE INDEX idx_ingredientes_restaurante ON inventario.ingredientes USING btree
 
 
 --
--- TOC entry 3944 (class 1259 OID 19145)
+-- TOC entry 3957 (class 1259 OID 17396)
 -- Name: idx_ingredientes_stock; Type: INDEX; Schema: inventario; Owner: postgres
 --
 
@@ -5210,7 +6116,7 @@ CREATE INDEX idx_ingredientes_stock ON inventario.ingredientes USING btree (cant
 
 
 --
--- TOC entry 3955 (class 1259 OID 19200)
+-- TOC entry 3960 (class 1259 OID 17397)
 -- Name: idx_mermas_fecha; Type: INDEX; Schema: inventario; Owner: postgres
 --
 
@@ -5218,7 +6124,7 @@ CREATE INDEX idx_mermas_fecha ON inventario.mermas USING btree (created_at);
 
 
 --
--- TOC entry 3956 (class 1259 OID 19199)
+-- TOC entry 3961 (class 1259 OID 17398)
 -- Name: idx_mermas_ingrediente; Type: INDEX; Schema: inventario; Owner: postgres
 --
 
@@ -5226,7 +6132,7 @@ CREATE INDEX idx_mermas_ingrediente ON inventario.mermas USING btree (ingredient
 
 
 --
--- TOC entry 3936 (class 1259 OID 19114)
+-- TOC entry 3964 (class 1259 OID 17399)
 -- Name: idx_proveedores_nombre; Type: INDEX; Schema: inventario; Owner: postgres
 --
 
@@ -5234,7 +6140,7 @@ CREATE INDEX idx_proveedores_nombre ON inventario.proveedores USING btree (nombr
 
 
 --
--- TOC entry 3937 (class 1259 OID 19115)
+-- TOC entry 3965 (class 1259 OID 17400)
 -- Name: idx_proveedores_restaurante; Type: INDEX; Schema: inventario; Owner: postgres
 --
 
@@ -5242,7 +6148,7 @@ CREATE INDEX idx_proveedores_restaurante ON inventario.proveedores USING btree (
 
 
 --
--- TOC entry 3961 (class 1259 OID 19215)
+-- TOC entry 3976 (class 1259 OID 17401)
 -- Name: idx_categorias_restaurante; Type: INDEX; Schema: menu; Owner: postgres
 --
 
@@ -5250,7 +6156,7 @@ CREATE INDEX idx_categorias_restaurante ON menu.categorias USING btree (restaura
 
 
 --
--- TOC entry 3967 (class 1259 OID 19253)
+-- TOC entry 3977 (class 1259 OID 17402)
 -- Name: idx_receta_ingredientes_ingrediente; Type: INDEX; Schema: menu; Owner: postgres
 --
 
@@ -5258,7 +6164,7 @@ CREATE INDEX idx_receta_ingredientes_ingrediente ON menu.receta_ingredientes USI
 
 
 --
--- TOC entry 3968 (class 1259 OID 19252)
+-- TOC entry 3978 (class 1259 OID 17403)
 -- Name: idx_receta_ingredientes_receta; Type: INDEX; Schema: menu; Owner: postgres
 --
 
@@ -5266,7 +6172,7 @@ CREATE INDEX idx_receta_ingredientes_receta ON menu.receta_ingredientes USING bt
 
 
 --
--- TOC entry 3962 (class 1259 OID 19236)
+-- TOC entry 3983 (class 1259 OID 17404)
 -- Name: idx_recetas_activo; Type: INDEX; Schema: menu; Owner: postgres
 --
 
@@ -5274,7 +6180,7 @@ CREATE INDEX idx_recetas_activo ON menu.recetas USING btree (activo);
 
 
 --
--- TOC entry 3963 (class 1259 OID 19237)
+-- TOC entry 3984 (class 1259 OID 17405)
 -- Name: idx_recetas_categoria; Type: INDEX; Schema: menu; Owner: postgres
 --
 
@@ -5282,7 +6188,7 @@ CREATE INDEX idx_recetas_categoria ON menu.recetas USING btree (categoria_id);
 
 
 --
--- TOC entry 3964 (class 1259 OID 19235)
+-- TOC entry 3985 (class 1259 OID 17406)
 -- Name: idx_recetas_nombre; Type: INDEX; Schema: menu; Owner: postgres
 --
 
@@ -5290,7 +6196,7 @@ CREATE INDEX idx_recetas_nombre ON menu.recetas USING btree (nombre);
 
 
 --
--- TOC entry 4001 (class 1259 OID 19373)
+-- TOC entry 3992 (class 1259 OID 17407)
 -- Name: idx_facturas_fecha; Type: INDEX; Schema: operaciones; Owner: postgres
 --
 
@@ -5298,7 +6204,7 @@ CREATE INDEX idx_facturas_fecha ON operaciones.facturas USING btree (fecha);
 
 
 --
--- TOC entry 4002 (class 1259 OID 19374)
+-- TOC entry 3993 (class 1259 OID 17408)
 -- Name: idx_facturas_fecha_estado; Type: INDEX; Schema: operaciones; Owner: postgres
 --
 
@@ -5306,7 +6212,7 @@ CREATE INDEX idx_facturas_fecha_estado ON operaciones.facturas USING btree (fech
 
 
 --
--- TOC entry 4003 (class 1259 OID 19372)
+-- TOC entry 3994 (class 1259 OID 17409)
 -- Name: idx_facturas_numero; Type: INDEX; Schema: operaciones; Owner: postgres
 --
 
@@ -5314,7 +6220,7 @@ CREATE INDEX idx_facturas_numero ON operaciones.facturas USING btree (numero_fac
 
 
 --
--- TOC entry 3973 (class 1259 OID 19268)
+-- TOC entry 3995 (class 1259 OID 17410)
 -- Name: idx_mesas_estado; Type: INDEX; Schema: operaciones; Owner: postgres
 --
 
@@ -5322,7 +6228,7 @@ CREATE INDEX idx_mesas_estado ON operaciones.mesas USING btree (estado);
 
 
 --
--- TOC entry 3974 (class 1259 OID 19269)
+-- TOC entry 3996 (class 1259 OID 17411)
 -- Name: idx_mesas_numero; Type: INDEX; Schema: operaciones; Owner: postgres
 --
 
@@ -5330,7 +6236,7 @@ CREATE INDEX idx_mesas_numero ON operaciones.mesas USING btree (numero);
 
 
 --
--- TOC entry 3977 (class 1259 OID 19283)
+-- TOC entry 3999 (class 1259 OID 17412)
 -- Name: idx_meseros_nombre; Type: INDEX; Schema: operaciones; Owner: postgres
 --
 
@@ -5338,7 +6244,7 @@ CREATE INDEX idx_meseros_nombre ON operaciones.meseros USING btree (nombre);
 
 
 --
--- TOC entry 3993 (class 1259 OID 19346)
+-- TOC entry 4002 (class 1259 OID 17413)
 -- Name: idx_pedido_detalle_pedido; Type: INDEX; Schema: operaciones; Owner: postgres
 --
 
@@ -5346,7 +6252,7 @@ CREATE INDEX idx_pedido_detalle_pedido ON operaciones.pedido_detalle USING btree
 
 
 --
--- TOC entry 3994 (class 1259 OID 19347)
+-- TOC entry 4003 (class 1259 OID 17414)
 -- Name: idx_pedido_detalle_receta; Type: INDEX; Schema: operaciones; Owner: postgres
 --
 
@@ -5354,7 +6260,7 @@ CREATE INDEX idx_pedido_detalle_receta ON operaciones.pedido_detalle USING btree
 
 
 --
--- TOC entry 3984 (class 1259 OID 19328)
+-- TOC entry 4006 (class 1259 OID 17415)
 -- Name: idx_pedidos_codigo; Type: INDEX; Schema: operaciones; Owner: postgres
 --
 
@@ -5362,7 +6268,7 @@ CREATE INDEX idx_pedidos_codigo ON operaciones.pedidos USING btree (codigo);
 
 
 --
--- TOC entry 3985 (class 1259 OID 19325)
+-- TOC entry 4007 (class 1259 OID 17416)
 -- Name: idx_pedidos_estado; Type: INDEX; Schema: operaciones; Owner: postgres
 --
 
@@ -5370,7 +6276,7 @@ CREATE INDEX idx_pedidos_estado ON operaciones.pedidos USING btree (estado);
 
 
 --
--- TOC entry 3986 (class 1259 OID 19326)
+-- TOC entry 4008 (class 1259 OID 17417)
 -- Name: idx_pedidos_estado_cuenta; Type: INDEX; Schema: operaciones; Owner: postgres
 --
 
@@ -5378,7 +6284,7 @@ CREATE INDEX idx_pedidos_estado_cuenta ON operaciones.pedidos USING btree (estad
 
 
 --
--- TOC entry 3987 (class 1259 OID 19327)
+-- TOC entry 4009 (class 1259 OID 17418)
 -- Name: idx_pedidos_fecha; Type: INDEX; Schema: operaciones; Owner: postgres
 --
 
@@ -5386,7 +6292,7 @@ CREATE INDEX idx_pedidos_fecha ON operaciones.pedidos USING btree (fecha_hora);
 
 
 --
--- TOC entry 3988 (class 1259 OID 19329)
+-- TOC entry 4010 (class 1259 OID 17419)
 -- Name: idx_pedidos_fecha_estado; Type: INDEX; Schema: operaciones; Owner: postgres
 --
 
@@ -5394,7 +6300,7 @@ CREATE INDEX idx_pedidos_fecha_estado ON operaciones.pedidos USING btree (fecha_
 
 
 --
--- TOC entry 3980 (class 1259 OID 19302)
+-- TOC entry 4015 (class 1259 OID 17420)
 -- Name: idx_reservas_estado; Type: INDEX; Schema: operaciones; Owner: postgres
 --
 
@@ -5402,7 +6308,7 @@ CREATE INDEX idx_reservas_estado ON operaciones.reservas USING btree (estado);
 
 
 --
--- TOC entry 3981 (class 1259 OID 19301)
+-- TOC entry 4016 (class 1259 OID 17421)
 -- Name: idx_reservas_fecha; Type: INDEX; Schema: operaciones; Owner: postgres
 --
 
@@ -5410,7 +6316,23 @@ CREATE INDEX idx_reservas_fecha ON operaciones.reservas USING btree (fecha_reser
 
 
 --
--- TOC entry 3917 (class 1259 OID 16782)
+-- TOC entry 4114 (class 1259 OID 18083)
+-- Name: idx_trans_pago_metodo; Type: INDEX; Schema: operaciones; Owner: postgres
+--
+
+CREATE INDEX idx_trans_pago_metodo ON operaciones.transacciones_pago USING btree (metodo, restaurante_id);
+
+
+--
+-- TOC entry 4115 (class 1259 OID 18082)
+-- Name: idx_trans_pago_pedido; Type: INDEX; Schema: operaciones; Owner: postgres
+--
+
+CREATE INDEX idx_trans_pago_pedido ON operaciones.transacciones_pago USING btree (pedido_id);
+
+
+--
+-- TOC entry 4021 (class 1259 OID 17422)
 -- Name: idx_banco_activo; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5418,7 +6340,7 @@ CREATE INDEX idx_banco_activo ON public.banco USING btree (activo);
 
 
 --
--- TOC entry 3920 (class 1259 OID 16802)
+-- TOC entry 4024 (class 1259 OID 17423)
 -- Name: idx_banco_movimientos_banco; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5426,7 +6348,7 @@ CREATE INDEX idx_banco_movimientos_banco ON public.banco_movimientos USING btree
 
 
 --
--- TOC entry 3921 (class 1259 OID 16800)
+-- TOC entry 4025 (class 1259 OID 17424)
 -- Name: idx_banco_movimientos_fecha; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5434,7 +6356,7 @@ CREATE INDEX idx_banco_movimientos_fecha ON public.banco_movimientos USING btree
 
 
 --
--- TOC entry 3910 (class 1259 OID 16748)
+-- TOC entry 4028 (class 1259 OID 17425)
 -- Name: idx_caja_fechas; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5442,7 +6364,7 @@ CREATE INDEX idx_caja_fechas ON public.caja USING btree (fecha_apertura, fecha_c
 
 
 --
--- TOC entry 3913 (class 1259 OID 16768)
+-- TOC entry 4031 (class 1259 OID 17426)
 -- Name: idx_caja_movimientos_caja; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5450,7 +6372,7 @@ CREATE INDEX idx_caja_movimientos_caja ON public.caja_movimientos USING btree (c
 
 
 --
--- TOC entry 3914 (class 1259 OID 16766)
+-- TOC entry 4032 (class 1259 OID 17427)
 -- Name: idx_caja_movimientos_fecha; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5458,7 +6380,7 @@ CREATE INDEX idx_caja_movimientos_fecha ON public.caja_movimientos USING btree (
 
 
 --
--- TOC entry 3870 (class 1259 OID 16598)
+-- TOC entry 4037 (class 1259 OID 17428)
 -- Name: idx_compra_detalle_compra; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5466,7 +6388,7 @@ CREATE INDEX idx_compra_detalle_compra ON public.compra_detalle USING btree (com
 
 
 --
--- TOC entry 3871 (class 1259 OID 16599)
+-- TOC entry 4038 (class 1259 OID 17429)
 -- Name: idx_compra_detalle_ingrediente; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5474,7 +6396,7 @@ CREATE INDEX idx_compra_detalle_ingrediente ON public.compra_detalle USING btree
 
 
 --
--- TOC entry 3865 (class 1259 OID 16582)
+-- TOC entry 4041 (class 1259 OID 17430)
 -- Name: idx_compras_fecha; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5482,7 +6404,7 @@ CREATE INDEX idx_compras_fecha ON public.compras USING btree (fecha);
 
 
 --
--- TOC entry 3866 (class 1259 OID 17021)
+-- TOC entry 4042 (class 1259 OID 17431)
 -- Name: idx_compras_fecha_proveedor; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5490,7 +6412,7 @@ CREATE INDEX idx_compras_fecha_proveedor ON public.compras USING btree (fecha, p
 
 
 --
--- TOC entry 3867 (class 1259 OID 16583)
+-- TOC entry 4043 (class 1259 OID 17432)
 -- Name: idx_compras_proveedor; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5498,7 +6420,7 @@ CREATE INDEX idx_compras_proveedor ON public.compras USING btree (proveedor_id);
 
 
 --
--- TOC entry 3906 (class 1259 OID 16731)
+-- TOC entry 4046 (class 1259 OID 17433)
 -- Name: idx_egresos_categoria; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5506,7 +6428,7 @@ CREATE INDEX idx_egresos_categoria ON public.egresos USING btree (categoria_id);
 
 
 --
--- TOC entry 3907 (class 1259 OID 16730)
+-- TOC entry 4047 (class 1259 OID 17434)
 -- Name: idx_egresos_fecha; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5514,7 +6436,7 @@ CREATE INDEX idx_egresos_fecha ON public.egresos USING btree (fecha);
 
 
 --
--- TOC entry 3902 (class 1259 OID 16714)
+-- TOC entry 4052 (class 1259 OID 17435)
 -- Name: idx_facturas_fecha; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5522,7 +6444,7 @@ CREATE INDEX idx_facturas_fecha ON public.facturas USING btree (fecha);
 
 
 --
--- TOC entry 3903 (class 1259 OID 16713)
+-- TOC entry 4053 (class 1259 OID 17436)
 -- Name: idx_facturas_numero; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5530,7 +6452,7 @@ CREATE INDEX idx_facturas_numero ON public.facturas USING btree (numero_factura)
 
 
 --
--- TOC entry 3859 (class 1259 OID 16569)
+-- TOC entry 4054 (class 1259 OID 17437)
 -- Name: idx_ingredientes_nombre; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5538,7 +6460,7 @@ CREATE INDEX idx_ingredientes_nombre ON public.ingredientes USING btree (nombre)
 
 
 --
--- TOC entry 3860 (class 1259 OID 16570)
+-- TOC entry 4055 (class 1259 OID 17438)
 -- Name: idx_ingredientes_stock; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5546,7 +6468,7 @@ CREATE INDEX idx_ingredientes_stock ON public.ingredientes USING btree (cantidad
 
 
 --
--- TOC entry 3882 (class 1259 OID 16648)
+-- TOC entry 4058 (class 1259 OID 17439)
 -- Name: idx_mesas_numero; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5554,7 +6476,7 @@ CREATE INDEX idx_mesas_numero ON public.mesas USING btree (numero);
 
 
 --
--- TOC entry 3885 (class 1259 OID 16660)
+-- TOC entry 4061 (class 1259 OID 17440)
 -- Name: idx_meseros_nombre; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5562,7 +6484,7 @@ CREATE INDEX idx_meseros_nombre ON public.meseros USING btree (nombre);
 
 
 --
--- TOC entry 3894 (class 1259 OID 16693)
+-- TOC entry 4070 (class 1259 OID 17441)
 -- Name: idx_pedido_detalle_pedido; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5570,7 +6492,7 @@ CREATE INDEX idx_pedido_detalle_pedido ON public.pedido_detalle USING btree (ped
 
 
 --
--- TOC entry 3895 (class 1259 OID 16694)
+-- TOC entry 4071 (class 1259 OID 17442)
 -- Name: idx_pedido_detalle_receta; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5578,7 +6500,7 @@ CREATE INDEX idx_pedido_detalle_receta ON public.pedido_detalle USING btree (rec
 
 
 --
--- TOC entry 3888 (class 1259 OID 16678)
+-- TOC entry 4074 (class 1259 OID 17443)
 -- Name: idx_pedidos_codigo; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5586,7 +6508,7 @@ CREATE INDEX idx_pedidos_codigo ON public.pedidos USING btree (codigo);
 
 
 --
--- TOC entry 3889 (class 1259 OID 16677)
+-- TOC entry 4075 (class 1259 OID 17444)
 -- Name: idx_pedidos_fecha; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5594,7 +6516,7 @@ CREATE INDEX idx_pedidos_fecha ON public.pedidos USING btree (fecha_hora);
 
 
 --
--- TOC entry 3851 (class 1259 OID 16543)
+-- TOC entry 4080 (class 1259 OID 17445)
 -- Name: idx_proveedores_nombre; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5602,7 +6524,7 @@ CREATE INDEX idx_proveedores_nombre ON public.proveedores USING btree (nombre);
 
 
 --
--- TOC entry 3852 (class 1259 OID 16544)
+-- TOC entry 4081 (class 1259 OID 17446)
 -- Name: idx_proveedores_restaurante; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5610,7 +6532,7 @@ CREATE INDEX idx_proveedores_restaurante ON public.proveedores USING btree (rest
 
 
 --
--- TOC entry 3876 (class 1259 OID 16634)
+-- TOC entry 4086 (class 1259 OID 17447)
 -- Name: idx_receta_ingredientes_ingrediente; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5618,7 +6540,7 @@ CREATE INDEX idx_receta_ingredientes_ingrediente ON public.receta_ingredientes U
 
 
 --
--- TOC entry 3877 (class 1259 OID 16633)
+-- TOC entry 4087 (class 1259 OID 17448)
 -- Name: idx_receta_ingredientes_receta; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5626,7 +6548,7 @@ CREATE INDEX idx_receta_ingredientes_receta ON public.receta_ingredientes USING 
 
 
 --
--- TOC entry 3872 (class 1259 OID 16618)
+-- TOC entry 4092 (class 1259 OID 17449)
 -- Name: idx_recetas_activo; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5634,7 +6556,7 @@ CREATE INDEX idx_recetas_activo ON public.recetas USING btree (activo);
 
 
 --
--- TOC entry 3873 (class 1259 OID 16617)
+-- TOC entry 4093 (class 1259 OID 17450)
 -- Name: idx_recetas_nombre; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5642,7 +6564,7 @@ CREATE INDEX idx_recetas_nombre ON public.recetas USING btree (nombre);
 
 
 --
--- TOC entry 3843 (class 1259 OID 16514)
+-- TOC entry 4104 (class 1259 OID 17451)
 -- Name: idx_usuarios_email; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5650,7 +6572,7 @@ CREATE INDEX idx_usuarios_email ON public.usuarios USING btree (email);
 
 
 --
--- TOC entry 3844 (class 1259 OID 16513)
+-- TOC entry 4105 (class 1259 OID 17452)
 -- Name: idx_usuarios_username; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5658,7 +6580,7 @@ CREATE INDEX idx_usuarios_username ON public.usuarios USING btree (username);
 
 
 --
--- TOC entry 4146 (class 2620 OID 19754)
+-- TOC entry 4244 (class 2620 OID 17453)
 -- Name: restaurante trg_restaurante_updated; Type: TRIGGER; Schema: core; Owner: postgres
 --
 
@@ -5666,7 +6588,7 @@ CREATE TRIGGER trg_restaurante_updated BEFORE UPDATE ON core.restaurante FOR EAC
 
 
 --
--- TOC entry 4147 (class 2620 OID 19755)
+-- TOC entry 4245 (class 2620 OID 17454)
 -- Name: usuarios trg_usuarios_updated; Type: TRIGGER; Schema: core; Owner: postgres
 --
 
@@ -5674,7 +6596,7 @@ CREATE TRIGGER trg_usuarios_updated BEFORE UPDATE ON core.usuarios FOR EACH ROW 
 
 
 --
--- TOC entry 4155 (class 2620 OID 19763)
+-- TOC entry 4246 (class 2620 OID 17455)
 -- Name: banco trg_banco_updated; Type: TRIGGER; Schema: finanzas; Owner: postgres
 --
 
@@ -5682,7 +6604,7 @@ CREATE TRIGGER trg_banco_updated BEFORE UPDATE ON finanzas.banco FOR EACH ROW EX
 
 
 --
--- TOC entry 4149 (class 2620 OID 19757)
+-- TOC entry 4247 (class 2620 OID 17456)
 -- Name: ingredientes trg_ingredientes_updated; Type: TRIGGER; Schema: inventario; Owner: postgres
 --
 
@@ -5690,7 +6612,7 @@ CREATE TRIGGER trg_ingredientes_updated BEFORE UPDATE ON inventario.ingredientes
 
 
 --
--- TOC entry 4148 (class 2620 OID 19756)
+-- TOC entry 4248 (class 2620 OID 17457)
 -- Name: proveedores trg_proveedores_updated; Type: TRIGGER; Schema: inventario; Owner: postgres
 --
 
@@ -5698,7 +6620,7 @@ CREATE TRIGGER trg_proveedores_updated BEFORE UPDATE ON inventario.proveedores F
 
 
 --
--- TOC entry 4150 (class 2620 OID 19758)
+-- TOC entry 4249 (class 2620 OID 17458)
 -- Name: categorias trg_categorias_updated; Type: TRIGGER; Schema: menu; Owner: postgres
 --
 
@@ -5706,7 +6628,7 @@ CREATE TRIGGER trg_categorias_updated BEFORE UPDATE ON menu.categorias FOR EACH 
 
 
 --
--- TOC entry 4151 (class 2620 OID 19759)
+-- TOC entry 4250 (class 2620 OID 17459)
 -- Name: recetas trg_recetas_updated; Type: TRIGGER; Schema: menu; Owner: postgres
 --
 
@@ -5714,7 +6636,7 @@ CREATE TRIGGER trg_recetas_updated BEFORE UPDATE ON menu.recetas FOR EACH ROW EX
 
 
 --
--- TOC entry 4152 (class 2620 OID 19760)
+-- TOC entry 4251 (class 2620 OID 17460)
 -- Name: mesas trg_mesas_updated; Type: TRIGGER; Schema: operaciones; Owner: postgres
 --
 
@@ -5722,7 +6644,7 @@ CREATE TRIGGER trg_mesas_updated BEFORE UPDATE ON operaciones.mesas FOR EACH ROW
 
 
 --
--- TOC entry 4153 (class 2620 OID 19761)
+-- TOC entry 4252 (class 2620 OID 17461)
 -- Name: meseros trg_meseros_updated; Type: TRIGGER; Schema: operaciones; Owner: postgres
 --
 
@@ -5730,7 +6652,7 @@ CREATE TRIGGER trg_meseros_updated BEFORE UPDATE ON operaciones.meseros FOR EACH
 
 
 --
--- TOC entry 4154 (class 2620 OID 19762)
+-- TOC entry 4253 (class 2620 OID 17462)
 -- Name: pedidos trg_pedidos_updated; Type: TRIGGER; Schema: operaciones; Owner: postgres
 --
 
@@ -5738,7 +6660,7 @@ CREATE TRIGGER trg_pedidos_updated BEFORE UPDATE ON operaciones.pedidos FOR EACH
 
 
 --
--- TOC entry 4145 (class 2620 OID 17020)
+-- TOC entry 4254 (class 2620 OID 17463)
 -- Name: proveedores update_proveedores_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -5746,7 +6668,7 @@ CREATE TRIGGER update_proveedores_updated_at BEFORE UPDATE ON public.proveedores
 
 
 --
--- TOC entry 4144 (class 2620 OID 17019)
+-- TOC entry 4255 (class 2620 OID 17464)
 -- Name: restaurante update_restaurante_updated_at; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -5754,7 +6676,43 @@ CREATE TRIGGER update_restaurante_updated_at BEFORE UPDATE ON public.restaurante
 
 
 --
--- TOC entry 4137 (class 2606 OID 19749)
+-- TOC entry 4241 (class 2606 OID 18173)
+-- Name: asiento_lineas fk_asiento_lineas_asiento; Type: FK CONSTRAINT; Schema: contabilidad; Owner: postgres
+--
+
+ALTER TABLE ONLY contabilidad.asiento_lineas
+    ADD CONSTRAINT fk_asiento_lineas_asiento FOREIGN KEY (asiento_id) REFERENCES contabilidad.asientos(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4242 (class 2606 OID 18178)
+-- Name: asiento_lineas fk_asiento_lineas_cuenta; Type: FK CONSTRAINT; Schema: contabilidad; Owner: postgres
+--
+
+ALTER TABLE ONLY contabilidad.asiento_lineas
+    ADD CONSTRAINT fk_asiento_lineas_cuenta FOREIGN KEY (cuenta_id) REFERENCES contabilidad.plan_cuentas(id);
+
+
+--
+-- TOC entry 4243 (class 2606 OID 18183)
+-- Name: asiento_lineas fk_asiento_lineas_restaurante; Type: FK CONSTRAINT; Schema: contabilidad; Owner: postgres
+--
+
+ALTER TABLE ONLY contabilidad.asiento_lineas
+    ADD CONSTRAINT fk_asiento_lineas_restaurante FOREIGN KEY (restaurante_id) REFERENCES core.restaurante(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4240 (class 2606 OID 18151)
+-- Name: asientos fk_asientos_restaurante; Type: FK CONSTRAINT; Schema: contabilidad; Owner: postgres
+--
+
+ALTER TABLE ONLY contabilidad.asientos
+    ADD CONSTRAINT fk_asientos_restaurante FOREIGN KEY (restaurante_id) REFERENCES core.restaurante(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4135 (class 2606 OID 17465)
 -- Name: libro_diario fk_libro_restaurante; Type: FK CONSTRAINT; Schema: contabilidad; Owner: postgres
 --
 
@@ -5763,7 +6721,25 @@ ALTER TABLE ONLY contabilidad.libro_diario
 
 
 --
--- TOC entry 4088 (class 2606 OID 20019)
+-- TOC entry 4238 (class 2606 OID 18124)
+-- Name: plan_cuentas fk_plan_cuentas_padre; Type: FK CONSTRAINT; Schema: contabilidad; Owner: postgres
+--
+
+ALTER TABLE ONLY contabilidad.plan_cuentas
+    ADD CONSTRAINT fk_plan_cuentas_padre FOREIGN KEY (padre_id) REFERENCES contabilidad.plan_cuentas(id);
+
+
+--
+-- TOC entry 4239 (class 2606 OID 18129)
+-- Name: plan_cuentas fk_plan_cuentas_restaurante; Type: FK CONSTRAINT; Schema: contabilidad; Owner: postgres
+--
+
+ALTER TABLE ONLY contabilidad.plan_cuentas
+    ADD CONSTRAINT fk_plan_cuentas_restaurante FOREIGN KEY (restaurante_id) REFERENCES core.restaurante(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4137 (class 2606 OID 17470)
 -- Name: usuarios FK_7ba064af415d3da35c33731f743; Type: FK CONSTRAINT; Schema: core; Owner: postgres
 --
 
@@ -5772,7 +6748,7 @@ ALTER TABLE ONLY core.usuarios
 
 
 --
--- TOC entry 4087 (class 2606 OID 19489)
+-- TOC entry 4136 (class 2606 OID 17475)
 -- Name: metodos_pago fk_metodos_pago_restaurante; Type: FK CONSTRAINT; Schema: core; Owner: postgres
 --
 
@@ -5781,7 +6757,7 @@ ALTER TABLE ONLY core.metodos_pago
 
 
 --
--- TOC entry 4133 (class 2606 OID 19734)
+-- TOC entry 4139 (class 2606 OID 17480)
 -- Name: banco_movimientos fk_banco_mov_banco; Type: FK CONSTRAINT; Schema: finanzas; Owner: postgres
 --
 
@@ -5790,7 +6766,7 @@ ALTER TABLE ONLY finanzas.banco_movimientos
 
 
 --
--- TOC entry 4134 (class 2606 OID 19739)
+-- TOC entry 4140 (class 2606 OID 17485)
 -- Name: banco_movimientos fk_banco_mov_metodo_pago; Type: FK CONSTRAINT; Schema: finanzas; Owner: postgres
 --
 
@@ -5799,7 +6775,7 @@ ALTER TABLE ONLY finanzas.banco_movimientos
 
 
 --
--- TOC entry 4135 (class 2606 OID 19729)
+-- TOC entry 4141 (class 2606 OID 17490)
 -- Name: banco_movimientos fk_banco_mov_restaurante; Type: FK CONSTRAINT; Schema: finanzas; Owner: postgres
 --
 
@@ -5808,7 +6784,7 @@ ALTER TABLE ONLY finanzas.banco_movimientos
 
 
 --
--- TOC entry 4136 (class 2606 OID 19744)
+-- TOC entry 4142 (class 2606 OID 17495)
 -- Name: banco_movimientos fk_banco_mov_usuario; Type: FK CONSTRAINT; Schema: finanzas; Owner: postgres
 --
 
@@ -5817,7 +6793,7 @@ ALTER TABLE ONLY finanzas.banco_movimientos
 
 
 --
--- TOC entry 4132 (class 2606 OID 19724)
+-- TOC entry 4138 (class 2606 OID 17500)
 -- Name: banco fk_banco_restaurante; Type: FK CONSTRAINT; Schema: finanzas; Owner: postgres
 --
 
@@ -5826,7 +6802,7 @@ ALTER TABLE ONLY finanzas.banco
 
 
 --
--- TOC entry 4128 (class 2606 OID 19709)
+-- TOC entry 4146 (class 2606 OID 17505)
 -- Name: caja_movimientos fk_caja_mov_caja; Type: FK CONSTRAINT; Schema: finanzas; Owner: postgres
 --
 
@@ -5835,7 +6811,7 @@ ALTER TABLE ONLY finanzas.caja_movimientos
 
 
 --
--- TOC entry 4129 (class 2606 OID 19714)
+-- TOC entry 4147 (class 2606 OID 17510)
 -- Name: caja_movimientos fk_caja_mov_metodo_pago; Type: FK CONSTRAINT; Schema: finanzas; Owner: postgres
 --
 
@@ -5844,7 +6820,7 @@ ALTER TABLE ONLY finanzas.caja_movimientos
 
 
 --
--- TOC entry 4130 (class 2606 OID 19704)
+-- TOC entry 4148 (class 2606 OID 17515)
 -- Name: caja_movimientos fk_caja_mov_restaurante; Type: FK CONSTRAINT; Schema: finanzas; Owner: postgres
 --
 
@@ -5853,7 +6829,7 @@ ALTER TABLE ONLY finanzas.caja_movimientos
 
 
 --
--- TOC entry 4131 (class 2606 OID 19719)
+-- TOC entry 4149 (class 2606 OID 17520)
 -- Name: caja_movimientos fk_caja_mov_usuario; Type: FK CONSTRAINT; Schema: finanzas; Owner: postgres
 --
 
@@ -5862,7 +6838,7 @@ ALTER TABLE ONLY finanzas.caja_movimientos
 
 
 --
--- TOC entry 4125 (class 2606 OID 19689)
+-- TOC entry 4143 (class 2606 OID 17525)
 -- Name: caja fk_caja_restaurante; Type: FK CONSTRAINT; Schema: finanzas; Owner: postgres
 --
 
@@ -5871,7 +6847,7 @@ ALTER TABLE ONLY finanzas.caja
 
 
 --
--- TOC entry 4126 (class 2606 OID 19694)
+-- TOC entry 4144 (class 2606 OID 17530)
 -- Name: caja fk_caja_usuario_apertura; Type: FK CONSTRAINT; Schema: finanzas; Owner: postgres
 --
 
@@ -5880,7 +6856,7 @@ ALTER TABLE ONLY finanzas.caja
 
 
 --
--- TOC entry 4127 (class 2606 OID 19699)
+-- TOC entry 4145 (class 2606 OID 17535)
 -- Name: caja fk_caja_usuario_cierre; Type: FK CONSTRAINT; Schema: finanzas; Owner: postgres
 --
 
@@ -5889,7 +6865,7 @@ ALTER TABLE ONLY finanzas.caja
 
 
 --
--- TOC entry 4123 (class 2606 OID 19684)
+-- TOC entry 4150 (class 2606 OID 17540)
 -- Name: egresos fk_egresos_categoria; Type: FK CONSTRAINT; Schema: finanzas; Owner: postgres
 --
 
@@ -5898,7 +6874,7 @@ ALTER TABLE ONLY finanzas.egresos
 
 
 --
--- TOC entry 4124 (class 2606 OID 19679)
+-- TOC entry 4151 (class 2606 OID 17545)
 -- Name: egresos fk_egresos_restaurante; Type: FK CONSTRAINT; Schema: finanzas; Owner: postgres
 --
 
@@ -5907,7 +6883,16 @@ ALTER TABLE ONLY finanzas.egresos
 
 
 --
--- TOC entry 4089 (class 2606 OID 19509)
+-- TOC entry 4237 (class 2606 OID 18101)
+-- Name: gastos_operativos fk_gastos_restaurante; Type: FK CONSTRAINT; Schema: finanzas; Owner: postgres
+--
+
+ALTER TABLE ONLY finanzas.gastos_operativos
+    ADD CONSTRAINT fk_gastos_restaurante FOREIGN KEY (restaurante_id) REFERENCES core.restaurante(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4152 (class 2606 OID 17550)
 -- Name: categoria_egresos fk_cat_egresos_restaurante; Type: FK CONSTRAINT; Schema: inventario; Owner: postgres
 --
 
@@ -5916,7 +6901,7 @@ ALTER TABLE ONLY inventario.categoria_egresos
 
 
 --
--- TOC entry 4096 (class 2606 OID 19549)
+-- TOC entry 4153 (class 2606 OID 17555)
 -- Name: compra_detalle fk_compra_det_compra; Type: FK CONSTRAINT; Schema: inventario; Owner: postgres
 --
 
@@ -5925,7 +6910,7 @@ ALTER TABLE ONLY inventario.compra_detalle
 
 
 --
--- TOC entry 4097 (class 2606 OID 19554)
+-- TOC entry 4154 (class 2606 OID 17560)
 -- Name: compra_detalle fk_compra_det_ingrediente; Type: FK CONSTRAINT; Schema: inventario; Owner: postgres
 --
 
@@ -5934,7 +6919,7 @@ ALTER TABLE ONLY inventario.compra_detalle
 
 
 --
--- TOC entry 4098 (class 2606 OID 19544)
+-- TOC entry 4155 (class 2606 OID 17565)
 -- Name: compra_detalle fk_compra_det_restaurante; Type: FK CONSTRAINT; Schema: inventario; Owner: postgres
 --
 
@@ -5943,7 +6928,7 @@ ALTER TABLE ONLY inventario.compra_detalle
 
 
 --
--- TOC entry 4099 (class 2606 OID 19559)
+-- TOC entry 4156 (class 2606 OID 17570)
 -- Name: compra_detalle fk_compra_det_unidad; Type: FK CONSTRAINT; Schema: inventario; Owner: postgres
 --
 
@@ -5952,7 +6937,7 @@ ALTER TABLE ONLY inventario.compra_detalle
 
 
 --
--- TOC entry 4094 (class 2606 OID 19539)
+-- TOC entry 4157 (class 2606 OID 17575)
 -- Name: compras fk_compras_proveedor; Type: FK CONSTRAINT; Schema: inventario; Owner: postgres
 --
 
@@ -5961,7 +6946,7 @@ ALTER TABLE ONLY inventario.compras
 
 
 --
--- TOC entry 4095 (class 2606 OID 19534)
+-- TOC entry 4158 (class 2606 OID 17580)
 -- Name: compras fk_compras_restaurante; Type: FK CONSTRAINT; Schema: inventario; Owner: postgres
 --
 
@@ -5970,7 +6955,7 @@ ALTER TABLE ONLY inventario.compras
 
 
 --
--- TOC entry 4092 (class 2606 OID 19524)
+-- TOC entry 4159 (class 2606 OID 17585)
 -- Name: ingredientes fk_ingredientes_restaurante; Type: FK CONSTRAINT; Schema: inventario; Owner: postgres
 --
 
@@ -5979,7 +6964,7 @@ ALTER TABLE ONLY inventario.ingredientes
 
 
 --
--- TOC entry 4093 (class 2606 OID 19529)
+-- TOC entry 4160 (class 2606 OID 17590)
 -- Name: ingredientes fk_ingredientes_unidad; Type: FK CONSTRAINT; Schema: inventario; Owner: postgres
 --
 
@@ -5988,7 +6973,7 @@ ALTER TABLE ONLY inventario.ingredientes
 
 
 --
--- TOC entry 4100 (class 2606 OID 19569)
+-- TOC entry 4161 (class 2606 OID 17595)
 -- Name: mermas fk_mermas_ingrediente; Type: FK CONSTRAINT; Schema: inventario; Owner: postgres
 --
 
@@ -5997,7 +6982,7 @@ ALTER TABLE ONLY inventario.mermas
 
 
 --
--- TOC entry 4101 (class 2606 OID 19564)
+-- TOC entry 4162 (class 2606 OID 17600)
 -- Name: mermas fk_mermas_restaurante; Type: FK CONSTRAINT; Schema: inventario; Owner: postgres
 --
 
@@ -6006,7 +6991,7 @@ ALTER TABLE ONLY inventario.mermas
 
 
 --
--- TOC entry 4102 (class 2606 OID 19574)
+-- TOC entry 4163 (class 2606 OID 17605)
 -- Name: mermas fk_mermas_usuario; Type: FK CONSTRAINT; Schema: inventario; Owner: postgres
 --
 
@@ -6015,7 +7000,7 @@ ALTER TABLE ONLY inventario.mermas
 
 
 --
--- TOC entry 4090 (class 2606 OID 19514)
+-- TOC entry 4164 (class 2606 OID 17610)
 -- Name: proveedores fk_proveedores_restaurante; Type: FK CONSTRAINT; Schema: inventario; Owner: postgres
 --
 
@@ -6024,7 +7009,7 @@ ALTER TABLE ONLY inventario.proveedores
 
 
 --
--- TOC entry 4091 (class 2606 OID 19519)
+-- TOC entry 4165 (class 2606 OID 17615)
 -- Name: unidad_compra fk_unidad_compra_restaurante; Type: FK CONSTRAINT; Schema: inventario; Owner: postgres
 --
 
@@ -6033,7 +7018,7 @@ ALTER TABLE ONLY inventario.unidad_compra
 
 
 --
--- TOC entry 4138 (class 2606 OID 19800)
+-- TOC entry 4166 (class 2606 OID 17620)
 -- Name: products products_categoria_id_fkey; Type: FK CONSTRAINT; Schema: inventory; Owner: postgres
 --
 
@@ -6042,7 +7027,7 @@ ALTER TABLE ONLY inventory.products
 
 
 --
--- TOC entry 4103 (class 2606 OID 19579)
+-- TOC entry 4167 (class 2606 OID 17625)
 -- Name: categorias fk_categorias_restaurante; Type: FK CONSTRAINT; Schema: menu; Owner: postgres
 --
 
@@ -6051,7 +7036,7 @@ ALTER TABLE ONLY menu.categorias
 
 
 --
--- TOC entry 4106 (class 2606 OID 19604)
+-- TOC entry 4168 (class 2606 OID 17630)
 -- Name: receta_ingredientes fk_receta_ing_ingrediente; Type: FK CONSTRAINT; Schema: menu; Owner: postgres
 --
 
@@ -6060,7 +7045,7 @@ ALTER TABLE ONLY menu.receta_ingredientes
 
 
 --
--- TOC entry 4107 (class 2606 OID 19599)
+-- TOC entry 4169 (class 2606 OID 17635)
 -- Name: receta_ingredientes fk_receta_ing_receta; Type: FK CONSTRAINT; Schema: menu; Owner: postgres
 --
 
@@ -6069,7 +7054,7 @@ ALTER TABLE ONLY menu.receta_ingredientes
 
 
 --
--- TOC entry 4108 (class 2606 OID 19594)
+-- TOC entry 4170 (class 2606 OID 17640)
 -- Name: receta_ingredientes fk_receta_ing_restaurante; Type: FK CONSTRAINT; Schema: menu; Owner: postgres
 --
 
@@ -6078,7 +7063,7 @@ ALTER TABLE ONLY menu.receta_ingredientes
 
 
 --
--- TOC entry 4104 (class 2606 OID 19589)
+-- TOC entry 4171 (class 2606 OID 17645)
 -- Name: recetas fk_recetas_categoria; Type: FK CONSTRAINT; Schema: menu; Owner: postgres
 --
 
@@ -6087,7 +7072,7 @@ ALTER TABLE ONLY menu.recetas
 
 
 --
--- TOC entry 4105 (class 2606 OID 19584)
+-- TOC entry 4172 (class 2606 OID 17650)
 -- Name: recetas fk_recetas_restaurante; Type: FK CONSTRAINT; Schema: menu; Owner: postgres
 --
 
@@ -6096,7 +7081,7 @@ ALTER TABLE ONLY menu.recetas
 
 
 --
--- TOC entry 4119 (class 2606 OID 19669)
+-- TOC entry 4173 (class 2606 OID 17655)
 -- Name: facturas fk_facturas_metodo_pago; Type: FK CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -6105,7 +7090,7 @@ ALTER TABLE ONLY operaciones.facturas
 
 
 --
--- TOC entry 4120 (class 2606 OID 19664)
+-- TOC entry 4174 (class 2606 OID 17660)
 -- Name: facturas fk_facturas_pedido; Type: FK CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -6114,7 +7099,7 @@ ALTER TABLE ONLY operaciones.facturas
 
 
 --
--- TOC entry 4121 (class 2606 OID 19659)
+-- TOC entry 4175 (class 2606 OID 17665)
 -- Name: facturas fk_facturas_restaurante; Type: FK CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -6123,7 +7108,7 @@ ALTER TABLE ONLY operaciones.facturas
 
 
 --
--- TOC entry 4122 (class 2606 OID 19674)
+-- TOC entry 4176 (class 2606 OID 17670)
 -- Name: facturas fk_facturas_usuario; Type: FK CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -6132,7 +7117,7 @@ ALTER TABLE ONLY operaciones.facturas
 
 
 --
--- TOC entry 4109 (class 2606 OID 19609)
+-- TOC entry 4177 (class 2606 OID 17675)
 -- Name: mesas fk_mesas_restaurante; Type: FK CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -6141,7 +7126,7 @@ ALTER TABLE ONLY operaciones.mesas
 
 
 --
--- TOC entry 4110 (class 2606 OID 19614)
+-- TOC entry 4178 (class 2606 OID 17680)
 -- Name: meseros fk_meseros_restaurante; Type: FK CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -6150,7 +7135,7 @@ ALTER TABLE ONLY operaciones.meseros
 
 
 --
--- TOC entry 4116 (class 2606 OID 19649)
+-- TOC entry 4179 (class 2606 OID 17685)
 -- Name: pedido_detalle fk_pedido_det_pedido; Type: FK CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -6159,7 +7144,7 @@ ALTER TABLE ONLY operaciones.pedido_detalle
 
 
 --
--- TOC entry 4117 (class 2606 OID 19654)
+-- TOC entry 4180 (class 2606 OID 17690)
 -- Name: pedido_detalle fk_pedido_det_receta; Type: FK CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -6168,7 +7153,7 @@ ALTER TABLE ONLY operaciones.pedido_detalle
 
 
 --
--- TOC entry 4118 (class 2606 OID 19644)
+-- TOC entry 4181 (class 2606 OID 17695)
 -- Name: pedido_detalle fk_pedido_det_restaurante; Type: FK CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -6177,7 +7162,7 @@ ALTER TABLE ONLY operaciones.pedido_detalle
 
 
 --
--- TOC entry 4113 (class 2606 OID 19634)
+-- TOC entry 4182 (class 2606 OID 17700)
 -- Name: pedidos fk_pedidos_mesa; Type: FK CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -6186,7 +7171,7 @@ ALTER TABLE ONLY operaciones.pedidos
 
 
 --
--- TOC entry 4114 (class 2606 OID 19639)
+-- TOC entry 4183 (class 2606 OID 17705)
 -- Name: pedidos fk_pedidos_mesero; Type: FK CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -6195,7 +7180,7 @@ ALTER TABLE ONLY operaciones.pedidos
 
 
 --
--- TOC entry 4115 (class 2606 OID 19629)
+-- TOC entry 4184 (class 2606 OID 17710)
 -- Name: pedidos fk_pedidos_restaurante; Type: FK CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -6204,7 +7189,7 @@ ALTER TABLE ONLY operaciones.pedidos
 
 
 --
--- TOC entry 4111 (class 2606 OID 19624)
+-- TOC entry 4185 (class 2606 OID 17715)
 -- Name: reservas fk_reservas_mesa; Type: FK CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -6213,7 +7198,7 @@ ALTER TABLE ONLY operaciones.reservas
 
 
 --
--- TOC entry 4112 (class 2606 OID 19619)
+-- TOC entry 4186 (class 2606 OID 17720)
 -- Name: reservas fk_reservas_restaurante; Type: FK CONSTRAINT; Schema: operaciones; Owner: postgres
 --
 
@@ -6222,7 +7207,25 @@ ALTER TABLE ONLY operaciones.reservas
 
 
 --
--- TOC entry 4143 (class 2606 OID 20024)
+-- TOC entry 4235 (class 2606 OID 18072)
+-- Name: transacciones_pago fk_trans_pago_pedido; Type: FK CONSTRAINT; Schema: operaciones; Owner: postgres
+--
+
+ALTER TABLE ONLY operaciones.transacciones_pago
+    ADD CONSTRAINT fk_trans_pago_pedido FOREIGN KEY (pedido_id) REFERENCES operaciones.pedidos(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4236 (class 2606 OID 18077)
+-- Name: transacciones_pago fk_trans_pago_restaurante; Type: FK CONSTRAINT; Schema: operaciones; Owner: postgres
+--
+
+ALTER TABLE ONLY operaciones.transacciones_pago
+    ADD CONSTRAINT fk_trans_pago_restaurante FOREIGN KEY (restaurante_id) REFERENCES core.restaurante(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4215 (class 2606 OID 17725)
 -- Name: order_items FK_145532db85752b29c57d2b7b1f1; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6231,7 +7234,7 @@ ALTER TABLE ONLY public.order_items
 
 
 --
--- TOC entry 4083 (class 2606 OID 17003)
+-- TOC entry 4188 (class 2606 OID 17730)
 -- Name: banco_movimientos fk_banco_movimientos_banco; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6240,7 +7243,7 @@ ALTER TABLE ONLY public.banco_movimientos
 
 
 --
--- TOC entry 4084 (class 2606 OID 17008)
+-- TOC entry 4189 (class 2606 OID 17735)
 -- Name: banco_movimientos fk_banco_movimientos_metodo_pago; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6249,7 +7252,7 @@ ALTER TABLE ONLY public.banco_movimientos
 
 
 --
--- TOC entry 4085 (class 2606 OID 16903)
+-- TOC entry 4190 (class 2606 OID 17740)
 -- Name: banco_movimientos fk_banco_movimientos_restaurante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6258,7 +7261,7 @@ ALTER TABLE ONLY public.banco_movimientos
 
 
 --
--- TOC entry 4086 (class 2606 OID 17013)
+-- TOC entry 4191 (class 2606 OID 17745)
 -- Name: banco_movimientos fk_banco_movimientos_usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6267,7 +7270,7 @@ ALTER TABLE ONLY public.banco_movimientos
 
 
 --
--- TOC entry 4082 (class 2606 OID 16898)
+-- TOC entry 4187 (class 2606 OID 17750)
 -- Name: banco fk_banco_restaurante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6276,7 +7279,7 @@ ALTER TABLE ONLY public.banco
 
 
 --
--- TOC entry 4078 (class 2606 OID 16988)
+-- TOC entry 4195 (class 2606 OID 17755)
 -- Name: caja_movimientos fk_caja_movimientos_caja; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6285,7 +7288,7 @@ ALTER TABLE ONLY public.caja_movimientos
 
 
 --
--- TOC entry 4079 (class 2606 OID 16993)
+-- TOC entry 4196 (class 2606 OID 17760)
 -- Name: caja_movimientos fk_caja_movimientos_metodo_pago; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6294,7 +7297,7 @@ ALTER TABLE ONLY public.caja_movimientos
 
 
 --
--- TOC entry 4080 (class 2606 OID 16893)
+-- TOC entry 4197 (class 2606 OID 17765)
 -- Name: caja_movimientos fk_caja_movimientos_restaurante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6303,7 +7306,7 @@ ALTER TABLE ONLY public.caja_movimientos
 
 
 --
--- TOC entry 4081 (class 2606 OID 16998)
+-- TOC entry 4198 (class 2606 OID 17770)
 -- Name: caja_movimientos fk_caja_movimientos_usuario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6312,7 +7315,7 @@ ALTER TABLE ONLY public.caja_movimientos
 
 
 --
--- TOC entry 4075 (class 2606 OID 16888)
+-- TOC entry 4192 (class 2606 OID 17775)
 -- Name: caja fk_caja_restaurante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6321,7 +7324,7 @@ ALTER TABLE ONLY public.caja
 
 
 --
--- TOC entry 4076 (class 2606 OID 16978)
+-- TOC entry 4193 (class 2606 OID 17780)
 -- Name: caja fk_caja_usuario_apertura; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6330,7 +7333,7 @@ ALTER TABLE ONLY public.caja
 
 
 --
--- TOC entry 4077 (class 2606 OID 16983)
+-- TOC entry 4194 (class 2606 OID 17785)
 -- Name: caja fk_caja_usuario_cierre; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6339,7 +7342,7 @@ ALTER TABLE ONLY public.caja
 
 
 --
--- TOC entry 4048 (class 2606 OID 16818)
+-- TOC entry 4199 (class 2606 OID 17790)
 -- Name: categoria_egresos fk_categoria_egresos_restaurante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6348,7 +7351,7 @@ ALTER TABLE ONLY public.categoria_egresos
 
 
 --
--- TOC entry 4055 (class 2606 OID 16923)
+-- TOC entry 4200 (class 2606 OID 17795)
 -- Name: compra_detalle fk_compra_detalle_compra; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6357,7 +7360,7 @@ ALTER TABLE ONLY public.compra_detalle
 
 
 --
--- TOC entry 4056 (class 2606 OID 16928)
+-- TOC entry 4201 (class 2606 OID 17800)
 -- Name: compra_detalle fk_compra_detalle_ingrediente; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6366,7 +7369,7 @@ ALTER TABLE ONLY public.compra_detalle
 
 
 --
--- TOC entry 4057 (class 2606 OID 16843)
+-- TOC entry 4202 (class 2606 OID 17805)
 -- Name: compra_detalle fk_compra_detalle_restaurante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6375,7 +7378,7 @@ ALTER TABLE ONLY public.compra_detalle
 
 
 --
--- TOC entry 4058 (class 2606 OID 16933)
+-- TOC entry 4203 (class 2606 OID 17810)
 -- Name: compra_detalle fk_compra_detalle_unidad_compra; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6384,7 +7387,7 @@ ALTER TABLE ONLY public.compra_detalle
 
 
 --
--- TOC entry 4053 (class 2606 OID 16918)
+-- TOC entry 4204 (class 2606 OID 17815)
 -- Name: compras fk_compras_proveedor; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6393,7 +7396,7 @@ ALTER TABLE ONLY public.compras
 
 
 --
--- TOC entry 4054 (class 2606 OID 16838)
+-- TOC entry 4205 (class 2606 OID 17820)
 -- Name: compras fk_compras_restaurante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6402,7 +7405,7 @@ ALTER TABLE ONLY public.compras
 
 
 --
--- TOC entry 4073 (class 2606 OID 16938)
+-- TOC entry 4206 (class 2606 OID 17825)
 -- Name: egresos fk_egresos_categoria; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6411,7 +7414,7 @@ ALTER TABLE ONLY public.egresos
 
 
 --
--- TOC entry 4074 (class 2606 OID 16883)
+-- TOC entry 4207 (class 2606 OID 17830)
 -- Name: egresos fk_egresos_restaurante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6420,7 +7423,7 @@ ALTER TABLE ONLY public.egresos
 
 
 --
--- TOC entry 4071 (class 2606 OID 16973)
+-- TOC entry 4208 (class 2606 OID 17835)
 -- Name: facturas fk_facturas_pedido; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6429,7 +7432,7 @@ ALTER TABLE ONLY public.facturas
 
 
 --
--- TOC entry 4072 (class 2606 OID 16878)
+-- TOC entry 4209 (class 2606 OID 17840)
 -- Name: facturas fk_facturas_restaurante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6438,7 +7441,7 @@ ALTER TABLE ONLY public.facturas
 
 
 --
--- TOC entry 4051 (class 2606 OID 16833)
+-- TOC entry 4210 (class 2606 OID 17845)
 -- Name: ingredientes fk_ingredientes_restaurante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6447,7 +7450,7 @@ ALTER TABLE ONLY public.ingredientes
 
 
 --
--- TOC entry 4052 (class 2606 OID 16913)
+-- TOC entry 4211 (class 2606 OID 17850)
 -- Name: ingredientes fk_ingredientes_unidad; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6456,7 +7459,7 @@ ALTER TABLE ONLY public.ingredientes
 
 
 --
--- TOC entry 4063 (class 2606 OID 16858)
+-- TOC entry 4212 (class 2606 OID 17855)
 -- Name: mesas fk_mesas_restaurante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6465,7 +7468,7 @@ ALTER TABLE ONLY public.mesas
 
 
 --
--- TOC entry 4064 (class 2606 OID 16863)
+-- TOC entry 4213 (class 2606 OID 17860)
 -- Name: meseros fk_meseros_restaurante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6474,7 +7477,7 @@ ALTER TABLE ONLY public.meseros
 
 
 --
--- TOC entry 4044 (class 2606 OID 16803)
+-- TOC entry 4214 (class 2606 OID 17865)
 -- Name: metodos_pago fk_metodos_pago_restaurante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6483,7 +7486,7 @@ ALTER TABLE ONLY public.metodos_pago
 
 
 --
--- TOC entry 4068 (class 2606 OID 16963)
+-- TOC entry 4216 (class 2606 OID 17870)
 -- Name: pedido_detalle fk_pedido_detalle_pedido; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6492,7 +7495,7 @@ ALTER TABLE ONLY public.pedido_detalle
 
 
 --
--- TOC entry 4069 (class 2606 OID 16968)
+-- TOC entry 4217 (class 2606 OID 17875)
 -- Name: pedido_detalle fk_pedido_detalle_receta; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6501,7 +7504,7 @@ ALTER TABLE ONLY public.pedido_detalle
 
 
 --
--- TOC entry 4070 (class 2606 OID 16873)
+-- TOC entry 4218 (class 2606 OID 17880)
 -- Name: pedido_detalle fk_pedido_detalle_restaurante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6510,7 +7513,7 @@ ALTER TABLE ONLY public.pedido_detalle
 
 
 --
--- TOC entry 4065 (class 2606 OID 16953)
+-- TOC entry 4219 (class 2606 OID 17885)
 -- Name: pedidos fk_pedidos_mesa; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6519,7 +7522,7 @@ ALTER TABLE ONLY public.pedidos
 
 
 --
--- TOC entry 4066 (class 2606 OID 16958)
+-- TOC entry 4220 (class 2606 OID 17890)
 -- Name: pedidos fk_pedidos_mesero; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6528,7 +7531,7 @@ ALTER TABLE ONLY public.pedidos
 
 
 --
--- TOC entry 4067 (class 2606 OID 16868)
+-- TOC entry 4221 (class 2606 OID 17895)
 -- Name: pedidos fk_pedidos_restaurante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6537,7 +7540,7 @@ ALTER TABLE ONLY public.pedidos
 
 
 --
--- TOC entry 4049 (class 2606 OID 16823)
+-- TOC entry 4222 (class 2606 OID 17900)
 -- Name: proveedores fk_proveedores_restaurante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6546,7 +7549,7 @@ ALTER TABLE ONLY public.proveedores
 
 
 --
--- TOC entry 4060 (class 2606 OID 16948)
+-- TOC entry 4223 (class 2606 OID 17905)
 -- Name: receta_ingredientes fk_receta_ingredientes_ingrediente; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6555,7 +7558,7 @@ ALTER TABLE ONLY public.receta_ingredientes
 
 
 --
--- TOC entry 4061 (class 2606 OID 16943)
+-- TOC entry 4224 (class 2606 OID 17910)
 -- Name: receta_ingredientes fk_receta_ingredientes_receta; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6564,7 +7567,7 @@ ALTER TABLE ONLY public.receta_ingredientes
 
 
 --
--- TOC entry 4062 (class 2606 OID 16853)
+-- TOC entry 4225 (class 2606 OID 17915)
 -- Name: receta_ingredientes fk_receta_ingredientes_restaurante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6573,7 +7576,7 @@ ALTER TABLE ONLY public.receta_ingredientes
 
 
 --
--- TOC entry 4059 (class 2606 OID 16848)
+-- TOC entry 4226 (class 2606 OID 17920)
 -- Name: recetas fk_recetas_restaurante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6582,7 +7585,7 @@ ALTER TABLE ONLY public.recetas
 
 
 --
--- TOC entry 4045 (class 2606 OID 16808)
+-- TOC entry 4227 (class 2606 OID 17925)
 -- Name: roles fk_roles_restaurante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6591,7 +7594,7 @@ ALTER TABLE ONLY public.roles
 
 
 --
--- TOC entry 4050 (class 2606 OID 16828)
+-- TOC entry 4228 (class 2606 OID 17930)
 -- Name: unidad_compra fk_unidad_compra_restaurante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6600,7 +7603,7 @@ ALTER TABLE ONLY public.unidad_compra
 
 
 --
--- TOC entry 4046 (class 2606 OID 16813)
+-- TOC entry 4229 (class 2606 OID 17935)
 -- Name: usuarios fk_usuarios_restaurante; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6609,7 +7612,7 @@ ALTER TABLE ONLY public.usuarios
 
 
 --
--- TOC entry 4047 (class 2606 OID 16908)
+-- TOC entry 4230 (class 2606 OID 17940)
 -- Name: usuarios fk_usuarios_rol; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -6618,7 +7621,7 @@ ALTER TABLE ONLY public.usuarios
 
 
 --
--- TOC entry 4141 (class 2606 OID 19871)
+-- TOC entry 4231 (class 2606 OID 17945)
 -- Name: order_items order_items_order_id_fkey; Type: FK CONSTRAINT; Schema: sales; Owner: postgres
 --
 
@@ -6627,7 +7630,7 @@ ALTER TABLE ONLY sales.order_items
 
 
 --
--- TOC entry 4142 (class 2606 OID 19876)
+-- TOC entry 4232 (class 2606 OID 17950)
 -- Name: order_items order_items_product_id_fkey; Type: FK CONSTRAINT; Schema: sales; Owner: postgres
 --
 
@@ -6636,7 +7639,7 @@ ALTER TABLE ONLY sales.order_items
 
 
 --
--- TOC entry 4139 (class 2606 OID 19850)
+-- TOC entry 4233 (class 2606 OID 17955)
 -- Name: orders orders_restaurant_id_fkey; Type: FK CONSTRAINT; Schema: sales; Owner: postgres
 --
 
@@ -6645,566 +7648,19 @@ ALTER TABLE ONLY sales.orders
 
 
 --
+-- TOC entry 4234 (class 2606 OID 17960)
+-- Name: orders orders_table_id_fkey; Type: FK CONSTRAINT; Schema: sales; Owner: postgres
+--
+
 ALTER TABLE ONLY sales.orders
     ADD CONSTRAINT orders_table_id_fkey FOREIGN KEY (table_id) REFERENCES core.tables(id);
 
 
--- ============================================================
--- AMPLIACIÓN v0.1.0 - 2026-03-31
--- Correcciones académicas: Profesores Gerenciales y Contabilidad
--- Nuevas tablas requeridas por el enunciado de Costos y Ventas
--- ============================================================
-
-
--- ============================================================
--- TYPE: metodo_pago_enum
--- Métodos de pago aceptados en el Punto de Venta (Enunciado #4)
--- Un pedido puede usar uno o más métodos simultáneamente
--- ============================================================
-
-CREATE TYPE public.metodo_pago_enum AS ENUM (
-    'efectivo',
-    'pago_movil',
-    'tarjeta',
-    'divisa'
-);
-
-ALTER TYPE public.metodo_pago_enum OWNER TO postgres;
-
-COMMENT ON TYPE public.metodo_pago_enum IS
-'Métodos de pago aceptados: efectivo (Bs), pago_movil (transferencia), tarjeta (débito/crédito), divisa (USD/EUR físico)';
-
-
--- ============================================================
--- TYPE: categoria_gasto_enum
--- Categorías de gastos operativos según el enunciado (solo estas 5)
--- ============================================================
-
-CREATE TYPE public.categoria_gasto_enum AS ENUM (
-    'agua',
-    'gas',
-    'electricidad',
-    'internet',
-    'alquiler'
-);
-
-ALTER TYPE public.categoria_gasto_enum OWNER TO postgres;
-
-COMMENT ON TYPE public.categoria_gasto_enum IS
-'Gastos operativos fijos según enunciado académico: agua, gas, electricidad, internet, alquiler';
-
-
--- ============================================================
--- TYPE: tipo_cuenta_contable_enum
--- Clasificación del plan de cuentas contable
--- ============================================================
-
-CREATE TYPE public.tipo_cuenta_contable_enum AS ENUM (
-    'activo',
-    'pasivo',
-    'patrimonio',
-    'ingreso',
-    'costo',
-    'gasto'
-);
-
-ALTER TYPE public.tipo_cuenta_contable_enum OWNER TO postgres;
-
-
--- ============================================================
--- TABLE: operaciones.transacciones_pago
--- Requerimiento del Profesor de Contabilidad:
--- "El punto de venta y caja van en un solo lugar. Se especifica
---  con qué método se pagó cada venta." (efectivo, pago móvil,
---  tarjeta, divisa). Un pedido puede tener múltiples filas aquí
---  (pago mixto). El arqueo de caja se calcula agrupando por metodo.
--- ============================================================
-
-CREATE SEQUENCE operaciones.transacciones_pago_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE operaciones.transacciones_pago_id_seq OWNER TO postgres;
-
-CREATE TABLE operaciones.transacciones_pago (
-    id            integer NOT NULL DEFAULT nextval('operaciones.transacciones_pago_id_seq'),
-    pedido_id     integer NOT NULL,
-    metodo        public.metodo_pago_enum NOT NULL,
-    monto         numeric(12,2) NOT NULL CHECK (monto > 0),
-    referencia    character varying(100),     -- Nro. confirmación pago móvil / últimos 4 dígitos tarjeta
-    tasa_cambio   numeric(12,4) DEFAULT 1,   -- Si metodo=divisa: tasa Bs/USD usada en la transacción
-    usuario_id    integer,
-    restaurante_id integer NOT NULL,
-    created_at    timestamp without time zone DEFAULT CURRENT_TIMESTAMP
-);
-
-ALTER TABLE operaciones.transacciones_pago OWNER TO postgres;
-
-ALTER SEQUENCE operaciones.transacciones_pago_id_seq OWNED BY operaciones.transacciones_pago.id;
-
-COMMENT ON TABLE operaciones.transacciones_pago IS
-'Registro de método(s) de pago por pedido. Un pedido puede tener múltiples filas (pago mixto).
-Permite arqueo por método: SUM(monto) WHERE metodo = ''efectivo'' AND caja_id = X';
-
-COMMENT ON COLUMN operaciones.transacciones_pago.tasa_cambio IS
-'Aplica cuando metodo=divisa. Registra la tasa Bs/USD vigente al momento de la transacción para reportes contables correctos.';
-
-COMMENT ON COLUMN operaciones.transacciones_pago.referencia IS
-'Número de confirmación (pago móvil), últimos 4 dígitos (tarjeta) o identificador libre.';
-
-ALTER TABLE ONLY operaciones.transacciones_pago
-    ADD CONSTRAINT transacciones_pago_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY operaciones.transacciones_pago
-    ADD CONSTRAINT fk_trans_pago_pedido
-    FOREIGN KEY (pedido_id) REFERENCES operaciones.pedidos(id) ON DELETE CASCADE;
-
-ALTER TABLE ONLY operaciones.transacciones_pago
-    ADD CONSTRAINT fk_trans_pago_restaurante
-    FOREIGN KEY (restaurante_id) REFERENCES core.restaurante(id) ON DELETE CASCADE;
-
-CREATE INDEX idx_trans_pago_pedido ON operaciones.transacciones_pago(pedido_id);
-CREATE INDEX idx_trans_pago_metodo ON operaciones.transacciones_pago(metodo, restaurante_id);
-
-
--- ============================================================
--- TABLE: finanzas.gastos_operativos
--- Requerimiento del Enunciado #4:
--- "Gestión de Gastos fijos: Registro exclusivo de pagos de
---  servicios: Agua, Gas, Electricidad, Internet y Alquiler."
--- Estos gastos alimentan directamente el Estado de Resultados.
--- ============================================================
-
-CREATE SEQUENCE finanzas.gastos_operativos_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE finanzas.gastos_operativos_id_seq OWNER TO postgres;
-
-CREATE TABLE finanzas.gastos_operativos (
-    id              integer NOT NULL DEFAULT nextval('finanzas.gastos_operativos_id_seq'),
-    categoria       public.categoria_gasto_enum NOT NULL,
-    descripcion     character varying(255),
-    monto           numeric(12,2) NOT NULL CHECK (monto > 0),
-    fecha           date NOT NULL,
-    metodo_pago     public.metodo_pago_enum NOT NULL DEFAULT 'efectivo',
-    referencia      character varying(100),
-    periodo_mes     integer CHECK (periodo_mes BETWEEN 1 AND 12),
-    periodo_anio    integer,
-    usuario_id      integer,
-    restaurante_id  integer NOT NULL,
-    created_at      timestamp without time zone DEFAULT CURRENT_TIMESTAMP
-);
-
-ALTER TABLE finanzas.gastos_operativos OWNER TO postgres;
-
-ALTER SEQUENCE finanzas.gastos_operativos_id_seq OWNED BY finanzas.gastos_operativos.id;
-
-COMMENT ON TABLE finanzas.gastos_operativos IS
-'Gastos operativos fijos del restaurante. Según el enunciado académico solo se registran:
-agua, gas, electricidad, internet y alquiler. Cada registro genera un asiento contable automático
-en contabilidad.asientos (Debe: Gasto / Haber: Caja o Banco).';
-
-COMMENT ON COLUMN finanzas.gastos_operativos.categoria IS
-'Una de las 5 categorías del enunciado: agua, gas, electricidad, internet, alquiler.';
-
-COMMENT ON COLUMN finanzas.gastos_operativos.periodo_mes IS
-'Mes al que corresponde el gasto (puede diferir de la fecha de pago). Usado en Estado de Resultados.';
-
-ALTER TABLE ONLY finanzas.gastos_operativos
-    ADD CONSTRAINT gastos_operativos_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY finanzas.gastos_operativos
-    ADD CONSTRAINT fk_gastos_restaurante
-    FOREIGN KEY (restaurante_id) REFERENCES core.restaurante(id) ON DELETE CASCADE;
-
-CREATE INDEX idx_gastos_restaurante_fecha ON finanzas.gastos_operativos(restaurante_id, fecha);
-CREATE INDEX idx_gastos_categoria ON finanzas.gastos_operativos(categoria, restaurante_id);
-
-
--- ============================================================
--- TABLAS DE CONTABILIDAD COMPLETA (Doble Entrada)
--- Requerimiento del Profesor de Contabilidad:
--- "El módulo contable debe llevar la contabilidad completa"
--- Balance General + Estado de Resultados + Libro Diario real
---
--- NOTA: contabilidad.libro_diario ya existe (registro plano,
--- se conserva para compatibilidad). Las nuevas tablas implementan
--- el sistema de doble entrada (Debe = Haber) requerido.
--- ============================================================
-
--- Plan de Cuentas Contable
-CREATE SEQUENCE contabilidad.plan_cuentas_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE contabilidad.plan_cuentas_id_seq OWNER TO postgres;
-
-CREATE TABLE contabilidad.plan_cuentas (
-    id              integer NOT NULL DEFAULT nextval('contabilidad.plan_cuentas_id_seq'),
-    codigo          character varying(20) NOT NULL,   -- ej: "1.1.01"
-    nombre          character varying(100) NOT NULL,
-    tipo            public.tipo_cuenta_contable_enum NOT NULL,
-    padre_id        integer,                          -- jerarquía del plan de cuentas
-    es_auxiliar     boolean DEFAULT true,             -- false = cuenta de grupo, no se mueve
-    restaurante_id  integer,                          -- NULL = cuenta global del sistema
-    activo          boolean DEFAULT true,
-    created_at      timestamp without time zone DEFAULT CURRENT_TIMESTAMP
-);
-
-ALTER TABLE contabilidad.plan_cuentas OWNER TO postgres;
-
-ALTER SEQUENCE contabilidad.plan_cuentas_id_seq OWNED BY contabilidad.plan_cuentas.id;
-
-COMMENT ON TABLE contabilidad.plan_cuentas IS
-'Plan de Cuentas Contable. Estructura jerárquica (padre_id) que permite generar
-Balance General y Estado de Resultados agrupando por tipo de cuenta.
-Las cuentas globales (restaurante_id IS NULL) aplican a todos los restaurantes.';
-
-COMMENT ON COLUMN contabilidad.plan_cuentas.codigo IS
-'Código contable estándar. Ej: 1=Activo, 2=Pasivo, 3=Patrimonio, 4=Ingreso, 5=Costo, 6=Gasto';
-
-ALTER TABLE ONLY contabilidad.plan_cuentas
-    ADD CONSTRAINT plan_cuentas_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY contabilidad.plan_cuentas
-    ADD CONSTRAINT plan_cuentas_codigo_restaurante_unique
-    UNIQUE (codigo, restaurante_id);
-
-ALTER TABLE ONLY contabilidad.plan_cuentas
-    ADD CONSTRAINT fk_plan_cuentas_padre
-    FOREIGN KEY (padre_id) REFERENCES contabilidad.plan_cuentas(id);
-
-ALTER TABLE ONLY contabilidad.plan_cuentas
-    ADD CONSTRAINT fk_plan_cuentas_restaurante
-    FOREIGN KEY (restaurante_id) REFERENCES core.restaurante(id) ON DELETE CASCADE;
-
-CREATE INDEX idx_plan_cuentas_tipo ON contabilidad.plan_cuentas(tipo);
-
-
--- Cabecera del Asiento Contable (Libro Diario - Doble Entrada)
-CREATE SEQUENCE contabilidad.asientos_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE contabilidad.asientos_id_seq OWNER TO postgres;
-
-CREATE TABLE contabilidad.asientos (
-    id              integer NOT NULL DEFAULT nextval('contabilidad.asientos_id_seq'),
-    fecha           date NOT NULL,
-    descripcion     character varying(255) NOT NULL,
-    -- Referencia polimórfica al evento que generó el asiento
-    origen_tipo     character varying(50),    -- 'venta', 'compra', 'gasto_operativo', 'costo_venta'
-    origen_id       integer,                   -- id del pedido, compra o gasto que lo originó
-    total_debe      numeric(12,2) DEFAULT 0 NOT NULL,
-    total_haber     numeric(12,2) DEFAULT 0 NOT NULL,
-    -- Invariante: total_debe DEBE ser = total_haber (doble entrada)
-    restaurante_id  integer NOT NULL,
-    creado_por      integer,                   -- usuario_id que desencadenó el evento
-    created_at      timestamp without time zone DEFAULT CURRENT_TIMESTAMP
-);
-
-ALTER TABLE contabilidad.asientos OWNER TO postgres;
-
-ALTER SEQUENCE contabilidad.asientos_id_seq OWNED BY contabilidad.asientos.id;
-
-COMMENT ON TABLE contabilidad.asientos IS
-'Cabecera del asiento contable. Cada evento del sistema (venta, compra, gasto) genera
-un asiento automáticamente. INVARIANTE: total_debe = total_haber (principio de partida doble).';
-
-COMMENT ON COLUMN contabilidad.asientos.origen_tipo IS
-'venta: pedido pagado | compra: entrada de mercancía | gasto_operativo: agua/luz/etc | costo_venta: back-flushing';
-
-ALTER TABLE ONLY contabilidad.asientos
-    ADD CONSTRAINT asientos_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY contabilidad.asientos
-    ADD CONSTRAINT fk_asientos_restaurante
-    FOREIGN KEY (restaurante_id) REFERENCES core.restaurante(id) ON DELETE CASCADE;
-
-CREATE INDEX idx_asientos_fecha ON contabilidad.asientos(fecha, restaurante_id);
-CREATE INDEX idx_asientos_origen ON contabilidad.asientos(origen_tipo, origen_id);
-
-
--- Líneas del Asiento Contable (Partida Doble: Debe y Haber)
-CREATE SEQUENCE contabilidad.asiento_lineas_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-ALTER SEQUENCE contabilidad.asiento_lineas_id_seq OWNER TO postgres;
-
-CREATE TABLE contabilidad.asiento_lineas (
-    id              integer NOT NULL DEFAULT nextval('contabilidad.asiento_lineas_id_seq'),
-    asiento_id      integer NOT NULL,
-    cuenta_id       integer NOT NULL,             -- FK a contabilidad.plan_cuentas
-    tipo_movimiento character varying(5) NOT NULL CHECK (tipo_movimiento IN ('debe', 'haber')),
-    monto           numeric(12,2) NOT NULL CHECK (monto > 0),
-    descripcion     character varying(255),
-    restaurante_id  integer NOT NULL
-);
-
-ALTER TABLE contabilidad.asiento_lineas OWNER TO postgres;
-
-ALTER SEQUENCE contabilidad.asiento_lineas_id_seq OWNED BY contabilidad.asiento_lineas.id;
-
-COMMENT ON TABLE contabilidad.asiento_lineas IS
-'Líneas de cada asiento contable. Cada asiento tiene N líneas (min. 2: un Debe y un Haber).
-La suma de todas las líneas tipo "debe" debe ser igual a la suma de las "haber" en el mismo asiento.
-Ejemplo para una Venta:
-  DEBE:  Caja/Banco            500.00
-  HABER: Ingresos por Ventas   500.00
-  DEBE:  Costo de Ventas       180.00
-  HABER: Inventario            180.00';
-
-COMMENT ON COLUMN contabilidad.asiento_lineas.tipo_movimiento IS
-'debe = cargo a la cuenta | haber = abono a la cuenta (partida doble)';
-
-ALTER TABLE ONLY contabilidad.asiento_lineas
-    ADD CONSTRAINT asiento_lineas_pkey PRIMARY KEY (id);
-
-ALTER TABLE ONLY contabilidad.asiento_lineas
-    ADD CONSTRAINT fk_asiento_lineas_asiento
-    FOREIGN KEY (asiento_id) REFERENCES contabilidad.asientos(id) ON DELETE CASCADE;
-
-ALTER TABLE ONLY contabilidad.asiento_lineas
-    ADD CONSTRAINT fk_asiento_lineas_cuenta
-    FOREIGN KEY (cuenta_id) REFERENCES contabilidad.plan_cuentas(id);
-
-ALTER TABLE ONLY contabilidad.asiento_lineas
-    ADD CONSTRAINT fk_asiento_lineas_restaurante
-    FOREIGN KEY (restaurante_id) REFERENCES core.restaurante(id) ON DELETE CASCADE;
-
-CREATE INDEX idx_asiento_lineas_asiento ON contabilidad.asiento_lineas(asiento_id);
-CREATE INDEX idx_asiento_lineas_cuenta ON contabilidad.asiento_lineas(cuenta_id, restaurante_id);
-
-
--- ============================================================
--- SEED: Plan de Cuentas Base (Global - restaurante_id NULL)
--- Cuentas del enunciado: Activos, Pasivos, Patrimonio,
--- Ingresos, Costos de Venta, Gastos Operativos
--- ============================================================
-
-INSERT INTO contabilidad.plan_cuentas (codigo, nombre, tipo, es_auxiliar, restaurante_id) VALUES
--- ACTIVOS
-('1',       'ACTIVOS',                              'activo',    false, NULL),
-('1.1',     'Activos Corrientes',                   'activo',    false, NULL),
-('1.1.01',  'Caja',                                 'activo',    true,  NULL),
-('1.1.02',  'Banco',                                'activo',    true,  NULL),
-('1.1.03',  'Inventario de Insumos',                'activo',    true,  NULL),
--- PASIVOS
-('2',       'PASIVOS',                              'pasivo',    false, NULL),
-('2.1',     'Pasivos Corrientes',                   'pasivo',    false, NULL),
-('2.1.01',  'Cuentas por Pagar a Proveedores',      'pasivo',    true,  NULL),
--- PATRIMONIO
-('3',       'PATRIMONIO',                           'patrimonio', false, NULL),
-('3.1.01',  'Capital Social',                       'patrimonio', true,  NULL),
-('3.1.02',  'Utilidades Acumuladas',                'patrimonio', true,  NULL),
-('3.1.03',  'Utilidad / Pérdida del Ejercicio',     'patrimonio', true,  NULL),
--- INGRESOS
-('4',       'INGRESOS',                             'ingreso',   false, NULL),
-('4.1.01',  'Ingresos por Ventas',                  'ingreso',   true,  NULL),
--- COSTOS
-('5',       'COSTOS DE VENTA',                      'costo',     false, NULL),
-('5.1.01',  'Costo de Ventas (Ingredientes)',        'costo',     true,  NULL),
--- GASTOS OPERATIVOS (los 5 del enunciado)
-('6',       'GASTOS OPERATIVOS',                    'gasto',     false, NULL),
-('6.1.01',  'Gasto Agua',                           'gasto',     true,  NULL),
-('6.1.02',  'Gasto Gas',                            'gasto',     true,  NULL),
-('6.1.03',  'Gasto Electricidad',                   'gasto',     true,  NULL),
-('6.1.04',  'Gasto Internet',                       'gasto',     true,  NULL),
-('6.1.05',  'Gasto Alquiler',                       'gasto',     true,  NULL);
-
--- Asignar padre_id para la jerarquía
-UPDATE contabilidad.plan_cuentas SET padre_id = (SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '1'   AND restaurante_id IS NULL) WHERE codigo = '1.1'     AND restaurante_id IS NULL;
-UPDATE contabilidad.plan_cuentas SET padre_id = (SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '1.1' AND restaurante_id IS NULL) WHERE codigo LIKE '1.1.%' AND restaurante_id IS NULL;
-UPDATE contabilidad.plan_cuentas SET padre_id = (SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '2'   AND restaurante_id IS NULL) WHERE codigo = '2.1'     AND restaurante_id IS NULL;
-UPDATE contabilidad.plan_cuentas SET padre_id = (SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '2.1' AND restaurante_id IS NULL) WHERE codigo LIKE '2.1.%' AND restaurante_id IS NULL;
-UPDATE contabilidad.plan_cuentas SET padre_id = (SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '3'   AND restaurante_id IS NULL) WHERE codigo LIKE '3.1.%' AND restaurante_id IS NULL;
-UPDATE contabilidad.plan_cuentas SET padre_id = (SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '4'   AND restaurante_id IS NULL) WHERE codigo LIKE '4.1.%' AND restaurante_id IS NULL;
-UPDATE contabilidad.plan_cuentas SET padre_id = (SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '5'   AND restaurante_id IS NULL) WHERE codigo LIKE '5.1.%' AND restaurante_id IS NULL;
-UPDATE contabilidad.plan_cuentas SET padre_id = (SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '6'   AND restaurante_id IS NULL) WHERE codigo LIKE '6.1.%' AND restaurante_id IS NULL;
-
-
--- ============================================================
--- SEED: Roles del sistema (idempotente - WHERE NOT EXISTS)
--- ============================================================
-
-INSERT INTO core.roles (nombre)
-SELECT v.nombre FROM (VALUES
-    ('super_admin'),
-    ('admin'),
-    ('cajero'),
-    ('cocina')
-) AS v(nombre)
-WHERE NOT EXISTS (
-    SELECT 1 FROM core.roles r WHERE r.nombre = v.nombre
-);
-
-
--- ============================================================
--- SEED: Unidades de Medida base (idempotente - WHERE NOT EXISTS)
--- ============================================================
-
-INSERT INTO core.unidad_medida (nombre, abreviatura)
-SELECT v.nombre, v.abrev FROM (VALUES
-    ('Gramos',      'g'),
-    ('Kilogramos',  'kg'),
-    ('Litros',      'L'),
-    ('Mililitros',  'ml'),
-    ('Unidades',    'und')
-) AS v(nombre, abrev)
-WHERE NOT EXISTS (
-    SELECT 1 FROM core.unidad_medida u WHERE u.nombre = v.nombre
-);
-
-
--- ============================================================
--- VISTA: contabilidad.v_balance_general
--- Facilita la consulta del Balance General por restaurante y período
--- ============================================================
-
-CREATE OR REPLACE VIEW contabilidad.v_balance_general AS
-SELECT
-    r.id            AS restaurante_id,
-    r.nombre        AS restaurante,
-    pc.tipo,
-    pc.codigo,
-    pc.nombre       AS cuenta,
-    COALESCE(SUM(
-        CASE al.tipo_movimiento
-            WHEN 'debe'  THEN
-                CASE WHEN pc.tipo::text IN ('activo','costo','gasto') THEN al.monto ELSE -al.monto END
-            WHEN 'haber' THEN
-                CASE WHEN pc.tipo::text IN ('activo','costo','gasto') THEN -al.monto ELSE al.monto END
-        END
-    ), 0)           AS saldo
-FROM contabilidad.plan_cuentas pc
-CROSS JOIN core.restaurante r
-LEFT JOIN contabilidad.asiento_lineas al
-    ON al.cuenta_id = pc.id AND al.restaurante_id = r.id
-LEFT JOIN contabilidad.asientos a
-    ON a.id = al.asiento_id AND a.restaurante_id = r.id
-WHERE pc.es_auxiliar = true
-GROUP BY r.id, r.nombre, pc.tipo, pc.codigo, pc.nombre
-ORDER BY pc.codigo;
-
-COMMENT ON VIEW contabilidad.v_balance_general IS
-'Vista del Balance General y Estado de Resultados. Filtrar por restaurante_id y rango de fechas
-usando JOIN con contabilidad.asientos.';
-
-
--- ============================================================
--- VISTA: contabilidad.v_estado_resultados
--- Estado de Resultados: Ingresos - Costo de Ventas - Gastos = Utilidad
--- ============================================================
-
-CREATE OR REPLACE VIEW contabilidad.v_estado_resultados AS
-SELECT
-    al.restaurante_id,
-    a.fecha,
-    pc.tipo,
-    pc.nombre AS cuenta,
-    SUM(
-        CASE al.tipo_movimiento
-            WHEN 'debe'  THEN
-                CASE WHEN pc.tipo::text IN ('costo','gasto') THEN al.monto ELSE -al.monto END
-            WHEN 'haber' THEN
-                CASE WHEN pc.tipo::text = 'ingreso' THEN al.monto ELSE -al.monto END
-        END
-    ) AS monto
-FROM contabilidad.asiento_lineas al
-JOIN contabilidad.asientos a ON a.id = al.asiento_id
-JOIN contabilidad.plan_cuentas pc ON pc.id = al.cuenta_id
-WHERE pc.tipo::text IN ('ingreso', 'costo', 'gasto')
-GROUP BY al.restaurante_id, a.fecha, pc.tipo, pc.nombre
-ORDER BY a.fecha, pc.tipo::text;
-
-COMMENT ON VIEW contabilidad.v_estado_resultados IS
-'Estado de Resultados por fecha. Para obtener el total de un período:
-SELECT tipo, cuenta, SUM(monto) FROM contabilidad.v_estado_resultados
-WHERE restaurante_id = X AND fecha BETWEEN inicio AND fin
-GROUP BY tipo, cuenta;';
-
-
--- ============================================================
--- VIEW: operaciones.v_arqueo_caja
--- Arqueo de caja agrupado por método de pago
--- Requerimiento del Profesor de Contabilidad
--- ============================================================
-
-CREATE OR REPLACE VIEW operaciones.v_arqueo_caja AS
-SELECT
-    tp.restaurante_id,
-    DATE(tp.created_at)     AS fecha,
-    tp.metodo               AS metodo_pago,
-    COUNT(tp.id)            AS num_transacciones,
-    SUM(tp.monto)           AS total_recaudado
-FROM operaciones.transacciones_pago tp
-GROUP BY tp.restaurante_id, DATE(tp.created_at), tp.metodo
-ORDER BY tp.restaurante_id, fecha, tp.metodo;
-
-COMMENT ON VIEW operaciones.v_arqueo_caja IS
-'Resumen del arqueo de caja por día y método de pago.
-Filtra por restaurante_id y fecha para el cierre diario.
-Muestra cuánto se recaudó en efectivo, pago_movil, tarjeta y divisa por separado.';
-
-
--- ============================================================
--- VIEW: menu.v_rentabilidad_platos
--- Reporte de Rentabilidad por Plato (requerido en el enunciado)
--- Compara: Costo de Producción (CPP actual) vs. Precio de Venta
--- ============================================================
-
-CREATE OR REPLACE VIEW menu.v_rentabilidad_platos AS
-SELECT
-    r.restaurante_id,
-    r.id            AS receta_id,
-    r.nombre        AS plato,
-    r.costo_produccion,
-    r.precio_sugerido,
-    r.precio_venta,
-    CASE
-        WHEN r.precio_venta > 0
-        THEN ROUND(((r.precio_venta - r.costo_produccion) / r.precio_venta) * 100, 2)
-        ELSE 0
-    END             AS margen_real_porcentaje,
-    CASE
-        WHEN r.precio_venta > 0
-        THEN (r.precio_venta - r.costo_produccion)
-        ELSE 0
-    END             AS utilidad_por_plato
-FROM menu.recetas r
-WHERE r.activo = true;
-
-COMMENT ON VIEW menu.v_rentabilidad_platos IS
-'Reporte de rentabilidad por plato. Compara costo_produccion (CPP de ingredientes * cantidades)
-vs precio_venta. El campo costo_produccion debe actualizarse cuando cambia el CPP de un ingrediente.';
-
-
--- Completed on 2026-03-24 21:19:57 -04 | Ampliado 2026-03-31
+-- Completed on 2026-04-07 20:21:11 -04
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict y6FeDqZZnkhe7WS6zFAuTEwcaykSherO633E39RkszOutZIMPi6teOT4eWa5EIL
+\unrestrict WUAK399PlKghsnngOnAtz92gQCKgYycfoEsreHVHkya4aeirIQKy0EEvD3YoqsA
+

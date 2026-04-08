@@ -225,7 +225,7 @@ export class POSService {
             await qr.commitTransaction();
 
             // Notify Kitchen through WebSocket
-            broadcastNewOrderToKitchen({ action: 'nuevo_pedido', payload: { id: pedido.id, restaurante_id: restaurantId } });
+            broadcastNewOrderToKitchen({ id: pedido.id, codigo: pedido.codigo, restaurante_id: restaurantId });
 
             return {
                 id: pedido.id,
