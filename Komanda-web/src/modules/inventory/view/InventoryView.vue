@@ -40,12 +40,12 @@ const filteredInventory = computed(() => {
     );
 });
 
-// Fechas
-const today = new Date('2026-04-03');
+// Fechas — usamos la fecha real del sistema
+const today = new Date();
 const isExpiringSoon = (dateStr) => {
     if (!dateStr) return false;
     const expDate = new Date(dateStr);
-    const diffTime = expDate - today;
+    const diffTime = expDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays <= 7; 
 };
@@ -91,9 +91,9 @@ const backToPurchaseForm = () => {
     currentView.value = 'purchaseForm';
 };
 
-// Compras
+// Compras — price incluido para CPP (Regla 1 del enunciado)
 const purchaseItems = ref([
-    { name: '', quantity: null, unit: 'Kg', category: '', expiryDate: '' }
+    { name: '', quantity: null, price: null, unit: 'Kg', category: '', expiryDate: '' }
 ]);
 
 const openPurchaseForm = () => {
@@ -102,11 +102,11 @@ const openPurchaseForm = () => {
 
 const goBack = () => {
     currentView.value = 'inventory';
-    purchaseItems.value = [{ name: '', quantity: null, unit: 'Kg', category: '', expiryDate: '' }];
+    purchaseItems.value = [{ name: '', quantity: null, price: null, unit: 'Kg', category: '', expiryDate: '' }];
 };
 
 const addPurchaseRow = () => {
-    purchaseItems.value.push({ name: '', quantity: null, unit: 'Kg', category: '', expiryDate: '' });
+    purchaseItems.value.push({ name: '', quantity: null, price: null, unit: 'Kg', category: '', expiryDate: '' });
 };
 
 const removePurchaseRow = (index) => {
@@ -299,11 +299,12 @@ const criticalItemsCount = computed(() => {
                             <table class="table table-borderless align-middle w-100">
                                 <thead>
                                     <tr class="small text-secondary-custom fw-bold">
-                                        <th style="width: 25%">Insumo *</th>
-                                        <th style="width: 15%">Cantidad *</th>
-                                        <th style="width: 15%">Ud.</th>
-                                        <th style="width: 20%">Categoría</th>
-                                        <th style="width: 20%">Caducidad</th>
+                                        <th style="width: 22%">Insumo *</th>
+                                        <th style="width: 13%">Cantidad *</th>
+                                        <th style="width: 13%">Precio unit.</th>
+                                        <th style="width: 12%">Ud.</th>
+                                        <th style="width: 18%">Categoría</th>
+                                        <th style="width: 17%">Caducidad</th>
                                         <th style="width: 5%"></th>
                                     </tr>
                                 </thead>
@@ -313,7 +314,10 @@ const criticalItemsCount = computed(() => {
                                             <input v-model="row.name" @input="handleNameInput(row)" list="inventoryNames" type="text" placeholder="Buscar / Escribir..." class="form-control py-2 rounded-3 custom-input form-control-sm" required />
                                         </td>
                                         <td>
-                                            <input v-model.number="row.quantity" type="number" step="any" placeholder="Cant." class="form-control py-2 rounded-3 custom-input form-control-sm" required />
+                                            <input v-model.number="row.quantity" type="number" step="any" min="0.001" placeholder="Cant." class="form-control py-2 rounded-3 custom-input form-control-sm" required />
+                                        </td>
+                                        <td>
+                                            <input v-model.number="row.price" type="number" step="any" min="0" placeholder="0.00" class="form-control py-2 rounded-3 custom-input form-control-sm" />
                                         </td>
                                         <td>
                                             <select v-model="row.unit" class="form-select py-2 rounded-3 custom-input form-control-sm" required>

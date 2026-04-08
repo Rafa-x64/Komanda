@@ -3,6 +3,7 @@ import { z } from "zod";
 export const purchaseItemSchema = z.object({
   name: z.string().min(1, "El nombre del insumo es requerido"),
   quantity: z.number().positive("La cantidad debe ser mayor a 0"),
+  price: z.number().min(0).optional().default(0),
   unit: z.string().optional().default("Kg"),
   category: z.string().optional(),
   expiryDate: z.string().optional()
