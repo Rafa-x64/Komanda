@@ -47,6 +47,12 @@ const router = createRouter({
             component: () => import('../modules/employees/views/EmployeesView.vue'),
             meta: { requiresAuth: true, roles: ['admin'] }
         },
+        {
+            path: '/inventario',
+            name: 'inventory',
+            component: () => import('../modules/inventory/view/InventoryView.vue'),
+            meta: { requiresAuth: false, roles: ['admin'] }
+        },
         /* ----- Auth ----- */
         {
             path: '/singup',

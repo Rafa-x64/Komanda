@@ -1,3 +1,6 @@
 packages:
   - 'Komanda-api'
   - 'Komanda-web'
+allowBuilds:
+  bcrypt: true
+  esbuild: true
