@@ -1,13 +1,31 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { PlusCircle, Search, ArrowLeft, Tags } from 'lucide-vue-next';
+import { fetchWithAuth } from '../../../core/api/auth.api';
 
-// Aquí definimos los datos que la tabla va a mostrar
-const inventory = ref([
-    { id: 1, name: 'Harina de Trigo', category: 'Secos', quantity: 5, minStock: 10, unit: 'Kg', expiryDate: '2026-06-15' },
-    { id: 2, name: 'Queso Mozzarella', category: 'Lácteos', quantity: 15, minStock: 5, unit: 'Kg', expiryDate: '2026-04-08' }, // Próximo a caducar
-    { id: 3, name: 'Tomate Marzano', category: 'Vegetales', quantity: 2, minStock: 8, unit: 'Kg', expiryDate: '2026-05-20' }
-]);
+// Aquí definimos los datos que la tabla va a mostrar provenientes de la bd
+const inventory = ref([]);
+
+const fetchInventory = async () => {
+    try {
+        const response = await fetchWithAuth('/inventory');
+        inventory.value = response.data.map(item => ({
+            id: item.id,
+            name: item.nombre,
+            category: item.categoria || 'General',
+            quantity: item.cantidad_disponible,
+            minStock: item.cantidad_minima,
+            unit: 'Kg', // fallback de UI
+            expiryDate: item.fecha_caducidad
+        }));
+    } catch (error) {
+        console.error('Error cargando inventario', error);
+    }
+};
+
+onMounted(() => {
+    fetchInventory();
+});
 
 const searchQuery = ref('');
 
@@ -106,39 +124,25 @@ const handleNameInput = (row) => {
     }
 };
 
-const processPurchase = () => {
+const processPurchase = async () => {
     const validItems = purchaseItems.value.filter(item => item.name && item.quantity);
     
     if (validItems.length === 0) {
-    alert('Llena los campos obligatorios (Nombre y Cantidad) de al menos un insumo.');
-    return;
-}
+        alert('Llena los campos obligatorios (Nombre y Cantidad) de al menos un insumo.');
+        return;
+    }
 
-validItems.forEach((newItem, index) => {
-        const existingItemIndex = inventory.value.findIndex(
-        item => item.name.toLowerCase() === newItem.name.toLowerCase()
-    );
-
-    if (existingItemIndex !== -1) {
-        inventory.value[existingItemIndex].quantity += newItem.quantity;
-        if (newItem.expiryDate) {
-            inventory.value[existingItemIndex].expiryDate = newItem.expiryDate;
-        }
-        } else {
-        inventory.value.push({
-          id: Date.now() + index, // unique mock id
-            name: newItem.name,
-            category: newItem.category || 'General',
-            quantity: newItem.quantity,
-            minStock: 5,
-            unit: newItem.unit,
-            expiryDate: newItem.expiryDate
+    try {
+        await fetchWithAuth('/inventory/purchase', {
+            method: 'POST',
+            body: JSON.stringify({ items: validItems })
         });
-        }
-    });
-
-alert('Compra(s) agregada(s) al inventario exitosamente');
-goBack();
+        alert('Compra(s) agregada(s) al inventario exitosamente');
+        await fetchInventory(); // Refrescar los datos del backend
+        goBack();
+    } catch (error) {
+        alert('Error registrando compra: ' + error.message);
+    }
 };
 
 // Estas funciones ayudan a que los colores funcionen

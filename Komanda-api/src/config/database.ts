@@ -10,6 +10,7 @@ import { PedidoDetalle } from "../modules/pos/domain/pedido-detalle.entity";
 import { Mesa } from "../modules/pos/domain/mesa.entity";
 import { Receta } from "../modules/pos/domain/receta.entity";
 import { Categoria } from "../modules/pos/domain/categoria.entity";
+import { Ingrediente } from "../modules/inventory/inventory.model";
 
 export const Conexion = new DataSource({
     type: "postgres",
@@ -20,7 +21,7 @@ export const Conexion = new DataSource({
     database: process.env.DB_NAME ?? "komanda_db",
     synchronize: false,
     logging: false,
-    entities: [Restaurant, User, Role, Pedido, PedidoDetalle, Mesa, Receta, Categoria],
+    entities: [Restaurant, User, Role, Pedido, PedidoDetalle, Mesa, Receta, Categoria, Ingrediente],
     subscribers: [],
     migrations: [],
 });
