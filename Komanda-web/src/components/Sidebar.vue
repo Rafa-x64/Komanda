@@ -84,6 +84,11 @@
                   <router-link to="/finanzas" class="nav-link text-secondary-custom p-1 px-2" active-class="active text-korange fw-bold mb-0">Finanzas</router-link>
                 </li>
                 <li class="nav-item py-1" v-if="hasAccess(['admin'])">
+                  <router-link to="/reportes" class="nav-link text-secondary-custom p-1 px-2" active-class="active text-korange fw-bold mb-0">
+                    <i class="bi bi-graph-up-arrow me-1"></i> Reportes
+                  </router-link>
+                </li>
+                <li class="nav-item py-1" v-if="hasAccess(['admin'])">
                   <router-link to="/empleados" class="nav-link text-secondary-custom p-1 px-2" active-class="active text-korange fw-bold mb-0">Empleados</router-link>
                 </li>
                 <li class="nav-item py-1" v-if="hasAccess(['admin'])">

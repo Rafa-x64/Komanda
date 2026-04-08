@@ -76,6 +76,12 @@ const router = createRouter({
             name: 'pos',
             component: () => import('../modules/pos/views/POSView.vue'),
             meta: { requiresAuth: true, roles: ['admin', 'cajero', 'mesero'] }
+        },
+        {
+            path: '/reportes',
+            name: 'reportes',
+            component: () => import('../modules/dashboard/views/ReportsDashboard.vue'),
+            meta: { requiresAuth: true, roles: ['admin'] }
         }
     ]
 });
