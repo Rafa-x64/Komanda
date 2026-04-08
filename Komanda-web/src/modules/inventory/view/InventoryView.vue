@@ -270,9 +270,9 @@ const criticalItemsCount = computed(() => {
                 </p>
             </div>
 
-            <div class="col-lg-10">
-                <div class="bg-surface-custom p-4 p-md-5 rounded-4 shadow-sm border border-custom position-relative">
-                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-5">
+            <div class="col-lg-12 col-xl-11">
+                <div class="bg-surface-custom p-3 p-md-4 p-lg-5 rounded-4 shadow-sm border border-custom position-relative">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
                         <div class="d-flex align-items-center gap-3">
                             <button @click="goBack" class="btn btn-outline-korange rounded-circle d-flex align-items-center justify-content-center p-2 transition-transform hover-translate-x" title="Volver">
                                 <ArrowLeft :size="24" />
@@ -296,44 +296,44 @@ const criticalItemsCount = computed(() => {
                         </datalist>
 
                         <div class="table-responsive mb-4">
-                            <table class="table table-borderless align-middle w-100">
+                            <table class="table table-borderless table-sm align-middle w-100" style="min-width: 800px;">
                                 <thead>
                                     <tr class="small text-secondary-custom fw-bold">
-                                        <th style="width: 22%">Insumo *</th>
-                                        <th style="width: 13%">Cantidad *</th>
-                                        <th style="width: 13%">Precio unit.</th>
+                                        <th style="width: 25%">Insumo *</th>
+                                        <th style="width: 12%">Cantidad *</th>
+                                        <th style="width: 12%">Precio unit.</th>
                                         <th style="width: 12%">Ud.</th>
                                         <th style="width: 18%">Categoría</th>
-                                        <th style="width: 17%">Caducidad</th>
+                                        <th style="width: 16%">Caducidad</th>
                                         <th style="width: 5%"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-for="(row, index) in purchaseItems" :key="index" class="align-top">
-                                        <td>
-                                            <input v-model="row.name" @input="handleNameInput(row)" list="inventoryNames" type="text" placeholder="Buscar / Escribir..." class="form-control py-2 rounded-3 custom-input form-control-sm" required />
+                                        <td class="px-1">
+                                            <input v-model="row.name" @input="handleNameInput(row)" list="inventoryNames" type="text" placeholder="Insumo..." class="form-control py-2 px-2 rounded-3 custom-input form-control-sm" required />
                                         </td>
-                                        <td>
-                                            <input v-model.number="row.quantity" type="number" step="any" min="0.001" placeholder="Cant." class="form-control py-2 rounded-3 custom-input form-control-sm" required />
+                                        <td class="px-1">
+                                            <input v-model.number="row.quantity" type="number" step="any" min="0.001" placeholder="Cant." class="form-control py-2 px-2 rounded-3 custom-input form-control-sm" required />
                                         </td>
-                                        <td>
-                                            <input v-model.number="row.price" type="number" step="any" min="0" placeholder="0.00" class="form-control py-2 rounded-3 custom-input form-control-sm" />
+                                        <td class="px-1">
+                                            <input v-model.number="row.price" type="number" step="any" min="0" placeholder="0.00" class="form-control py-2 px-2 rounded-3 custom-input form-control-sm" />
                                         </td>
-                                        <td>
-                                            <select v-model="row.unit" class="form-select py-2 rounded-3 custom-input form-control-sm" required>
+                                        <td class="px-1">
+                                            <select v-model="row.unit" class="form-select py-2 px-2 rounded-3 custom-input form-control-sm" required>
                                                 <option>Kg</option><option>L</option><option>Unid</option><option>Cajas</option><option>Gramos</option>
                                             </select>
                                         </td>
-                                        <td>
-                                            <select v-model="row.category" class="form-select py-2 rounded-3 custom-input form-control-sm" required>
+                                        <td class="px-1">
+                                            <select v-model="row.category" class="form-select py-2 px-2 rounded-3 custom-input form-control-sm" required>
                                                 <option value="" disabled>Seleccione...</option>
                                                 <option v-for="cat in categorias" :key="cat.id" :value="cat.name">{{ cat.name }}</option>
                                             </select>
                                         </td>
-                                        <td>
-                                            <input v-model="row.expiryDate" type="date" class="form-control py-2 rounded-3 custom-input form-control-sm" />
+                                        <td class="px-1">
+                                            <input v-model="row.expiryDate" type="date" class="form-control py-2 px-2 rounded-3 custom-input form-control-sm" />
                                         </td>
-                                        <td class="text-center">
+                                        <td class="text-center px-1">
                                             <button v-if="purchaseItems.length > 1" type="button" @click="removePurchaseRow(index)" class="btn btn-sm text-danger hover-bg-danger rounded-circle p-1" title="Eliminar fila">
                                                 ✖
                                             </button>
