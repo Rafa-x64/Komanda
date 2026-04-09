@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { Send, ShoppingCart, AlertCircle, CheckCircle, CreditCard, X, Plus } from 'lucide-vue-next'
 import ProductCard from '../components/ProductCard.vue'
 import PosCategoryFilter from '../components/PosCategoryFilter.vue'
@@ -11,7 +11,6 @@ import {
   fetchProducts,
   fetchTables,
   fetchMetodosPago,
-  type Pago,
 } from '../pos.api'
 
 const { cartItems, selectedTable, addItem, updateQuantity, addKitchenNote, removeItem, clearCart, subtotal, total } = useCart()
@@ -36,7 +35,7 @@ const pagos = ref<{ metodo_pago_id: number; monto: number; referencia: string; n
 const addPago = () => {
   if (!metodosPago.value.length) return
   const primero = metodosPago.value[0]
-  pagos.value.push({ metodo_pago_id: primero.id, monto: 0, referencia: '', nombre: primero.nombre })
+  if (primero) pagos.value.push({ metodo_pago_id: primero.id, monto: 0, referencia: '', nombre: primero.nombre })
 }
 
 const removePago = (idx: number) => pagos.value.splice(idx, 1)
@@ -47,7 +46,7 @@ const faltante = computed(() => Math.max(0, total.value - totalPagado.value))
 
 const onMetodoChange = (idx: number, id: number) => {
   const m = metodosPago.value.find(m => m.id === Number(id))
-  if (m) pagos.value[idx].nombre = m.nombre
+  if (m && pagos.value[idx]) pagos.value[idx].nombre = m.nombre
 }
 
 // Filtered products by category
@@ -74,7 +73,7 @@ const openPaymentModal = () => {
   // Auto-llenar con el total completo en el primer método
   if (metodosPago.value.length && !pagos.value.length) {
     const primero = metodosPago.value[0]
-    pagos.value = [{ metodo_pago_id: primero.id, monto: total.value, referencia: '', nombre: primero.nombre }]
+    if (primero) pagos.value = [{ metodo_pago_id: primero.id, monto: total.value, referencia: '', nombre: primero.nombre }]
   }
   showPaymentModal.value = true
 }
