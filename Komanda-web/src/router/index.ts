@@ -82,6 +82,12 @@ const router = createRouter({
             name: 'reportes',
             component: () => import('../modules/dashboard/views/ReportsDashboard.vue'),
             meta: { requiresAuth: true, roles: ['admin'] }
+        },
+        {
+            path: '/contabilidad',
+            name: 'contabilidad',
+            component: () => import('../modules/accounting/views/BalanceSheetView.vue'),
+            meta: { requiresAuth: true, roles: ['admin'] }
         }
     ]
 });

@@ -218,7 +218,7 @@ import html2pdf from 'html2pdf.js'
 
 const auth = useAuth()
 const userName = computed(() => auth.user.value?.nombre || 'Administrador')
-const restaurantName = computed(() => auth.user.value?.restaurantName || 'Mi Restaurante')
+const restaurantName = computed(() => (auth.user.value as any)?.restaurantName || 'Mi Restaurante')
 
 const currentDate = new Date().toLocaleDateString('es-ES', {
   weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
@@ -323,7 +323,7 @@ const downloadPDF = () => {
     return
   }
 
-  const opt = {
+  const opt: any = {
     margin:       [0.3, 0.3, 0.3, 0.3],
     filename:     `Komanda_Reporte_${currentDisplayedReportType.value || 'General'}_${dateFrom.value}_al_${dateTo.value}.pdf`,
     image:        { type: 'jpeg', quality: 0.98 },

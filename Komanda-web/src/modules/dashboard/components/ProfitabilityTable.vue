@@ -86,7 +86,7 @@ interface DishProfit {
   totalGain: number
 }
 
-const tabs = [
+const tabs: { key: 'top' | 'bottom', label: string }[] = [
   { key: 'top', label: '🏆 Top 5' },
   { key: 'bottom', label: '📉 Pérdidas' }
 ]
