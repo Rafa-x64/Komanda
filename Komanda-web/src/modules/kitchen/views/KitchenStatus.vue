@@ -17,7 +17,7 @@
         </div>
       </div>
 
-      <div class="row row-cols-1 row-cols-md-2 row-cols-xxl-3 g-3 m-0">
+      <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 row-cols-xxl-4 g-3 m-0">
         <div v-for="pedido in pedidos" :key="pedido.id" class="col p-2">
           <div :class="['card ticket shadow-sm', { 'border border-4 border-danger': pedido.minutos >= 15 }]">
 
@@ -40,8 +40,13 @@
             <div class="card-body p-0">
               <ul class="list-group list-group-flush">
                 <li v-for="(item, index) in pedido.items" :key="index"
-                  class="list-group-item border-color py-3 px-3 bg-transparent">
-                  <div class="d-flex align-items-start">
+                  class="list-group-item border-color py-3 px-3 bg-transparent item-hover"
+                  @click="toggleItemTachado(pedido.id, index)"
+                  style="cursor: pointer;">
+                  <div class="d-flex align-items-start" :class="{ 'tachado': isItemTachado(pedido.id, index) }">
+                     <div class="me-3 mt-1 text-secondary-custom">
+                        <i :class="isItemTachado(pedido.id, index) ? 'bi bi-check-circle-fill text-success fs-3' : 'bi bi-circle fs-3'"></i>
+                     </div>
                     <span class="qty-badge me-3">{{ item.cantidad }}</span>
                     <div class="flex-grow-1">
                       <h4 class="fw-bold text-uppercase mb-1 item-name text-primary-custom">{{ item.nombre }}</h4>
@@ -55,8 +60,8 @@
               </ul>
             </div>
 
-            <div class="card-footer border-0 p-0">
-              <button @click="marcarComoListo(pedido.id)" class="btn btn-korange w-100 py-4 rounded-0 fw-bold fs-4">
+            <div class="card-footer border-0 p-0 mt-auto">
+              <button @click="marcarComoListo(pedido.id)" class="btn btn-listo w-100 py-3 rounded-0 fw-bold fs-5">
                 MARCAR COMO LISTO
               </button>
             </div>
@@ -75,6 +80,9 @@ import { useSocketCocina } from '../composables/useSocketCocina';
 const pedidos = ref([]);
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/v1';
 
+// Formato de tachados: { "id_pedido": { "index_item": true } }
+const tachados = ref({});
+
 const getMinutosTranscurridos = (fechaIso) => {
   if (!fechaIso) return 0;
   const fecha = new Date(fechaIso);
@@ -85,7 +93,7 @@ const getMinutosTranscurridos = (fechaIso) => {
 
 const fetchPedidos = async () => {
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('auth_token');
     if (!token) return;
 
     const response = await fetch(`${API_URL}/kitchen`, {
@@ -131,9 +139,18 @@ const resumenProduccion = computed(() => {
   return totales;
 });
 
+const isItemTachado = (pedidoId, itemIndex) => {
+  return tachados.value[pedidoId]?.[itemIndex] === true;
+};
+
+const toggleItemTachado = (pedidoId, itemIndex) => {
+  if (!tachados.value[pedidoId]) tachados.value[pedidoId] = {};
+  tachados.value[pedidoId][itemIndex] = !tachados.value[pedidoId][itemIndex];
+};
+
 const marcarComoListo = async (id) => {
   try {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('auth_token');
     const response = await fetch(`${API_URL}/kitchen/${id}/status`, {
       method: 'PUT',
       headers: {
@@ -208,8 +225,34 @@ const marcarComoListo = async (id) => {
   font-size: 1.4rem;
 }
 
+.item-hover:hover {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+}
+
+[data-theme="dark"] .item-hover:hover {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+.tachado {
+  opacity: 0.5;
+  text-decoration: line-through;
+  transition: all 0.3s ease;
+}
+
 .border-color {
   border-color: var(--border-color) !important;
+}
+
+.btn-listo {
+  background-color: var(--KOrange) !important;
+  color: #ffffff !important;
+  border: none;
+  transition: all var(--transition-speed);
+}
+
+.btn-listo:hover {
+  background-color: var(--KOrange-hover) !important;
+  transform: translateY(-2px);
 }
 
 .text-secondary-custom {

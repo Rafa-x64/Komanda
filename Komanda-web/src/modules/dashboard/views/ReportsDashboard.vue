@@ -20,12 +20,12 @@
         </div>
       </header>
 
-      <!-- Este Div envuelve lo que se generará en el PDF -->
-      <div id="report-content" class="p-1">
+      <!-- Este Div envuelve el contenido principal -->
+      <div class="p-1">
         
         <!-- KPI Cards -->
         <section class="row g-3 mb-4">
-          <div class="col-6 col-lg-3" v-for="kpi in kpis" :key="kpi.label">
+          <div class="col-12 col-sm-6 col-xl-3" v-for="kpi in kpis" :key="kpi.label">
             <KpiCard v-bind="kpi" />
           </div>
         </section>
@@ -71,16 +71,16 @@
         </section>
 
         <!-- Detailed Data Table Seleccionada -->
-        <section class="mb-4">
+        <section class="mb-4" id="report-content">
           <div class="card shadow-sm p-4 h-100 bg-surface-custom border border-color">
               
               <!-- Controles de exportación (Botón PDF encima de los filtros) -->
-              <div class="d-flex justify-content-between align-items-center mb-3">
+              <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-2">
                 <h5 class="fw-bold mb-0 text-primary-custom d-flex align-items-center">
                   <i class="bi bi-funnel text-korange me-2"></i>
                   Extracción de Datos
                 </h5>
-                <button @click="downloadPDF" class="btn-korange px-4 py-2 rounded-pill shadow-sm d-flex align-items-center gap-2" style="color: white !important; font-weight: bold; background-color: var(--KOrange); border: none; cursor: pointer;" :disabled="isGeneratingPDF">
+                <button @click="downloadPDF" class="btn-korange px-4 py-2 rounded-pill shadow-sm d-flex align-items-center gap-2 align-self-start align-self-md-auto" style="color: white !important; font-weight: bold; background-color: var(--KOrange); border: none; cursor: pointer;" :disabled="isGeneratingPDF" data-html2canvas-ignore="true">
                   <i class="bi bi-file-earmark-pdf-fill fs-5"></i> 
                   {{ isGeneratingPDF ? 'Generando PDF...' : 'Descargar Reporte PDF' }}
                 </button>
@@ -88,7 +88,7 @@
 
               <!-- Barra de filtros integrada en la tabla -->
               <div class="row g-3 align-items-end mb-4 border-bottom border-color pb-4">
-                 <div class="col-12 col-md-4 col-xl-4">
+                 <div class="col-12 col-md-12 col-xl-4">
                    <label class="form-label small text-secondary-custom fw-bold mb-1">Tipo de Reporte a evaluar</label>
                    <select v-model="selectedReportType" class="form-select form-select-sm border-color text-primary-custom" @change="generateReportData">
                      <option value="ventas">Ventas y Rentabilidad</option>
@@ -99,15 +99,15 @@
                      <option value="mermas">Control de Mermas</option>
                    </select>
                  </div>
-                 <div class="col-6 col-md-3 col-xl-3">
+                 <div class="col-12 col-sm-6 col-xl-3">
                    <label class="form-label small text-secondary-custom fw-bold mb-1">Desde Fecha</label>
                    <input type="date" v-model="dateFrom" :max="todayString" class="form-control form-control-sm border-color text-primary-custom">
                  </div>
-                 <div class="col-6 col-md-3 col-xl-3">
+                 <div class="col-12 col-sm-6 col-xl-3">
                    <label class="form-label small text-secondary-custom fw-bold mb-1">Hasta Fecha</label>
                    <input type="date" v-model="dateTo" :max="todayString" class="form-control form-control-sm border-color text-primary-custom">
                  </div>
-                 <div class="col-12 col-md-2 col-xl-2 ms-auto mt-3 mt-md-0">
+                 <div class="col-12 col-xl-2 ms-auto mt-3 mt-xl-0">
                    <button class="btn btn-outline-korange btn-sm w-100 fw-bold" @click="generateReportData">
                      <i class="bi bi-funnel me-1"></i> Filtrar Datos
                    </button>
@@ -166,7 +166,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(row, i) in reportData" :key="i">
+                    <tr v-for="(row, i) in visibleReportData" :key="i">
                       <td v-for="(val, key) in row" :key="key">
                         <span v-if="key === 'estado'">
                           <span class="badge" :class="val === 'Crítico' ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success'">
@@ -176,7 +176,7 @@
                         <span v-else class="text-primary-custom">{{ val }}</span>
                       </td>
                     </tr>
-                    <tr v-if="!reportData.length">
+                    <tr v-if="!visibleReportData.length">
                       <td colspan="5" class="text-center text-secondary-custom py-4">
                         Aún no se han generado datos para los filtros seleccionados.
                       </td>
@@ -184,6 +184,15 @@
                   </tbody>
                 </table>
               </div>
+
+              <!-- Paginador Visivo -->
+              <div class="d-flex justify-content-center mt-4" data-html2canvas-ignore="true" v-if="visibleLimit < reportData.length">
+                <button @click="loadMore" class="btn btn-outline-secondary btn-sm px-4 py-2 rounded-pill fw-bold shadow-sm d-flex align-items-center gap-2">
+                  <i class="bi bi-chevron-down border-color"></i>
+                  Mostrar más registros (<span class="text-korange">{{ reportData.length - visibleLimit }} restantes</span>)
+                </button>
+              </div>
+
           </div>
         </section>
 
@@ -252,65 +261,110 @@ const reportTitle = computed(() => {
 })
 
 // === Datos Simulados basados en el Tipo de Reporte ===
-const mockDataVentas = [
-  { fecha: todayString, ticket: '#T-4201', base: '$45.00', tax: '$7.20', total: '$52.20' },
-  { fecha: todayString, ticket: '#T-4202', base: '$120.00', tax: '$19.20', total: '$139.20' },
-  { fecha: todayString, ticket: '#T-4203', base: '$22.50', tax: '$3.60', total: '$26.10' },
-  { fecha: todayString, ticket: '#T-4204', base: '$89.00', tax: '$14.24', total: '$103.24' },
-  { fecha: todayString, ticket: '#T-4205', base: '$150.00', tax: '$24.00', total: '$174.00' },
-  { fecha: todayString, ticket: '#T-4206', base: '$30.00', tax: '$4.80', total: '$34.80' },
-]
+// Generaremos más de 30 registros falsos para validar el paginado y los filtros de fecha.
+const _generateMockData = (count: number, generator: (i: number, randomDateStr: string) => any) => {
+  const data = []
+  // Rango de fechas: Desde hace un mes hasta hoy
+  const todayTime = new Date().getTime()
+  const baseTime = todayTime - (30 * 24 * 60 * 60 * 1000) 
+  
+  for(let i=0; i<count; i++) {
+    const randomTime = baseTime + Math.random() * (todayTime - baseTime)
+    const randomDateObj = new Date(randomTime)
+    const randomDateStr = randomDateObj.toISOString().split('T')[0]
+    data.push(generator(i, randomDateStr))
+  }
+  // Sort DESC por fecha (los más nuevos primero)
+  return data.sort((a,b) => new Date(b.fecha || b.fecha_entrada || '1970-01-01').getTime() - new Date(a.fecha || a.fecha_entrada || '1970-01-01').getTime())
+}
 
-const mockDataInventario = [
-  { insumo: 'Carne Sirloin', actual: '1.2 kg', reorden: '5.0 kg', estado: 'Crítico' },
-  { insumo: 'Tomate Cherry', actual: '0.8 kg', reorden: '3.0 kg', estado: 'Crítico' },
-  { insumo: 'Cebolla Blanca', actual: '24.0 kg', reorden: '10.0 kg', estado: 'Óptimo' },
-  { insumo: 'Queso Mozzarella', actual: '2.5 kg', reorden: '4.0 kg', estado: 'Crítico' },
-  { insumo: 'Pan de Hamburguesa', actual: '150 un', reorden: '50 un', estado: 'Óptimo' },
-]
+const mockDataVentas = _generateMockData(85, (i, d) => ({
+  fecha: d, ticket: `#T-42${i.toString().padStart(3, '0')}`,
+  base: `$${(20 + i % 15).toFixed(2)}`,
+  tax: `$${((20 + i % 15)*0.16).toFixed(2)}`,
+  total: `$${((20 + i % 15)*1.16).toFixed(2)}`
+}))
 
-const mockDataEmpleados = [
-  { empleado: 'Juan Pérez', cargo: 'Mesero', ventas: '$1,420.00', horas: '42 hs' },
-  { empleado: 'Ana Gómez', cargo: 'Cajera', ventas: '$3,800.00', horas: '38 hs' },
-  { empleado: 'Luis Martínez', cargo: 'Mesero', ventas: '$980.00', horas: '24 hs' },
-  { empleado: 'Carlos Chef', cargo: 'Cocinero', ventas: 'N/A', horas: '45 hs' },
-]
+// Inventario no tiene fecha temporal como tal que se filtre por periodo
+const mockDataInventario = Array.from({ length: 45 }, (_, i) => ({
+  insumo: `Insumo Especial ${i+1}`,
+  actual: `${(Math.random()*10).toFixed(1)} kg`,
+  reorden: '5.0 kg',
+  estado: i % 4 === 0 ? 'Crítico' : 'Óptimo'
+}))
 
-const mockDataGastos = [
-  { fecha: haceSieteDiasStr, categoria: 'Servicios Básicos', descripcion: 'Pago de Electricidad y Agua', monto: '$450.00', responsable: 'Admin' },
-  { fecha: todayString, categoria: 'Mantenimiento', descripcion: 'Reparación de Horno Industrial', monto: '$120.00', responsable: 'Admin' },
-  { fecha: todayString, categoria: 'Suministros', descripcion: 'Compra de Empaques y Desechables', monto: '$85.00', responsable: 'Admin' },
-]
+// Empleados tampoco se suele filtrar por fecha (dependiendo de la métrica)
+const mockDataEmpleados = Array.from({ length: 35 }, (_, i) => ({
+  empleado: `Empleado ${i+1}`, cargo: i % 3 === 0 ? 'Cajero' : (i % 2 === 0 ? 'Cocinero' : 'Mesero'),
+  ventas: i % 2 !== 0 ? `$${(Math.random()*2000).toFixed(2)}` : 'N/A', horas: `${30 + (i%20)} hs`
+}))
 
-const mockDataContabilidad = [
-  { fecha: todayString, asiento: 'AS-1020', cuenta_debe: 'Banco (Caja Principal)', cuenta_haber: 'Ventas de Servicios', monto: '$174.00' },
-  { fecha: todayString, asiento: 'AS-1021', cuenta_debe: 'Costo de Ventas', cuenta_haber: 'Inventario de Materia Prima', monto: '$58.20' },
-  { fecha: todayString, asiento: 'AS-1022', cuenta_debe: 'Gastos Operativos (Opex)', cuenta_haber: 'Caja Chica', monto: '$85.00' },
-]
+const mockDataGastos = _generateMockData(60, (i, d) => ({
+  fecha: d, categoria: i % 2 === 0 ? 'Servicios Básicos' : (i % 3 === 0 ? 'Suministros' : 'Mantenimiento'),
+  descripcion: `Gasto Operativo ${i+1}`, monto: `$${(50 + i*2).toFixed(2)}`, responsable: 'Admin'
+}))
 
-const mockDataMermas = [
-  { fecha: todayString, insumo: 'Carne Sirloin', cantidad: '0.5 kg', motivo: 'Caducidad de lote B-20', costo_perdido: '$4.90' },
-  { fecha: todayString, insumo: 'Lechuga', cantidad: '2 un', motivo: 'Deterioro por mal almacenamiento', costo_perdido: '$1.20' },
-  { fecha: haceSieteDiasStr, insumo: 'Tomate Cherry', cantidad: '0.3 kg', motivo: 'Caída accidental en manipulación', costo_perdido: '$1.10' },
-]
+const mockDataContabilidad = _generateMockData(120, (i, d) => ({
+  fecha: d, asiento: `AS-10${i.toString().padStart(3, '0')}`,
+  cuenta_debe: i%2===0?'Banco (Caja Principal)':'Costo de Ventas',
+  cuenta_haber: i%2===0?'Ventas de Servicios':'Inventario de Materia Prima',
+  monto: `$${(100 + i%50).toFixed(2)}`
+}))
+
+const mockDataMermas = _generateMockData(40, (i, d) => ({
+  fecha: d, insumo: `Insumo ${i%10 + 1}`, cantidad: `${(0.5 + i%3).toFixed(1)} kg`,
+  motivo: `Desperdicio Tipo ${i%4}`, costo_perdido: `$${(5 + i).toFixed(2)}`
+}))
+
+// === Paginación y Filtrado ===
+const visibleLimit = ref(30)
+
+const visibleReportData = computed(() => {
+  return reportData.value.slice(0, visibleLimit.value)
+})
+
+const loadMore = () => {
+  visibleLimit.value += 30
+}
 
 const generateReportData = () => {
   currentDisplayedReportType.value = selectedReportType.value
   
-  // Simulamos carga de datos basada en el dropdown select
+  let baseData: any[] = []
   if (selectedReportType.value === 'ventas') {
-    reportData.value = mockDataVentas
+    baseData = mockDataVentas
   } else if (selectedReportType.value === 'inventario') {
-    reportData.value = mockDataInventario
+    baseData = mockDataInventario
   } else if (selectedReportType.value === 'empleados') {
-    reportData.value = mockDataEmpleados
+    baseData = mockDataEmpleados
   } else if (selectedReportType.value === 'gastos') {
-    reportData.value = mockDataGastos
+    baseData = mockDataGastos
   } else if (selectedReportType.value === 'contabilidad') {
-    reportData.value = mockDataContabilidad
+    baseData = mockDataContabilidad
   } else if (selectedReportType.value === 'mermas') {
-    reportData.value = mockDataMermas
+    baseData = mockDataMermas
   }
+
+  // Filtrado de FECHAS reales (desde un input type="date")
+  if (dateFrom.value && dateTo.value) {
+    const fromTime = new Date(dateFrom.value + 'T00:00:00').getTime()
+    const toTime = new Date(dateTo.value + 'T23:59:59').getTime()
+
+    baseData = baseData.filter((item: any) => {
+      // Las columnas de fecha pueden tener distinto nombre según el reporte
+      const dateField = item.fecha || item.fecha_entrada || null
+      // Si el item tiene un campo de fecha, aplicamos el filtro
+      if (dateField) {
+        const itemTime = new Date(dateField + 'T00:00:00').getTime()
+        return itemTime >= fromTime && itemTime <= toTime
+      }
+      // Reportes sin fecha (Empleados, Inventario) simplemente retornan todos sus items
+      return true
+    })
+  }
+
+  visibleLimit.value = 30 // reset visible en cada filtro
+  reportData.value = baseData
 }
 
 // === Exportación PDF ====
