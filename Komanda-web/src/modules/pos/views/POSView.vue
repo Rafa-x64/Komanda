@@ -140,10 +140,19 @@ onMounted(async () => {
     loadingData.value = false
   }
 })
+
+import Sidebar from '../../../components/Sidebar.vue'
+import { useAuth } from '../../../core/composables/useAuth'
+
+const auth = useAuth()
+const userRole = computed(() => auth.user.value?.role || 'mesero')
+const userName = computed(() => auth.user.value?.nombre || 'Mesero')
 </script>
 
 <template>
-  <div class="pos-layout">
+  <div class="d-flex w-100">
+    <Sidebar :role="userRole" :userName="userName" />
+    <div class="pos-layout main-content">
     <!-- Toast Notification -->
     <Transition name="toast-slide">
       <div v-if="toast" class="pos-toast" :class="`pos-toast--${toast.type}`">
@@ -364,16 +373,32 @@ onMounted(async () => {
       </div>
     </Transition>
   </div>
+  </div>
 </template>
 
 <style scoped>
 /* ========== LAYOUT ========== */
 .pos-layout {
-  display: grid;
-  grid-template-columns: 1fr 360px;
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
   background: var(--bg-body);
   position: relative;
+  width: 100%;
+}
+
+@media (min-width: 992px) {
+  .pos-layout {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+  }
+}
+
+@media (min-width: 768px) {
+  .main-content {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+  }
 }
 
 /* ========== CATALOG ========== */

@@ -57,7 +57,7 @@ export class POSController {
     static async createSale(req: Request, res: Response): Promise<void> {
         try {
             const payload = CreateSaleSchema.parse(req.body);
-            const { restaurantId, id: userId } = (req as any).user;
+            const { restaurantId, userId } = (req as any).user;
 
             const sale = await POSService.createSale(payload, restaurantId, userId);
             res.status(201).json({ status: "success", data: sale });

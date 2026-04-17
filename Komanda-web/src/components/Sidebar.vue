@@ -117,8 +117,8 @@
             </div>
           </a>
           <ul class="dropdown-menu text-small shadow border-0 w-100" style="background-color: var(--bg-surface);">
-            <li><a class="dropdown-item text-main" href="#">Perfil</a></li>
-            <li><a class="dropdown-item text-main" href="#">Ajustes</a></li>
+            <li><router-link to="/configuracion" class="dropdown-item text-main">Mi Perfil</router-link></li>
+            <li><router-link to="/configuracion" class="dropdown-item text-main">Ajustes</router-link></li>
             <li><hr class="dropdown-divider border-secondary"></li>
             <li><a class="dropdown-item text-danger" href="#" @click.prevent="handleLogout">Cerrar sesión</a></li>
           </ul>

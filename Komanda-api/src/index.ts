@@ -9,6 +9,7 @@ import { employeesRouter } from "./modules/employees/employees.routes";
 import { menuRouter } from "./modules/menu/menu.routes";
 import { kitchenRouter } from "./modules/kitchen/kitchen.routes";
 import { inventoryRouter } from "./modules/inventory/inventory.routes";
+import settingsRoutes from "./modules/settings/settings.route";
 import { setupKitchenSocket } from "./modules/kitchen/kitchen.socket";
 import { WebSocketServer } from "ws";
 
@@ -28,6 +29,7 @@ app.use("/api/v1/employees", employeesRouter);
 app.use("/api/v1/menu", menuRouter);
 app.use("/api/v1/kitchen", kitchenRouter);
 app.use("/api/v1/inventory", inventoryRouter);
+app.use("/api/v1/settings", settingsRoutes);
 
 app.get('/', (_req, res) => {
   res.json({
