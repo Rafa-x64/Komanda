@@ -26,12 +26,6 @@ export class Ingrediente {
     @Column({ type: "int", name: "restaurante_id" })
     restaurante_id!: number;
 
-    @Column({ type: "varchar", length: 100, nullable: true })
-    categoria!: string | null;
-
-    @Column({ type: "date", nullable: true, name: "fecha_caducidad" })
-    fecha_caducidad!: string | null;
-
     @CreateDateColumn({ name: "created_at" })
     created_at!: Date;
 

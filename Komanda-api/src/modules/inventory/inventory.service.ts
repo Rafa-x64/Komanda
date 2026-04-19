@@ -42,8 +42,6 @@ export class InventoryService {
 
           ingredient.cantidad_disponible = stockActual + cantidadComprada;
           ingredient.costo_promedio = Number(cppNuevo.toFixed(4));
-          ingredient.categoria = item.category || ingredient.categoria;
-          if (validExpiryDate) ingredient.fecha_caducidad = validExpiryDate;
 
           await queryRunner.manager.save(ingredient);
           savedItems.push(ingredient);
@@ -54,8 +52,6 @@ export class InventoryService {
           ingredient.cantidad_minima = 5;
           ingredient.unidad_id = 1;
           ingredient.costo_promedio = precioCompra;
-          ingredient.categoria = item.category || 'General';
-          ingredient.fecha_caducidad = validExpiryDate;
           ingredient.restaurante_id = restauranteId;
 
           await queryRunner.manager.save(ingredient);

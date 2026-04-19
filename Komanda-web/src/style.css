@@ -226,3 +226,65 @@ label {
 .table-custom tbody tr:last-child td {
   border-bottom: none;
 }
+
+/* ================================================
+   OPERATIONS MODULE — Modal & Button Overrides
+   Garantiza que btn-korange siempre aplique
+   incluso dentro de modales de Bootstrap
+   ================================================ */
+.modal .btn-korange,
+.btn-korange {
+  background-color: var(--KOrange) !important;
+  color: #fff !important;
+  border: none !important;
+}
+.modal .btn-korange:hover,
+.btn-korange:hover {
+  background-color: var(--KOrange-hover) !important;
+  color: #fff !important;
+  transform: translateY(-1px);
+}
+.modal .btn-korange:disabled,
+.btn-korange:disabled {
+  opacity: 0.65;
+  transform: none;
+}
+.modal .btn-outline-korange {
+  background-color: transparent !important;
+  color: var(--KOrange) !important;
+  border: 1px solid var(--KOrange) !important;
+}
+.modal .btn-outline-korange:hover {
+  background-color: rgba(253,126,20,0.12) !important;
+}
+
+/* Modal content theme */
+.modal-content {
+  background-color: var(--bg-surface) !important;
+  color: var(--text-main) !important;
+}
+.modal-header, .modal-footer {
+  border-color: var(--border-color) !important;
+}
+.modal .form-control,
+.modal .form-select {
+  background-color: var(--bg-body) !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-color) !important;
+}
+.modal .form-control:focus,
+.modal .form-select:focus {
+  border-color: var(--KOrange) !important;
+  box-shadow: 0 0 0 0.2rem rgba(253,126,20,0.25) !important;
+}
+.modal .input-group-text {
+  background-color: var(--bg-body) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-muted) !important;
+}
+
+/* Responsive table in modals */
+@media (max-width: 768px) {
+  .modal-xl { --bs-modal-margin: 0.5rem; }
+  .modal-xl .modal-dialog { margin: 0.5rem; }
+}

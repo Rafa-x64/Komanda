@@ -33,7 +33,7 @@
             <div class="collapse" id="collapsePos">
               <ul class="nav flex-column ms-4 mt-1">
                 <li class="nav-item py-1" v-if="hasAccess(['admin', 'cajero'])">
-                  <router-link to="/operaciones" class="nav-link text-secondary-custom p-1 px-2" active-class="active text-korange fw-bold mb-0">Gestión</router-link>
+                  <router-link to="/operaciones" class="nav-link text-secondary-custom p-1 px-2" active-class="active text-korange fw-bold mb-0">Compras y Gastos</router-link>
                 </li>
                 <li class="nav-item py-1" v-if="hasAccess(['mesero'])">
                   <router-link to="/pedidos" class="nav-link text-secondary-custom p-1 px-2" active-class="active text-korange fw-bold mb-0">Pedidos</router-link>

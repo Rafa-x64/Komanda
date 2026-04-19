@@ -84,6 +84,12 @@ const router = createRouter({
             meta: { requiresAuth: true, roles: ['admin'] }
         },
         {
+            path: '/operaciones',
+            name: 'operaciones',
+            component: () => import('../modules/operations/views/OperationsView.vue'),
+            meta: { requiresAuth: true, roles: ['admin', 'cajero'] }
+        },
+        {
             path: '/contabilidad',
             name: 'contabilidad',
             component: () => import('../modules/accounting/views/BalanceSheetView.vue'),
