@@ -54,6 +54,32 @@ export class POSController {
         }
     }
 
+    static async getActiveOrders(req: Request, res: Response): Promise<void> {
+        try {
+            const { restaurantId } = (req as any).user;
+            const orders = await POSService.getActiveOrders(restaurantId);
+            res.status(200).json({ status: "success", data: orders });
+        } catch (error: any) {
+            res.status(500).json({ status: "error", message: error.message });
+        }
+    }
+
+    static async updateOrderStatus(req: Request, res: Response): Promise<void> {
+        try {
+            const { restaurantId } = (req as any).user;
+            const pedidoId = Number(req.params.id);
+            const { estado } = req.body;
+            if (!estado) {
+                res.status(400).json({ status: "error", message: "El estado es requerido" });
+                return;
+            }
+            const updated = await POSService.updateOrderStatus(pedidoId, estado, restaurantId);
+            res.status(200).json({ status: "success", data: updated });
+        } catch (error: any) {
+            res.status(400).json({ status: "error", message: error.message });
+        }
+    }
+
     static async createSale(req: Request, res: Response): Promise<void> {
         try {
             const payload = CreateSaleSchema.parse(req.body);

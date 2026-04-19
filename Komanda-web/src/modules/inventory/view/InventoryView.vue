@@ -1,515 +1,422 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { PlusCircle, Search, ArrowLeft, Tags } from 'lucide-vue-next';
-import { fetchWithAuth } from '../../../core/api/auth.api';
+import { useRouter } from 'vue-router';
+import { Search, AlertTriangle, Edit2, TrendingDown, ShoppingCart } from 'lucide-vue-next';
+import Sidebar from '../../../components/Sidebar.vue';
+import { useAuth } from '../../../core/composables/useAuth';
+import { inventoryApi } from '../inventory.api';
+import { operationsApi } from '../../operations/operations.api';
+import EditIngredientModal from '../components/EditIngredientModal.vue';
+import MermaModal from '../components/MermaModal.vue';
+import PurchaseModal from '../../operations/components/PurchaseModal.vue';
 
-// Aquí definimos los datos que la tabla va a mostrar provenientes de la bd
-const inventory = ref([]);
+const auth = useAuth();
+const router = useRouter();
+const toast = ref<{ type: 'success' | 'error', message: string } | null>(null);
+const showToast = (type: 'success' | 'error', message: string) => {
+    toast.value = { type, message };
+    setTimeout(() => toast.value = null, 3500);
+};
 
-const fetchInventory = async () => {
+const activeTab = ref('stock');
+const searchQuery = ref('');
+
+// Datos
+const ingredientes = ref<any[]>([]);
+const mermas = ref<any[]>([]);
+const proveedores = ref<any[]>([]);
+const loading = ref({ stock: false, mermas: false });
+
+// Modales
+const showEditModal = ref(false);
+const showMermaModal = ref(false);
+const selectedIngredient = ref<any>(null);
+const savingPurchase = ref(false);
+const purchaseModalRef = ref<any>(null);
+
+const fetchIngredientes = async () => {
+    loading.value.stock = true;
     try {
-        const response = await fetchWithAuth('/inventory');
-        inventory.value = response.data.map(item => ({
-            id: item.id,
-            name: item.nombre,
-            category: item.categoria || 'General',
-            quantity: item.cantidad_disponible,
-            minStock: item.cantidad_minima,
-            unit: 'Kg', // fallback de UI
-            expiryDate: item.fecha_caducidad
-        }));
-    } catch (error) {
-        console.error('Error cargando inventario', error);
+        const response = await inventoryApi.getIngredients();
+        ingredientes.value = response.data || [];
+    } catch (e: any) {
+        showToast('error', 'Error cargando stock: ' + e.message);
+    } finally {
+        loading.value.stock = false;
     }
+};
+
+const fetchMermas = async () => {
+    loading.value.mermas = true;
+    try {
+        const response = await inventoryApi.getMermas();
+        mermas.value = response.data || [];
+    } catch (e: any) {
+        showToast('error', 'Error cargando mermas: ' + e.message);
+    } finally {
+        loading.value.mermas = false;
+    }
+};
+
+const fetchProveedores = async () => {
+    try { proveedores.value = (await operationsApi.getProveedores()).data; }
+    catch (e: any) { showToast('error', 'Error cargando proveedores: ' + e.message); }
 };
 
 onMounted(() => {
-    fetchInventory();
+    fetchIngredientes();
+    fetchMermas();
+    fetchProveedores();
 });
 
-const searchQuery = ref('');
-
-// Vista actual: 'inventory' | 'purchaseForm'
-const currentView = ref('inventory');
-
-// Buscador
-const filteredInventory = computed(() => {
-    return inventory.value.filter(item => 
-        item.name.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
-        item.category.toLowerCase().includes(searchQuery.value.toLowerCase())
-    );
+// Computed para Stock
+const filteredIngredientes = computed(() => {
+    if (!searchQuery.value) return ingredientes.value;
+    return ingredientes.value.filter(i => i.nombre.toLowerCase().includes(searchQuery.value.toLowerCase()));
 });
-
-// Fechas — usamos la fecha real del sistema
-const today = new Date();
-const isExpiringSoon = (dateStr) => {
-    if (!dateStr) return false;
-    const expDate = new Date(dateStr);
-    const diffTime = expDate.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays <= 7; 
-};
-
-// Acciones
-const editItem = (id) => alert('Editar item ' + id);
-const deleteItem = (id) => {
-if (confirm('¿Seguro de eliminar este insumo?')) {
-    inventory.value = inventory.value.filter(item => item.id !== id);
-}
-};
-
-// Categorías
-const categorias = ref([
-    { id: 1, name: 'Secos' },
-    { id: 2, name: 'Lácteos' },
-    { id: 3, name: 'Vegetales' },
-    { id: 4, name: 'Carnes' },
-    { id: 5, name: 'Bebidas' }
-]);
-const newCategoryName = ref('');
-
-const addCategory = () => {
-    if (!newCategoryName.value.trim()) return;
-    categorias.value.push({
-        id: Date.now(),
-        name: newCategoryName.value.trim()
-    });
-    newCategoryName.value = '';
-};
-
-const deleteCategory = (id) => {
-    if(confirm('¿Seguro de eliminar esta categoría?')) {
-        categorias.value = categorias.value.filter(c => c.id !== id);
-    }
-};
-
-const openCategories = () => {
-    currentView.value = 'categories';
-};
-
-const backToPurchaseForm = () => {
-    currentView.value = 'purchaseForm';
-};
-
-// Compras — price incluido para CPP (Regla 1 del enunciado)
-const purchaseItems = ref([
-    { name: '', quantity: null, price: null, unit: 'Kg', category: '', expiryDate: '' }
-]);
-
-const openPurchaseForm = () => {
-    currentView.value = 'purchaseForm';
-};
-
-const goBack = () => {
-    currentView.value = 'inventory';
-    purchaseItems.value = [{ name: '', quantity: null, price: null, unit: 'Kg', category: '', expiryDate: '' }];
-};
-
-const addPurchaseRow = () => {
-    purchaseItems.value.push({ name: '', quantity: null, price: null, unit: 'Kg', category: '', expiryDate: '' });
-};
-
-const removePurchaseRow = (index) => {
-    if (purchaseItems.value.length > 1) {
-        purchaseItems.value.splice(index, 1);
-    }
-};
-
-const handleNameInput = (row) => {
-    if (!row.name) return;
-    const existing = inventory.value.find(item => item.name.toLowerCase() === row.name.toLowerCase());
-    if (existing) {
-        row.category = existing.category;
-        row.unit = existing.unit;
-    }
-};
-
-const processPurchase = async () => {
-    const validItems = purchaseItems.value.filter(item => item.name && item.quantity);
-    
-    if (validItems.length === 0) {
-        alert('Llena los campos obligatorios (Nombre y Cantidad) de al menos un insumo.');
-        return;
-    }
-
-    try {
-        await fetchWithAuth('/inventory/purchase', {
-            method: 'POST',
-            body: JSON.stringify({ items: validItems })
-        });
-        alert('Compra(s) agregada(s) al inventario exitosamente');
-        await fetchInventory(); // Refrescar los datos del backend
-        goBack();
-    } catch (error) {
-        alert('Error registrando compra: ' + error.message);
-    }
-};
-
-// Estas funciones ayudan a que los colores funcionen
-const statusText = (item) => (item.quantity <= item.minStock ? 'Stock Bajo' : 'Normal');
-const statusClass = (item) => (item.quantity <= item.minStock ? 'text-red-500 font-bold' : 'text-green-500 font-medium');
 
 const criticalItemsCount = computed(() => {
-    return inventory.value.filter(item => item.quantity <= item.minStock).length;
+    return ingredientes.value.filter(i => Number(i.cantidad_disponible) <= Number(i.cantidad_minima)).length;
 });
+
+const totalItems = computed(() => ingredientes.value.length);
+
+const isStockBajo = (item: any) => Number(item.cantidad_disponible) <= Number(item.cantidad_minima);
+
+// Acciones Modales
+const openEditModal = (item: any) => {
+    selectedIngredient.value = item;
+    showEditModal.value = true;
+};
+
+const handleSaveIngredient = async (formData: any) => {
+    try {
+        await inventoryApi.updateIngredient(selectedIngredient.value.id, formData);
+        showToast('success', 'Insumo actualizado exitosamente');
+        showEditModal.value = false;
+        fetchIngredientes();
+    } catch (e: any) {
+        showToast('error', e.message);
+    }
+};
+
+const handleSaveMerma = async (formData: any) => {
+    try {
+        await inventoryApi.createMerma(formData);
+        showToast('success', 'Merma registrada exitosamente. Stock actualizado.');
+        showMermaModal.value = false;
+        fetchIngredientes();
+        fetchMermas();
+    } catch (e: any) {
+        showToast('error', e.message);
+    }
+};
+
+const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleString('es-ES', { 
+        year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+};
+
+const onOpenPurchaseModal = () => {
+    if (purchaseModalRef.value) purchaseModalRef.value.resetForm();
+};
+
+const handleSavePurchase = async (data: any) => {
+    savingPurchase.value = true;
+    try {
+        await operationsApi.createCompra(data);
+        showToast('success', '¡Compra registrada! Redirigiendo a Operaciones...');
+        
+        // @ts-ignore
+        const modal = window.bootstrap?.Modal?.getInstance(document.getElementById('purchaseModal'));
+        modal?.hide();
+        
+        setTimeout(() => {
+            router.push('/operaciones');
+        }, 1500);
+    } catch (e: any) {
+        showToast('error', e.message);
+    } finally {
+        savingPurchase.value = false;
+    }
+};
 </script>
 
 <template>
-<div class="view-container py-4">
-    <div class="container-fluid max-w-7xl mx-auto">
-        
-        <!-- Headings mimicking Landing Page -->
-        <div v-if="currentView === 'inventory'" class="row justify-content-center mb-5 mt-3 fade-in">
-        <div class="col-lg-10 text-center">
-            <span class="text-korange fw-bold text-uppercase tracking-wider small">Komanda Almacén</span>
-            <h2 class="display-5 fw-bold mt-2 mb-3 text-primary-custom">Gestión de Inventario</h2>
-            <p class="lead text-secondary-custom">
-            Controla tu stock al instante, registra tus compras y recibe alertas de insumos críticos o próximos a caducar.
-            </p>
-        </div>
-        </div>
+<div class="d-flex w-100">
+    <Sidebar :role="auth.user.value?.role || 'admin'" :userName="auth.user.value?.nombre" />
 
-        <transition name="slide-fade" mode="out-in">
-        <!-- Vista de Inventario Principal -->
-        <div v-if="currentView === 'inventory'" key="inventory">
-        
-        <!-- Action Bar -->
-        <div class="row mb-5 gx-3 justify-content-between align-items-center">
-            <div class="col-md-6 order-2 order-md-1 mt-3 mt-md-0">
-                <div class="search-box position-relative shadow-sm rounded-pill transition-transform">
-                    <Search class="position-absolute top-50 start-0 translate-middle-y ms-4 text-korange" :size="20" />
-                    <input v-model="searchQuery" type="text" class="form-control ps-5 py-3 rounded-pill custom-input bg-surface-custom border-0"
-                    placeholder="Buscar insumo por nombre o categoría...">
+    <div class="view-container py-4 main-content">
+        <div class="container-fluid max-w-7xl mx-auto">
+            
+            <!-- Header -->
+        <div class="row mb-4 fade-in">
+            <div class="col-12 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div>
+                    <span class="text-korange fw-bold text-uppercase tracking-wider small">Komanda Almacén</span>
+                    <h2 class="display-6 fw-bold mt-2 mb-1 text-primary-custom">Control de Inventario</h2>
+                    <p class="text-secondary-custom mb-0">
+                        Monitorea el stock actual y registra ajustes por mermas o pérdidas.
+                    </p>
                 </div>
-            </div>
-            <div class="col-md-auto text-end order-1 order-md-2 d-flex flex-column flex-md-row">
-                <button
-                    class="btn-korange px-4 py-2 rounded-pill fw-bold d-inline-flex justify-content-center align-items-center gap-2 shadow-sm pulse-btn w-100"
-                    @click="openPurchaseForm">
-                    <PlusCircle :size="20" /> Registrar Compra
-                </button>
+                <div>
+                    <button class="btn btn-korange rounded-pill fw-bold px-4 py-2 shadow-sm pulse-btn d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#purchaseModal" @click="onOpenPurchaseModal">
+                        <ShoppingCart :size="20" /> Registrar Compra
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- Cards / Overview -->
-        <div class="row mb-5">
-            <div class="col-md-4">
-                <div class="card p-4 border-start border-4 border-korange rounded-4 shadow-sm d-flex justify-content-between h-100 transition-transform hover-translate-y" style="background-color: var(--bg-surface)">
+        <div class="row mb-4 gx-3 fade-in">
+            <div class="col-md-6 mb-3 mb-md-0">
+                <div class="card p-4 border-start border-4 border-korange rounded-4 shadow-sm d-flex justify-content-between h-100 bg-surface-custom transition-transform hover-translate-y">
                     <div>
-                        <p class="small text-secondary-custom fw-bold text-uppercase tracking-wider mb-2">Stock Crítico</p>
-                        <h2 class="display-5 fw-black text-primary-custom mb-0">{{ criticalItemsCount }}
-                            <span class="fs-5 fw-medium text-korange ms-1">ítems</span>
+                        <p class="small text-secondary-custom fw-bold text-uppercase tracking-wider mb-2">Total Insumos</p>
+                        <h2 class="display-6 fw-black text-primary-custom mb-0">{{ totalItems }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card p-4 border-start border-4 border-danger rounded-4 shadow-sm d-flex justify-content-between h-100 bg-surface-custom transition-transform hover-translate-y">
+                    <div>
+                        <p class="small text-danger fw-bold text-uppercase tracking-wider mb-2 d-flex align-items-center gap-2">
+                            <AlertTriangle :size="16" /> Stock Crítico
+                        </p>
+                        <h2 class="display-6 fw-black text-primary-custom mb-0">{{ criticalItemsCount }}
+                            <span class="fs-6 fw-medium text-secondary-custom ms-1">requieren atención</span>
                         </h2>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Tabla de Inventario -->
-        <div class="row">
-            <div class="col-12">
-                <div class="shadow-sm rounded-4 overflow-hidden border border-custom bg-surface-custom p-2">
-                <div class="table-responsive">
-                    <table class="table table-custom table-hover-custom table-hover-orange mb-0 w-100 align-middle">
-                        <thead class="text-uppercase small tracking-wider text-secondary-custom fw-bold">
-                            <tr>
-                                <th class="px-4 py-3 border-bottom text-korange">Insumo</th>
-                                <th class="px-4 py-3 border-bottom">Categoría</th>
-                                <th class="px-4 py-3 border-bottom">Cantidad</th>
-                                <th class="px-4 py-3 border-bottom">Min. Stock</th>
-                                <th class="px-4 py-3 border-bottom">Caducidad</th>
-                                <th class="px-4 py-3 border-bottom">Estado</th>
-                                <th class="px-4 py-3 border-bottom text-center">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="item in filteredInventory" :key="item.id" 
-                                :class="{'bg-danger-subtle': isExpiringSoon(item.expiryDate)}"
-                                class="transition-colors hover-bg-light">
-                                <td class="px-4 py-3 fw-bold text-primary-custom">{{ item.name }}</td>
-                                <td class="px-4 py-3 fw-medium text-primary-custom">
-                                    <span class="badge text-dark bg-light border text-secondary-custom">{{ item.category }}</span>
-                                </td>
-                                <td class="px-4 py-3 fw-bold text-primary-custom fs-5">{{ item.quantity }} <span class="fs-6 fw-medium text-secondary-custom">{{ item.unit }}</span></td>
-                                <td class="px-4 py-3 fw-medium text-secondary-custom">{{ item.minStock }}</td>
-                                <td class="px-4 py-3">
-                                    <div v-if="item.expiryDate" :class="{'text-danger fw-bold bg-danger-subtle px-2 py-1 rounded small': isExpiringSoon(item.expiryDate), 'text-secondary-custom fw-medium': !isExpiringSoon(item.expiryDate)}">
-                                        {{ item.expiryDate }} {{ isExpiringSoon(item.expiryDate) ? '(Pronto)' : '' }}
-                                    </div>
-                                    <span v-else class="text-muted small fst-italic">Sin fecha</span>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <span :class="statusClass(item)" class="badge bg-light border text-dark">{{ statusText(item) }}</span>
-                                </td>
-                                <td class="px-4 py-3 text-center text-nowrap">
-                                    <button @click="editItem(item.id)" class="btn btn-sm text-korange fw-medium me-2 hover-bg-orange rounded-3">Editar</button>
-                                    <button @click="deleteItem(item.id)" class="btn btn-sm text-danger fw-medium hover-bg-danger rounded-3">Borrar</button>
-                                </td>
-                            </tr>
-                            <tr v-if="filteredInventory.length === 0">
-                                <td colspan="7" class="px-4 py-5 text-center text-secondary-custom fw-medium">
-                                    No se encontraron insumos que coincidan con la búsqueda.
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            </div>
-        </div>
-        </div>
+        <!-- Navegación por pestañas -->
+        <div class="bg-surface-custom rounded-4 shadow-sm border border-custom overflow-hidden fade-in">
+            <ul class="nav nav-tabs px-4 pt-3 border-bottom-0 custom-tabs">
+                <li class="nav-item">
+                    <a class="nav-link fw-bold px-4 py-3 cursor-pointer" 
+                       :class="{ 'active': activeTab === 'stock' }" 
+                       @click="activeTab = 'stock'">
+                       Stock Actual
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-bold px-4 py-3 cursor-pointer" 
+                       :class="{ 'active': activeTab === 'mermas' }" 
+                       @click="activeTab = 'mermas'">
+                       Registro de Mermas
+                    </a>
+                </li>
+            </ul>
 
-        <!-- Vista de Formulario de Compra -->
-        <div v-else-if="currentView === 'purchaseForm'" key="purchaseForm" class="row justify-content-center mt-4">
-            
-            <div class="col-lg-10 text-center mb-4">
-                <span class="text-korange fw-bold text-uppercase tracking-wider small">Komanda Almacén</span>
-                <h2 class="display-5 fw-bold mt-2 mb-3 text-primary-custom">Registro de Compras</h2>
-                <p class="lead text-secondary-custom">
-                    Captura rápidamente tus insumos. Ingresa varias filas a la vez. El autocompletado enlazará y calculará información existente de forma automática.
-                </p>
-            </div>
-
-            <div class="col-lg-12 col-xl-11">
-                <div class="bg-surface-custom p-3 p-md-4 p-lg-5 rounded-4 shadow-sm border border-custom position-relative">
-                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
-                        <div class="d-flex align-items-center gap-3">
-                            <button @click="goBack" class="btn btn-outline-korange rounded-circle d-flex align-items-center justify-content-center p-2 transition-transform hover-translate-x" title="Volver">
-                                <ArrowLeft :size="24" />
-                            </button>
-                            <div>
-                                <h2 class="fs-4 fw-bold text-primary-custom mb-1">Formulario de Ingreso</h2>
-                                <p class="text-secondary-custom small fw-medium mb-0">Escribe nombres existentes para autocompletar.</p>
-                            </div>
-                        </div>
-
-                        <button
-                            class="btn btn-outline-korange px-4 py-2 rounded-pill fw-bold d-inline-flex justify-content-center align-items-center gap-2 shadow-sm"
-                            @click="openCategories">
-                            <Tags :size="18" /> Categorías
-                        </button>
-                    </div>
-                    
-                    <form @submit.prevent="processPurchase">
-                        <datalist id="inventoryNames">
-                            <option v-for="item in inventory" :key="item.id" :value="item.name"></option>
-                        </datalist>
-
-                        <div class="table-responsive mb-4">
-                            <table class="table table-borderless table-sm align-middle w-100" style="min-width: 800px;">
-                                <thead>
-                                    <tr class="small text-secondary-custom fw-bold">
-                                        <th style="width: 25%">Insumo *</th>
-                                        <th style="width: 12%">Cantidad *</th>
-                                        <th style="width: 12%">Precio unit.</th>
-                                        <th style="width: 12%">Ud.</th>
-                                        <th style="width: 18%">Categoría</th>
-                                        <th style="width: 16%">Caducidad</th>
-                                        <th style="width: 5%"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(row, index) in purchaseItems" :key="index" class="align-top">
-                                        <td class="px-1">
-                                            <input v-model="row.name" @input="handleNameInput(row)" list="inventoryNames" type="text" placeholder="Insumo..." class="form-control py-2 px-2 rounded-3 custom-input form-control-sm" required />
-                                        </td>
-                                        <td class="px-1">
-                                            <input v-model.number="row.quantity" type="number" step="any" min="0.001" placeholder="Cant." class="form-control py-2 px-2 rounded-3 custom-input form-control-sm" required />
-                                        </td>
-                                        <td class="px-1">
-                                            <input v-model.number="row.price" type="number" step="any" min="0" placeholder="0.00" class="form-control py-2 px-2 rounded-3 custom-input form-control-sm" />
-                                        </td>
-                                        <td class="px-1">
-                                            <select v-model="row.unit" class="form-select py-2 px-2 rounded-3 custom-input form-control-sm" required>
-                                                <option>Kg</option><option>L</option><option>Unid</option><option>Cajas</option><option>Gramos</option>
-                                            </select>
-                                        </td>
-                                        <td class="px-1">
-                                            <select v-model="row.category" class="form-select py-2 px-2 rounded-3 custom-input form-control-sm" required>
-                                                <option value="" disabled>Seleccione...</option>
-                                                <option v-for="cat in categorias" :key="cat.id" :value="cat.name">{{ cat.name }}</option>
-                                            </select>
-                                        </td>
-                                        <td class="px-1">
-                                            <input v-model="row.expiryDate" type="date" class="form-control py-2 px-2 rounded-3 custom-input form-control-sm" />
-                                        </td>
-                                        <td class="text-center px-1">
-                                            <button v-if="purchaseItems.length > 1" type="button" @click="removePurchaseRow(index)" class="btn btn-sm text-danger hover-bg-danger rounded-circle p-1" title="Eliminar fila">
-                                                ✖
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="d-flex justify-content-center mb-5">
-                            <button type="button" class="btn btn-outline-korange btn-sm rounded-pill py-2 px-4 fw-bold transition-transform hover-translate-y" @click="addPurchaseRow">
-                                + Agregar otra fila
-                            </button>
-                        </div>
-
-                        <div class="border-top border-custom pt-4 flex-row d-flex justify-content-end gap-3 mt-2">
-                            <button type="button" @click="goBack" class="btn btn-outline-secondary px-4 py-2 fw-bold rounded-pill">Cancelar</button>
-                            <button type="submit" class="btn btn-korange px-4 py-2 rounded-pill fw-bold shadow-sm d-inline-flex gap-2 align-items-center pulse-btn transition-transform hover-translate-y">
-                                <PlusCircle :size="18" /> Guardar Compra
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Vista de Categorías -->
-        <div v-else-if="currentView === 'categories'" key="categories" class="row justify-content-center mt-4">
-            <div class="col-lg-8">
-                <div class="bg-surface-custom p-4 p-md-5 rounded-4 shadow-sm border border-custom">
-                    <div class="d-flex align-items-center mb-5 gap-3">
-                        <button @click="backToPurchaseForm" class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-2 transition-transform hover-translate-x" title="Volver al Registro">
-                            <ArrowLeft :size="24" />
-                        </button>
-                        <div>
-                            <h2 class="fs-3 fw-bold text-primary-custom mb-1">Gestión de Categorías</h2>
-                            <p class="text-secondary-custom small fw-medium mb-0">Define y clasifica las familias de tus insumos.</p>
+            <div class="p-4 bg-white">
+                
+                <!-- TAB STOCK -->
+                <div v-if="activeTab === 'stock'">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="search-box position-relative shadow-sm rounded-pill w-100" style="max-width: 400px;">
+                            <Search class="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary" :size="18" />
+                            <input v-model="searchQuery" type="text" class="form-control ps-5 py-2 rounded-pill custom-input bg-light border-0"
+                                placeholder="Buscar insumo...">
                         </div>
                     </div>
-                    
-                    <form @submit.prevent="addCategory" class="mb-5 d-flex gap-2">
-                        <input v-model="newCategoryName" type="text" placeholder="Nueva Categoría (Ej: Congelados)" class="form-control py-2 rounded-pill custom-input flex-grow-1 ps-4" required />
-                        <button type="submit" class="btn-korange px-4 py-2 rounded-pill fw-bold shadow-sm pulse-btn">Añadir</button>
-                    </form>
 
-                    <div class="table-responsive">
-                        <table class="table table-custom table-hover-custom mb-0 w-100 align-middle border">
-                            <thead class="bg-light-opacity text-uppercase small tracking-wider text-secondary-custom fw-bold">
+                    <div class="table-responsive rounded-3 border">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light text-uppercase small text-secondary fw-bold">
                                 <tr>
-                                    <th class="px-4 py-3 border-bottom w-75">Nombre de la Categoría</th>
-                                    <th class="px-4 py-3 border-bottom text-center">Acciones</th>
+                                    <th class="px-4 py-3">Insumo</th>
+                                    <th class="px-4 py-3 text-end">Disponible</th>
+                                    <th class="px-4 py-3 text-end">Mínimo</th>
+                                    <th class="px-4 py-3 text-center">Estado</th>
+                                    <th class="px-4 py-3 text-end">Costo Prom.</th>
+                                    <th class="px-4 py-3 text-center">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="cat in categorias" :key="cat.id" class="hover-bg-light">
-                                    <td class="px-4 py-4 fw-bold text-primary-custom fs-6">{{ cat.name }}</td>
-                                    <td class="px-4 py-3 text-center">
-                                        <button @click="deleteCategory(cat.id)" class="btn btn-sm text-danger fw-medium hover-bg-danger rounded-3">Eliminar</button>
+                                <tr v-if="loading.stock">
+                                    <td colspan="6" class="text-center py-5">
+                                        <span class="spinner-border spinner-border-sm text-korange me-2"></span>Cargando...
                                     </td>
                                 </tr>
-                                <tr v-if="categorias.length === 0">
-                                    <td colspan="2" class="px-4 py-4 text-center text-secondary-custom fst-italic">Sin categorías configuradas. Agrega una arriba.</td>
+                                <tr v-else-if="filteredIngredientes.length === 0">
+                                    <td colspan="6" class="text-center py-5 text-secondary">
+                                        No se encontraron insumos.
+                                    </td>
+                                </tr>
+                                <tr v-for="item in filteredIngredientes" :key="item.id" :class="{'bg-danger bg-opacity-10': isStockBajo(item)}">
+                                    <td class="px-4 fw-bold">{{ item.nombre }}</td>
+                                    <td class="px-4 text-end fw-bold fs-6">
+                                        {{ item.cantidad_disponible }} <span class="text-muted small">{{ item.unidad_nombre || 'Ud.' }}</span>
+                                    </td>
+                                    <td class="px-4 text-end text-muted">{{ item.cantidad_minima }}</td>
+                                    <td class="px-4 text-center">
+                                        <span class="badge rounded-pill px-3" :class="isStockBajo(item) ? 'bg-danger text-white' : 'bg-success bg-opacity-10 text-success'">
+                                            {{ isStockBajo(item) ? 'Stock Bajo' : 'Normal' }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 text-end fw-medium text-secondary">
+                                        ${{ Number(item.costo_promedio).toFixed(2) }}
+                                    </td>
+                                    <td class="px-4 text-center">
+                                        <button class="btn btn-sm text-primary hover-bg-light rounded-circle p-2" @click="openEditModal(item)" title="Editar">
+                                            <Edit2 :size="16" />
+                                        </button>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
+
+                <!-- TAB MERMAS -->
+                <div v-if="activeTab === 'mermas'">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <p class="text-secondary mb-0">Historial de mermas y ajustes registrados.</p>
+                        <button class="btn btn-danger rounded-pill fw-bold px-4 d-inline-flex gap-2 align-items-center shadow-sm pulse-btn" @click="showMermaModal = true">
+                            <TrendingDown :size="18" /> Registrar Merma
+                        </button>
+                    </div>
+
+                    <div class="table-responsive rounded-3 border">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light text-uppercase small text-secondary fw-bold">
+                                <tr>
+                                    <th class="px-4 py-3">Fecha</th>
+                                    <th class="px-4 py-3">Insumo</th>
+                                    <th class="px-4 py-3 text-center">Tipo</th>
+                                    <th class="px-4 py-3">Motivo</th>
+                                    <th class="px-4 py-3 text-end text-danger">Cantidad Descontada</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-if="loading.mermas">
+                                    <td colspan="5" class="text-center py-5">
+                                        <span class="spinner-border spinner-border-sm text-korange me-2"></span>Cargando...
+                                    </td>
+                                </tr>
+                                <tr v-else-if="mermas.length === 0">
+                                    <td colspan="5" class="text-center py-5 text-secondary">
+                                        No hay mermas registradas.
+                                    </td>
+                                </tr>
+                                <tr v-for="merma in mermas" :key="merma.id">
+                                    <td class="px-4 text-muted small">{{ formatDate(merma.created_at) }}</td>
+                                    <td class="px-4 fw-bold">{{ merma.ingrediente_nombre }}</td>
+                                    <td class="px-4 text-center">
+                                        <span class="badge bg-secondary bg-opacity-10 text-secondary text-uppercase">{{ merma.tipo }}</span>
+                                    </td>
+                                    <td class="px-4 text-muted">{{ merma.razon || 'N/A' }}</td>
+                                    <td class="px-4 text-end fw-bold text-danger">
+                                        -{{ merma.cantidad }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </div>
-    </transition>
+
+    </div>
+
+    <!-- Modales -->
+    <EditIngredientModal 
+        :show="showEditModal" 
+        :ingrediente="selectedIngredient" 
+        @close="showEditModal = false" 
+        @save="handleSaveIngredient" 
+    />
+
+    <MermaModal 
+        :show="showMermaModal" 
+        :ingredientes="ingredientes" 
+        @close="showMermaModal = false" 
+        @save="handleSaveMerma" 
+    />
+
+    <PurchaseModal 
+        ref="purchaseModalRef" 
+        :loading="savingPurchase" 
+        :suppliers="proveedores" 
+        :ingredients="ingredientes"
+        @save="handleSavePurchase" 
+    />
+
+    <!-- Toast Notification -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1060">
+        <div v-if="toast" class="toast show align-items-center text-white border-0" :class="toast.type === 'success' ? 'bg-success' : 'bg-danger'" role="alert">
+            <div class="d-flex">
+                <div class="toast-body fw-medium">
+                    <span v-if="toast.type === 'success'">✅</span>
+                    <span v-else>⚠️</span>
+                    {{ toast.message }}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" @click="toast = null" aria-label="Close"></button>
+            </div>
+        </div>
+        </div>
     </div>
 </div>
 </template>
 
 <style scoped>
 .view-container {
-    background-color: var(--bg-body);
+    background-color: var(--bg-body, #f8f9fa);
     min-height: calc(100vh - 100px);
+    width: 100%;
+}
+@media (min-width: 768px) {
+  .main-content {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+  }
+}
+.max-w-7xl { max-width: 1200px; }
+.bg-surface-custom { background-color: #ffffff; }
+.text-primary-custom { color: #212529; }
+.text-secondary-custom { color: #6c757d; }
+.tracking-wider { letter-spacing: 1px; }
+
+.custom-tabs .nav-link {
+    color: #6c757d;
+    border: none;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+}
+.custom-tabs .nav-link:hover {
+    color: var(--KOrange);
+    background-color: rgba(255, 102, 0, 0.05);
+}
+.custom-tabs .nav-link.active {
+    color: var(--KOrange);
+    border-bottom: 3px solid var(--KOrange);
+    background-color: transparent;
 }
 
-.max-w-7xl {
-    max-width: 1200px;
-}
+.border-korange { border-color: var(--KOrange) !important; }
+.text-korange { color: var(--KOrange) !important; }
 
-.text-primary-custom {
-    color: var(--text-main) !important;
-}
-
-.text-secondary-custom {
-    color: var(--text-muted) !important;
-}
-
-.tracking-wider {
-    letter-spacing: 2px;
-}
-
-.bg-surface-custom {
-    background-color: var(--bg-surface);
-}
-
-.border-custom {
-    border-color: var(--border-color) !important;
-}
-
-.bg-danger-subtle {
-    background-color: rgba(220, 53, 69, 0.1) !important;
-}
-
-.bg-light-opacity {
-    background-color: var(--bg-surface);
-}
-
-.border-korange {
-    border-color: var(--KOrange) !important;
-}
-
-/* Hover effects */
 .hover-translate-y:hover {
     transform: translateY(-3px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
 }
+.cursor-pointer { cursor: pointer; }
+.hover-bg-light:hover { background-color: #f8f9fa; }
 
-/* Custom Search Input */
-.custom-input {
-    background-color: var(--bg-surface);
-    color: var(--text-main);
-    border: 1px solid var(--border-color);
-    transition: all var(--transition-speed);
-}
-
-.custom-input:focus {
-    background-color: var(--bg-body);
-    border-color: var(--KOrange);
-    box-shadow: 0 0 0 0.25rem rgba(253, 126, 20, 0.15);
-}
-
-/* Animations */
-.slide-fade-enter-active,
-.slide-fade-leave-active {
-    transition: all 0.4s ease;
-}
-
-.slide-fade-enter-from,
-.slide-fade-leave-to {
-    transform: translateY(20px);
-    opacity: 0;
-}
-
-.fade-in {
-    animation: fadeIn 0.4s ease-out;
-}
-
+.fade-in { animation: fadeIn 0.4s ease-out; }
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-.transition-transform {
-    transition: transform 0.2s ease;
+.pulse-btn {
+    transition: transform 0.2s;
 }
-
-.hover-translate-x:hover {
-    transform: translateX(-3px);
-}
-
-.hover-bg-light:hover {
-    background-color: rgba(0,0,0,0.02);
-}
-
-.hover-bg-orange:hover {
-    background-color: var(--KOrange);
-    color: white !important;
-}
-
-.hover-bg-danger:hover {
-    background-color: #dc3545;
-    color: white !important;
+.pulse-btn:active {
+    transform: scale(0.95);
 }
 </style>

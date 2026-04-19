@@ -15,6 +15,7 @@ import { Proveedor } from "../modules/operations/domain/proveedor.entity";
 import { Compra } from "../modules/operations/domain/compra.entity";
 import { CompraDetalle } from "../modules/operations/domain/compra-detalle.entity";
 import { GastoOperativo } from "../modules/operations/domain/gasto-operativo.entity";
+import { Merma } from "../modules/inventory/domain/merma.entity";
 
 export const Conexion = new DataSource({
     type: "postgres",
@@ -25,7 +26,7 @@ export const Conexion = new DataSource({
     database: process.env.DB_NAME ?? "komanda_db",
     synchronize: false,
     logging: false,
-    entities: [Restaurant, User, Role, Pedido, PedidoDetalle, Mesa, Receta, Categoria, Ingrediente, Proveedor, Compra, CompraDetalle, GastoOperativo],
+    entities: [Restaurant, User, Role, Pedido, PedidoDetalle, Mesa, Receta, Categoria, Ingrediente, Proveedor, Compra, CompraDetalle, GastoOperativo, Merma],
     subscribers: [],
     migrations: [],
 });
