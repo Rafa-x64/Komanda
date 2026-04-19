@@ -25,7 +25,7 @@ const router = createRouter({
         {
             path: '/mesero-dashboard',
             name: 'Mesero-Dashboard',
-            component: () => import('../modules/dashboard/MeseroDashboard.vue'),
+            component: () => import('../modules/waiter/views/WaiterDashboardView.vue'),
             meta: { requiresAuth: true, roles: ['admin', 'mesero'] }
         },
         {
@@ -75,13 +75,31 @@ const router = createRouter({
             path: '/pos',
             name: 'pos',
             component: () => import('../modules/pos/views/POSView.vue'),
-            meta: { requiresAuth: true, roles: ['admin', 'cajero', 'mesero'] }
+            meta: { requiresAuth: true, roles: ['admin', 'cajero'] }
+        },
+        {
+            path: '/pedidos',
+            name: 'pedidos',
+            component: () => import('../modules/waiter/views/WaiterOrdersView.vue'),
+            meta: { requiresAuth: true, roles: ['mesero', 'admin'] }
+        },
+        {
+            path: '/mesas',
+            name: 'mesas',
+            component: () => import('../modules/tables/views/TablesView.vue'),
+            meta: { requiresAuth: true, roles: ['admin', 'mesero', 'cajero', 'cocina'] }
         },
         {
             path: '/reportes',
             name: 'reportes',
             component: () => import('../modules/dashboard/views/ReportsDashboard.vue'),
             meta: { requiresAuth: true, roles: ['admin'] }
+        },
+        {
+            path: '/operaciones',
+            name: 'operaciones',
+            component: () => import('../modules/operations/views/OperationsView.vue'),
+            meta: { requiresAuth: true, roles: ['admin', 'cajero'] }
         },
         {
             path: '/contabilidad',

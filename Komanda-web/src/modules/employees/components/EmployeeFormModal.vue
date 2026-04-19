@@ -15,17 +15,17 @@
             
             <div class="mb-4">
               <label class="form-label text-white fw-bold mb-1">Nombre Completo</label>
-              <input v-model="form.nombre" type="text" class="form-control form-control-lg bg-dark text-white border-secondary shadow-sm" placeholder="Ej: Juan Perez" required />
+              <input v-model="form.nombre" type="text" class="form-control form-control-lg bg-transparent text-white border-secondary shadow-sm" placeholder="Ej: Juan Perez" required />
             </div>
             
             <div class="mb-4">
               <label class="form-label text-white fw-bold mb-1">Correo Electrónico</label>
-              <input v-model="form.email" type="email" class="form-control form-control-lg bg-dark text-white border-secondary shadow-sm" placeholder="Ej: juan@komanda.com" required />
+              <input v-model="form.email" type="email" class="form-control form-control-lg bg-transparent text-white border-secondary shadow-sm" placeholder="Ej: juan@komanda.com" required />
             </div>
             
             <div class="mb-4">
               <label class="form-label text-white fw-bold mb-1">Nombre de Usuario</label>
-              <input v-model="form.username" type="text" class="form-control form-control-lg bg-dark text-white border-secondary shadow-sm" placeholder="Ej: juan123" required autocomplete="username" />
+              <input v-model="form.username" type="text" class="form-control form-control-lg bg-transparent text-white border-secondary shadow-sm" placeholder="Ej: juan123" required autocomplete="username" />
             </div>
             
             <div class="mb-4">
@@ -33,19 +33,19 @@
                 Contraseña
                 <small class="text-white-50 ms-2 fw-normal" v-if="isEdit">(Dejar vacío para mantener actual)</small>
               </label>
-              <input v-model="form.password" type="password" class="form-control form-control-lg bg-dark text-white border-secondary shadow-sm" placeholder="Mínimo 6 caracteres" :required="!isEdit" autocomplete="new-password" />
+              <input v-model="form.password" type="password" class="form-control form-control-lg bg-transparent text-white border-secondary shadow-sm" placeholder="Mínimo 6 caracteres" :required="!isEdit" autocomplete="new-password" />
             </div>
             
             <div class="mb-4">
               <label class="form-label text-white fw-bold mb-1">Rol del empleado</label>
-              <select v-model="form.rol_id" class="form-select form-select-lg bg-dark text-white border-secondary shadow-sm" required>
-                <option :value="null" disabled>Selecciona un rol</option>
-                <option v-for="r in roles" :key="r.id" :value="r.id" class="text-white">{{ r.nombre }}</option>
+              <select v-model="form.rol_id" class="form-select form-select-lg bg-transparent text-white border-secondary shadow-sm" required>
+                <option :value="null" disabled class="text-dark">Selecciona un rol</option>
+                <option v-for="r in roles" :key="r.id" :value="r.id" class="text-dark">{{ r.nombre }}</option>
               </select>
             </div>
 
             <div class="form-check form-switch fs-5 mb-0 mt-2" v-if="isEdit">
-              <input v-model="form.activo" class="form-check-input bg-dark border-secondary shadow-sm" type="checkbox" role="switch" id="activoCheck" />
+              <input v-model="form.activo" class="form-check-input bg-transparent border-secondary shadow-sm" type="checkbox" role="switch" id="activoCheck" />
               <label class="form-check-label text-white ms-2 fw-bold" for="activoCheck" style="font-size: 1.1rem; align-self: center;">Usuario Activo</label>
               <div class="text-white-50 small ms-2 fs-6">Permite al usuario acceder al sistema.</div>
             </div>

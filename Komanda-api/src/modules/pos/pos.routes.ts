@@ -17,3 +17,8 @@ posRouter.get("/payment-methods", POSController.getPaymentMethods);
 posRouter.get("/sales", POSController.getSales);
 posRouter.post("/sales", POSController.createSale);
 posRouter.post("/cash-closures", POSController.closeCashRegister);
+
+// Gestión de pedidos activos (mesero + admin)
+posRouter.get("/orders", POSController.getActiveOrders);
+posRouter.patch("/orders/:id/status", POSController.updateOrderStatus);
+

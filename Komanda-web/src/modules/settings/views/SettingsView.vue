@@ -142,7 +142,7 @@
                     <h6 class="fw-bold text-primary-custom"><i class="bi bi-cash-coin text-success me-2"></i> Moneda Base y Facturación</h6>
                     <p class="small text-secondary-custom mb-3">La moneda principal con la que el sistema calcula el CPP, utilidades y balance general.</p>
                     <select class="form-select bg-surface border-color text-primary-custom" v-model="rulesForm.currency">
-                      <option value="BS">Bolívares (VES)</option>
+                      <option value="VES">Bolívares (VES)</option>
                       <option value="USD">Dólares (USD)</option>
                     </select>
                   </div>
@@ -218,7 +218,7 @@ const businessForm = ref({
 })
 
 const rulesForm = ref({
-  currency: 'BS',
+  currency: 'VES',
   enableStockAlerts: true
 })
 
@@ -238,7 +238,7 @@ onMounted(async () => {
         businessForm.value.email = data.email || '';
         businessForm.value.moneda = data.moneda || 'USD';
         businessForm.value.impuesto_porcentaje = data.impuesto_porcentaje || 0;
-        rulesForm.value.currency = data.moneda || 'BS'; // Synchronize visual map
+        rulesForm.value.currency = data.moneda || 'VES'; // Synchronize visual map
       }
     } catch (e) {
       console.error(e);

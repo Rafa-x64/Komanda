@@ -58,6 +58,50 @@ export class POSService {
         );
     }
 
+    static async getActiveOrders(restaurantId: number) {
+        return Conexion.query(
+            `SELECT 
+                p.id, p.codigo, p.cliente, p.estado, p.estado_cuenta, 
+                p.subtotal, p.total, p.fecha_hora,
+                m.numero AS mesa_numero, m.nombre AS mesa_nombre, m.estado AS mesa_estado,
+                json_agg(
+                    json_build_object(
+                        'id', pd.id,
+                        'receta_id', pd.receta_id,
+                        'nombre', r.nombre,
+                        'cantidad', pd.cantidad,
+                        'precio_unitario', pd.precio_unitario,
+                        'subtotal', pd.subtotal,
+                        'notas', pd.notas
+                    ) ORDER BY pd.id
+                ) AS items
+             FROM operaciones.pedidos p
+             LEFT JOIN operaciones.mesas m ON m.id = p.mesa_id
+             LEFT JOIN operaciones.pedido_detalle pd ON pd.pedido_id = p.id
+             LEFT JOIN menu.recetas r ON r.id = pd.receta_id
+             WHERE p.restaurante_id = $1
+               AND p.estado IN ('pendiente', 'preparando', 'listo')
+             GROUP BY p.id, m.numero, m.nombre, m.estado
+             ORDER BY p.fecha_hora DESC`,
+            [restaurantId]
+        );
+    }
+
+    static async updateOrderStatus(pedidoId: number, estado: string, restaurantId: number) {
+        const validEstados = ['pendiente', 'preparando', 'listo', 'anulado'];
+        if (!validEstados.includes(estado)) throw new Error('Estado inválido');
+
+        const result = await Conexion.query(
+            `UPDATE operaciones.pedidos 
+             SET estado = $1, updated_at = NOW()
+             WHERE id = $2 AND restaurante_id = $3
+             RETURNING id, codigo, estado, mesa_id`,
+            [estado, pedidoId, restaurantId]
+        );
+        if (!result.length) throw new Error('Pedido no encontrado');
+        return result[0];
+    }
+
     static async createSale(data: CreateSaleInput, restaurantId: number, userId: number) {
         const qr = Conexion.createQueryRunner();
         await qr.connect();
@@ -162,7 +206,7 @@ export class POSService {
             const pedido = qr.manager.create(Pedido, {
                 codigo,
                 mesa_id: data.mesa_id || null,
-                mesero_id: userId,
+                mesero_id: null, // operaciones.meseros es independiente de core.usuarios
                 cliente: data.cliente || null,
                 estado: "pendiente", // Se envía a cocina como pendiente
                 estado_cuenta,
