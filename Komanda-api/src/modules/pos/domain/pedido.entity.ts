@@ -24,11 +24,7 @@ export class Pedido {
     @Column({ type: "enum", enum: ["abierta", "cuenta_pedida", "pagada", "cerrada"], default: "abierta" })
     estado_cuenta!: string;
 
-    @Column({ type: "decimal", precision: 12, scale: 2, default: 0 })
-    total_pagado!: number;
 
-    @Column({ type: "boolean", default: false })
-    pagado_completo!: boolean;
 
     @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
     fecha_hora!: Date;
