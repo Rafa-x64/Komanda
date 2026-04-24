@@ -18,11 +18,13 @@ export class Pedido {
     @Column({ type: "varchar", length: 100, nullable: true })
     cliente!: string | null;
 
-    @Column({ type: "enum", enum: ["pendiente", "enviado", "preparando", "listo", "entregado", "anulado"], default: "pendiente" })
+    @Column({ type: "enum", enum: ["pendiente", "enviado", "preparando", "listo", "pagado", "completado", "anulado"], default: "pendiente" })
     estado!: string;
 
     @Column({ type: "enum", enum: ["abierta", "cuenta_pedida", "pagada", "cerrada"], default: "abierta" })
     estado_cuenta!: string;
+
+
 
     @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
     fecha_hora!: Date;

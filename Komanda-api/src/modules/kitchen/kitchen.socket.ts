@@ -1,12 +1,31 @@
 import { WebSocketServer, WebSocket } from 'ws';
 
-// Set global para mantener todos los clientes (pantallas) de cocina conectados
-const clients = new Set<WebSocket>();
+// Set global para mantener clientes de cocina conectados
+const kitchenClients = new Set<WebSocket>();
 
-export function setupKitchenSocket(wss: WebSocketServer) {
+// Set global para mantener clientes POS conectados
+const posClients = new Set<WebSocket>();
+
+// Notify POS that order is ready for payment
+export function notifyPForPayment(pedidoId: number, restaurante_id: number): void {
+    broadcast({
+        action: 'pedido_listo_pago',
+        payload: { pedidoId, restaurante_id }
+    }, 'pos');
+}
+
+export function setupKitchenSocket(wss: WebSocketServer): void {
     wss.on('connection', (ws: WebSocket) => {
         console.log('[Kitchen Socket] Nuevo cliente conectado');
-        clients.add(ws);
+        // Determine client type based on query parameter or header
+        const isPOS = ws.url && ws.url.includes('type=pos');
+        if (isPOS) {
+            posClients.add(ws);
+            console.log('[Kitchen Socket] Cliente POS conectado, total:', posClients.size);
+        } else {
+            kitchenClients.add(ws);
+            console.log('[Kitchen Socket] Cliente cocina conectado, total:', kitchenClients.size);
+        }
 
         // Cuando un cliente envía un mensaje
         ws.on('message', (message: string) => {
@@ -33,22 +52,23 @@ export function setupKitchenSocket(wss: WebSocketServer) {
 
         ws.on('close', () => {
             console.log('[Kitchen Socket] Cliente desconectado');
-            clients.delete(ws);
+            kitchenClients.delete(ws);
         });
     });
 }
 
 // Función disponible de forma global en el módulo para que, por ejemplo,
 // el Order.Controller nos llame para avisar que entró un nuevo pedido desde las mesas
-export function broadcastNewOrderToKitchen(pedido: any) {
+export function broadcastNewOrderToKitchen(pedido: any): void {
     broadcast({
         action: 'nuevo_pedido',
         payload: pedido
-    });
+    }, 'kitchen');
 }
 
-function broadcast(message: any) {
+function broadcast(message: any, target: 'kitchen' | 'pos' = 'kitchen'): void {
     const data = JSON.stringify(message);
+    const clients = target === 'kitchen' ? kitchenClients : posClients;
     for (const client of clients) {
         if (client.readyState === WebSocket.OPEN) {
             client.send(data);

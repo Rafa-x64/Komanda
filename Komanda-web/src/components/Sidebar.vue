@@ -24,7 +24,7 @@
             </router-link>
           </li>
 
-          <!-- Operaciones y POS (Punto de Venta) -->
+          <!-- Operaciones y POS -->
           <li class="nav-item" v-if="hasAccess(['admin', 'mesero', 'cajero', 'cocina'])">
             <a class="nav-link text-secondary-custom d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#collapsePos" role="button" aria-expanded="false" aria-controls="collapsePos">
               <div class="d-flex align-items-center"><i class="bi bi-shop fs-5 me-3"></i><span>Operaciones</span></div>
@@ -32,7 +32,7 @@
             </a>
             <div class="collapse" id="collapsePos" data-bs-parent="#sidebarAccordion">
               <ul class="nav flex-column ms-4 mt-1">
-                <li class="nav-item py-1" v-if="hasAccess(['admin', 'cajero'])">
+                <li class="nav-item py-1" v-if="hasAccess(['admin'])">
                   <router-link to="/operaciones" class="nav-link text-secondary-custom p-1 px-2" active-class="active text-korange fw-bold mb-0">Compras y Gastos</router-link>
                 </li>
                 <li class="nav-item py-1" v-if="hasAccess(['mesero'])">
@@ -51,8 +51,8 @@
             </div>
           </li>
 
-          <!-- Gestión de Menú e Inventario -->
-          <li class="nav-item" v-if="hasAccess(['admin', 'cajero', 'cocina'])">
+          <!-- Gestión de Menú e Inventario (solo admin y cocina) -->
+          <li class="nav-item" v-if="hasAccess(['admin', 'cocina'])">
             <a class="nav-link text-secondary-custom d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#collapseInventory" role="button" aria-expanded="false" aria-controls="collapseInventory">
               <div class="d-flex align-items-center"><i class="bi bi-boxes fs-5 me-3"></i><span>Inventario</span></div>
               <i class="bi bi-chevron-down small"></i>
@@ -62,7 +62,7 @@
                 <li class="nav-item py-1" v-if="hasAccess(['admin', 'cocina'])">
                   <router-link to="/almacen" class="nav-link text-secondary-custom p-1 px-2" active-class="active text-korange fw-bold mb-0">Almacén</router-link>
                 </li>
-                <li class="nav-item py-1" v-if="hasAccess(['admin', 'cajero'])">
+                <li class="nav-item py-1" v-if="hasAccess(['admin'])">
                   <router-link to="/inventario" class="nav-link text-secondary-custom p-1 px-2" active-class="active text-korange fw-bold mb-0">Stock</router-link>
                 </li>
                 <li class="nav-item py-1" v-if="hasAccess(['admin'])">
@@ -72,29 +72,29 @@
             </div>
           </li>
 
-          <!-- Administración -->
-          <li class="nav-item" v-if="hasAccess(['admin', 'cajero'])">
+          <!-- Administración (solo admin) -->
+          <li class="nav-item" v-if="hasAccess(['admin'])">
              <a class="nav-link text-secondary-custom d-flex justify-content-between align-items-center" data-bs-toggle="collapse" href="#collapseAdmin" role="button" aria-expanded="false" aria-controls="collapseAdmin">
               <div class="d-flex align-items-center"><i class="bi bi-gear fs-5 me-3"></i><span>Administración</span></div>
               <i class="bi bi-chevron-down small"></i>
             </a>
             <div class="collapse" id="collapseAdmin" data-bs-parent="#sidebarAccordion">
               <ul class="nav flex-column ms-4 mt-1">
-                <li class="nav-item py-1" v-if="hasAccess(['admin', 'cajero'])">
+                <li class="nav-item py-1">
                   <router-link to="/finanzas" class="nav-link text-secondary-custom p-1 px-2" active-class="active text-korange fw-bold mb-0">Finanzas</router-link>
                 </li>
-                <li class="nav-item py-1" v-if="hasAccess(['admin'])">
+                <li class="nav-item py-1">
                   <router-link to="/contabilidad" class="nav-link text-secondary-custom p-1 px-2" active-class="active text-korange fw-bold mb-0">Contabilidad</router-link>
                 </li>
-                <li class="nav-item py-1" v-if="hasAccess(['admin'])">
+                <li class="nav-item py-1">
                   <router-link to="/reportes" class="nav-link text-secondary-custom p-1 px-2" active-class="active text-korange fw-bold mb-0">
                     <i class="bi bi-graph-up-arrow me-1"></i> Reportes
                   </router-link>
                 </li>
-                <li class="nav-item py-1" v-if="hasAccess(['admin'])">
+                <li class="nav-item py-1">
                   <router-link to="/empleados" class="nav-link text-secondary-custom p-1 px-2" active-class="active text-korange fw-bold mb-0">Empleados</router-link>
                 </li>
-                <li class="nav-item py-1" v-if="hasAccess(['admin'])">
+                <li class="nav-item py-1">
                   <router-link to="/configuracion" class="nav-link text-secondary-custom p-1 px-2" active-class="active text-korange fw-bold mb-0">Configuración</router-link>
                 </li>
               </ul>

@@ -1,829 +1,400 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { Send, ShoppingCart, AlertCircle, CheckCircle, CreditCard, X, Plus } from 'lucide-vue-next'
-import ProductCard from '../components/ProductCard.vue'
-import PosCategoryFilter from '../components/PosCategoryFilter.vue'
-import CartItemRow from '../components/CardItemRow.vue'
-import { useCart } from '../composables/useCart'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { RefreshCw, CreditCard, CheckCircle2, Clock, UtensilsCrossed, AlertCircle } from 'lucide-vue-next'
+import Sidebar from '../../../components/Sidebar.vue'
+import { useAuth } from '../../../core/composables/useAuth'
 import {
-  sendOrder,
-  fetchCategories,
-  fetchProducts,
-  fetchTables,
-  fetchMetodosPago,
+  fetchReadyOrders, fetchMetodosPago, checkoutOrder,
+  type ReadyOrder, type Pago
 } from '../pos.api'
 
-const { cartItems, selectedTable, addItem, updateQuantity, addKitchenNote, removeItem, clearCart, subtotal, total } = useCart()
+const auth = useAuth()
 
-// UI state
-const loading = ref(false)
-const loadingData = ref(true)
-const toast = ref<{ type: 'success' | 'error'; message: string } | null>(null)
-const activeCategory = ref<number | null>(null)
-const showPaymentModal = ref(false)
-const clienteNombre = ref('')
+// ─── Estado ───────────────────────────────────────────────
+const orders     = ref<ReadyOrder[]>([])
+const metodos    = ref<{ id: number; nombre: string }[]>([])
+const loading    = ref(true)
+const selected   = ref<ReadyOrder | null>(null)
+const processing = ref(false)
+const toast      = ref<{ type: 'success' | 'error'; message: string } | null>(null)
+let pollInterval: ReturnType<typeof setInterval> | null = null
 
-// Data from API
-const categories = ref<{ id: number; nombre: string }[]>([])
-const tables = ref<{ id: number; nombre: string | null; numero: number }[]>([])
-const products = ref<{ id: number; nombre: string; precio_venta: number; categoria_id: number; imagen_url?: string }[]>([])
-const metodosPago = ref<{ id: number; nombre: string; tipo: string }[]>([])
+// Pagos del modal
+const pagos = ref<Pago[]>([])
 
-// Payment state — múltiples pagos por venta (Regla 3 enunciado maestro)
-const pagos = ref<{ metodo_pago_id: number; monto: number; referencia: string; nombre: string }[]>([])
-
-const addPago = () => {
-  if (!metodosPago.value.length) return
-  const primero = metodosPago.value[0]
-  if (primero) pagos.value.push({ metodo_pago_id: primero.id, monto: 0, referencia: '', nombre: primero.nombre })
-}
-
-const removePago = (idx: number) => pagos.value.splice(idx, 1)
-
-const totalPagado = computed(() => pagos.value.reduce((s, p) => s + Number(p.monto), 0))
-const vuelto = computed(() => Math.max(0, totalPagado.value - total.value))
-const faltante = computed(() => Math.max(0, total.value - totalPagado.value))
-
-const onMetodoChange = (idx: number, id: number) => {
-  const m = metodosPago.value.find(m => m.id === Number(id))
-  if (m && pagos.value[idx]) pagos.value[idx].nombre = m.nombre
-}
-
-// Filtered products by category
-const filteredProducts = computed(() => {
-  if (!activeCategory.value) return products.value
-  return products.value.filter(p => p.categoria_id === activeCategory.value)
-})
-const itemCount = computed(() => cartItems.value.reduce((sum, i) => sum + i.quantity, 0))
-
-// Toast helper
+// ─── Helpers ──────────────────────────────────────────────
 const showToast = (type: 'success' | 'error', message: string) => {
   toast.value = { type, message }
-  setTimeout(() => { toast.value = null }, 4000)
+  setTimeout(() => { toast.value = null }, 4500)
 }
 
-// Tracking removed since we use undefined check
+const formatTime = (d: string) =>
+  new Date(d).toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' })
 
-// Open payment modal
-const openPaymentModal = () => {
-  if (!cartItems.value.length) { showToast('error', 'El carrito está vacío'); return }
-  if (tables.value.length > 0 && selectedTable.value === undefined) {
-    showToast('error', 'Selecciona una mesa o elige "Sin mesa (para llevar)"'); return
+const mesaLabel = (o: ReadyOrder) =>
+  o.mesa_nombre || (o.mesa_numero ? `Mesa ${o.mesa_numero}` : '🛵 Para llevar')
+
+const estadoBadge = (estado: string) => {
+  const map: Record<string, { cls: string; label: string }> = {
+    listo:      { cls: 'bg-success text-white',   label: '✅ Listo' },
+    preparando: { cls: 'bg-primary text-white',   label: '👨‍🍳 En Cocina' },
+    pendiente:  { cls: 'bg-warning text-dark',    label: '⏳ Pendiente' },
+    enviado:    { cls: 'bg-info text-dark',       label: '📡 Enviado' },
   }
-  // Auto-llenar con el total completo en el primer método
-  if (metodosPago.value.length && !pagos.value.length) {
-    const primero = metodosPago.value[0]
-    if (primero) pagos.value = [{ metodo_pago_id: primero.id, monto: total.value, referencia: '', nombre: primero.nombre }]
-  }
-  showPaymentModal.value = true
+  return map[estado] ?? { cls: 'bg-secondary text-white', label: estado }
 }
 
-const closePaymentModal = () => {
-  showPaymentModal.value = false
-  pagos.value = []
-}
+// ─── KPIs ─────────────────────────────────────────────────
+const kpis = computed(() => [
+  { label: '¡Listos!',    value: orders.value.filter(o => o.estado === 'listo').length,      cls: 'text-success', bg: 'bg-success-subtle' },
+  { label: 'En Cocina',  value: orders.value.filter(o => o.estado === 'preparando').length,  cls: 'text-primary', bg: 'bg-primary-subtle' },
+  { label: 'Pendientes', value: orders.value.filter(o => o.estado === 'pendiente').length,   cls: 'text-warning', bg: 'bg-warning-subtle' },
+  { label: 'Total Cola', value: orders.value.length,                                         cls: 'text-korange', bg: 'bg-korange-subtle' },
+])
 
-// Submit order
-const handleConfirm = async () => {
-  if (pagos.value.length === 0) { showToast('error', 'Agrega al menos un método de pago'); return }
-  if (pagos.value.some(p => !p.monto || p.monto <= 0)) { showToast('error', 'Todos los pagos deben tener un monto mayor a 0'); return }
-
-  loading.value = true
+// ─── Carga de datos ───────────────────────────────────────
+const load = async () => {
   try {
-    await sendOrder({
-      mesa_id: selectedTable.value,
-      cliente: clienteNombre.value || null,
-      items: cartItems.value.map(i => ({
-        receta_id: i.product.id,
-        cantidad: i.quantity,
-        notas: i.notes,
-      })),
-      pagos: pagos.value.map(p => ({
-        metodo_pago_id: p.metodo_pago_id,
-        monto: Number(p.monto),
-        referencia: p.referencia || undefined,
-      })),
-    })
-    closePaymentModal()
-    clearCart()
-    clienteNombre.value = ''
-    showToast('success', '¡Venta registrada! Pedido enviado a cocina 🍳')
-  } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : 'Error desconocido'
-    showToast('error', msg)
+    const [ords, mets] = await Promise.all([fetchReadyOrders(), fetchMetodosPago()])
+    orders.value  = ords
+    metodos.value = mets
+  } catch {
+    showToast('error', 'Error cargando datos')
   } finally {
     loading.value = false
   }
 }
 
-onMounted(async () => {
+onMounted(() => { load(); pollInterval = setInterval(load, 15000) })
+onUnmounted(() => { if (pollInterval) clearInterval(pollInterval) })
+
+// ─── Modal de cobro ───────────────────────────────────────
+const openCheckout = (order: ReadyOrder) => {
+  selected.value = order
+  // Prellenar con el total en el primer método
+  const primero = metodos.value[0]
+  pagos.value = primero
+    ? [{ metodo_pago_id: primero.id, monto: Number(order.total), referencia: '' }]
+    : []
+}
+
+const closeModal = () => { selected.value = null; pagos.value = [] }
+
+const addPago = () => {
+  const primero = metodos.value[0]
+  if (primero) pagos.value.push({ metodo_pago_id: primero.id, monto: 0, referencia: '' })
+}
+const removePago = (i: number) => pagos.value.splice(i, 1)
+
+const totalPagado  = computed(() => pagos.value.reduce((s, p) => s + Number(p.monto), 0))
+const totalOrden   = computed(() => selected.value ? Number(selected.value.total) : 0)
+const vuelto       = computed(() => Math.max(0, totalPagado.value - totalOrden.value))
+const faltante     = computed(() => Math.max(0, totalOrden.value - totalPagado.value))
+const canCheckout  = computed(() => pagos.value.length > 0 && faltante.value === 0)
+
+const onMetodoChange = (idx: number, id: number) => {
+  if (pagos.value[idx]) pagos.value[idx].metodo_pago_id = Number(id)
+}
+
+const submitCheckout = async () => {
+  if (!selected.value || !canCheckout.value) return
+  processing.value = true
   try {
-    const results = await Promise.allSettled([
-      fetchCategories(),
-      fetchProducts(),
-      fetchTables(),
-      fetchMetodosPago(),
-    ])
-
-    if (results[0].status === 'fulfilled') categories.value = results[0].value || []
-    if (results[1].status === 'fulfilled') {
-      products.value = (results[1].value || []).map((p: any) => ({ ...p, precio_venta: parseFloat(p.precio_venta) }))
-    }
-    if (results[2].status === 'fulfilled') tables.value = results[2].value || []
-    if (results[3].status === 'fulfilled') metodosPago.value = results[3].value || []
-    else showToast('error', 'No se pudieron cargar los métodos de pago')
-
-  } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : 'No se pudo conectar con el servidor'
-    showToast('error', msg)
+    const result = await checkoutOrder(selected.value.id, pagos.value)
+    showToast('success', `✅ Cobrado! Vuelto: Bs. ${result.vuelto.toFixed(2)}`)
+    closeModal()
+    await load()
+  } catch (e: any) {
+    showToast('error', e.message || 'Error al procesar el cobro')
   } finally {
-    loadingData.value = false
+    processing.value = false
   }
-})
-
-import Sidebar from '../../../components/Sidebar.vue'
-import { useAuth } from '../../../core/composables/useAuth'
-
-const auth = useAuth()
-const userRole = computed(() => auth.user.value?.role || 'mesero')
-const userName = computed(() => auth.user.value?.nombre || 'Mesero')
+}
 </script>
 
 <template>
-  <div class="d-flex w-100">
-    <Sidebar :role="userRole" :userName="userName" />
-    <div class="pos-layout main-content">
-    <!-- Toast Notification -->
-    <Transition name="toast-slide">
-      <div v-if="toast" class="pos-toast" :class="`pos-toast--${toast.type}`">
-        <CheckCircle v-if="toast.type === 'success'" :size="18" />
-        <AlertCircle v-else :size="18" />
-        <span>{{ toast.message }}</span>
-      </div>
-    </Transition>
+<div class="d-flex w-100">
+  <Sidebar :role="auth.user.value?.role || 'cajero'" :userName="auth.user.value?.nombre" />
 
-    <!-- LEFT: Catalogue -->
-    <section class="pos-catalog">
-      <header class="pos-catalog__header">
-        <h1 class="pos-catalog__title">Punto de Venta</h1>
-        <div class="pos-catalog__controls">
-          <input
-            v-model="clienteNombre"
-            type="text"
-            class="form-control form-control-sm pos-client-input"
-            placeholder="Nombre del cliente (opcional)"
-          />
+  <main class="pos-main main-content">
+
+    <!-- Toast -->
+    <div v-if="toast" class="pos-toast" :class="toast.type === 'success' ? 'pos-toast--ok' : 'pos-toast--err'">
+      {{ toast.message }}
+    </div>
+
+    <div class="container-fluid py-4 px-3 px-md-4 pos-content">
+
+      <!-- Header -->
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+          <span class="text-korange fw-bold small text-uppercase tracking-wide">Caja Registradora</span>
+          <h2 class="fw-bold mt-1 mb-0 text-primary-custom">Cola de Cobros</h2>
+          <p class="text-secondary-custom small mb-0">Pedidos con cuenta abierta, ordenados por prioridad</p>
         </div>
-        <PosCategoryFilter
-          :categories="categories"
-          :active-category="activeCategory"
-          @filter-changed="activeCategory = $event"
-        />
-      </header>
-
-      <!-- Loading Skeleton -->
-      <div v-if="loadingData" class="pos-loading">
-        <div v-for="n in 8" :key="n" class="pos-skeleton-card"></div>
-      </div>
-
-      <div v-else class="pos-catalog__grid">
-        <ProductCard
-          v-for="p in filteredProducts"
-          :key="p.id"
-          :product="p"
-          @add-to-cart="addItem"
-        />
-      </div>
-
-      <p v-if="!loadingData && !filteredProducts.length" class="pos-empty-catalog">
-        No hay productos en esta categoría.
-      </p>
-    </section>
-
-    <!-- RIGHT: Ticket / Cart -->
-    <aside class="pos-ticket">
-      <!-- Table Selector -->
-      <div class="pos-ticket__header">
-        <ShoppingCart :size="20" class="text-korange" />
-        <select
-          v-model="selectedTable"
-          class="form-select form-select-sm pos-ticket__select"
-        >
-          <option :value="undefined" disabled>— Selecciona mesa —</option>
-          <option :value="null">Sin mesa (para llevar)</option>
-          <option v-for="t in tables" :key="t.id" :value="t.id">
-            {{ t.nombre || `Mesa ${t.numero}` }}
-          </option>
-        </select>
-      </div>
-
-      <!-- Cart Items -->
-      <div class="pos-ticket__body">
-        <div v-if="!cartItems.length" class="pos-ticket__empty">
-          <span class="pos-ticket__empty-icon">🛒</span>
-          <span>Selecciona productos del catálogo</span>
-        </div>
-        <CartItemRow
-          v-for="ci in cartItems"
-          :key="ci.product.id"
-          :item="ci"
-          @increase="updateQuantity(ci.product.id, 1)"
-          @decrease="updateQuantity(ci.product.id, -1)"
-          @add-note="addKitchenNote(ci.product.id, $event)"
-          @remove="removeItem(ci.product.id)"
-        />
-      </div>
-
-      <!-- Footer: Totals -->
-      <div class="pos-ticket__footer">
-        <div class="pos-ticket__totals">
-          <div class="pos-ticket__row">
-            <span>Subtotal</span>
-            <span>Bs. {{ subtotal.toFixed(2) }}</span>
-          </div>
-          <div class="pos-ticket__row pos-ticket__row--total">
-            <span>TOTAL</span>
-            <span>Bs. {{ total.toFixed(2) }}</span>
-          </div>
-        </div>
-
-        <button
-          class="pos-confirm-btn"
-          :disabled="!cartItems.length"
-          @click="openPaymentModal"
-        >
-          <CreditCard :size="20" />
-          <span>COBRAR ({{ itemCount }} ítem{{ itemCount !== 1 ? 's' : '' }})</span>
-        </button>
-
-        <button
-          v-if="cartItems.length"
-          class="pos-clear-btn"
-          @click="clearCart"
-        >
-          Limpiar carrito
+        <button @click="load" class="btn btn-outline-secondary btn-sm rounded-pill d-flex align-items-center gap-2">
+          <RefreshCw :size="15" /> Actualizar
         </button>
       </div>
-    </aside>
 
-    <!-- ===== PAYMENT MODAL (Regla 3: múltiples métodos) ===== -->
-    <Transition name="modal-fade">
-      <div v-if="showPaymentModal" class="pos-modal-overlay" @click.self="closePaymentModal">
-        <div class="pos-modal">
-          <div class="pos-modal__header">
-            <h2>Registrar Cobro</h2>
-            <button class="pos-modal__close" @click="closePaymentModal">
-              <X :size="20" />
-            </button>
+      <!-- KPIs -->
+      <div class="row g-3 mb-4">
+        <div v-for="k in kpis" :key="k.label" class="col-6 col-xl-3">
+          <div class="kpi-card rounded-4 p-3 h-100">
+            <div :class="['kpi-icon rounded-3 mb-2 d-flex align-items-center justify-content-center', k.bg]">
+              <CreditCard :size="20" :class="k.cls" />
+            </div>
+            <div :class="['kpi-value fw-black', k.cls]">{{ k.value }}</div>
+            <div class="kpi-label text-secondary-custom">{{ k.label }}</div>
           </div>
+        </div>
+      </div>
 
-          <div class="pos-modal__body">
-            <!-- Order Summary -->
-            <div class="pos-modal__summary">
-              <div class="pos-modal__summary-row">
-                <span>Total a cobrar</span>
-                <strong class="pos-modal__total">Bs. {{ total.toFixed(2) }}</strong>
+      <!-- Spinner -->
+      <div v-if="loading" class="text-center py-5">
+        <div class="spinner-border text-korange"></div>
+        <p class="mt-3 text-secondary-custom small">Cargando cola de cobros...</p>
+      </div>
+
+      <!-- Empty state -->
+      <div v-else-if="!orders.length" class="text-center py-5 rounded-4 bg-surface-custom border border-color">
+        <CheckCircle2 :size="52" class="text-success opacity-50 mb-3" />
+        <h5 class="fw-bold text-primary-custom">¡Todo cobrado!</h5>
+        <p class="text-secondary-custom small">No hay pedidos con cuentas pendientes de pago.</p>
+      </div>
+
+      <!-- Cola de pedidos -->
+      <div v-else class="row g-3">
+        <div v-for="order in orders" :key="order.id" class="col-12 col-sm-6 col-xl-4">
+          <div
+            class="order-card rounded-4 h-100 border border-color bg-surface-custom"
+            :class="{ 'order-card--ready': order.estado === 'listo' }"
+          >
+            <!-- Header -->
+            <div class="p-3 pb-2 d-flex justify-content-between align-items-start border-bottom border-color">
+              <div>
+                <span class="fw-bold text-primary-custom d-block">{{ order.codigo }}</span>
+                <span class="text-secondary-custom small">
+                  <Clock :size="12" class="me-1" />{{ formatTime(order.fecha_hora) }}
+                </span>
               </div>
+              <span class="badge rounded-pill fw-semibold" :class="estadoBadge(order.estado).cls">
+                {{ estadoBadge(order.estado).label }}
+              </span>
             </div>
 
-            <!-- Payment Methods List -->
-            <div class="pos-modal__section-title">Métodos de Pago</div>
-
-            <div v-if="!metodosPago.length" class="pos-modal__warn">
-              ⚠️ No hay métodos de pago configurados. Configúralos en Administración.
+            <!-- Mesa / Cliente -->
+            <div class="px-3 pt-2 pb-1 d-flex align-items-center gap-2">
+              <span class="badge bg-secondary-subtle text-secondary border border-secondary border-opacity-25 rounded-pill">
+                {{ mesaLabel(order) }}
+              </span>
+              <span v-if="order.cliente" class="text-secondary-custom small">{{ order.cliente }}</span>
             </div>
 
-            <div
-              v-for="(pago, idx) in pagos"
-              :key="idx"
-              class="pos-pago-row"
-            >
-              <select
-                v-model="pago.metodo_pago_id"
-                class="form-select form-select-sm pos-pago-row__select"
-                @change="onMetodoChange(idx, pago.metodo_pago_id)"
+            <!-- Items resumidos -->
+            <ul class="list-unstyled px-3 mb-0 small">
+              <li v-for="item in (order.items || []).slice(0, 4)" :key="item.id"
+                  class="d-flex justify-content-between text-secondary-custom py-1 border-bottom border-color"
+                  style="border-style: dashed !important;">
+                <span>{{ item.cantidad }}× {{ item.nombre }}</span>
+                <span>Bs. {{ Number(item.subtotal).toFixed(2) }}</span>
+              </li>
+              <li v-if="(order.items || []).length > 4" class="text-korange small pt-1">
+                +{{ (order.items || []).length - 4 }} más
+              </li>
+            </ul>
+
+            <!-- Footer con total y botón cobrar -->
+            <div class="p-3 pt-2 d-flex justify-content-between align-items-center">
+              <div>
+                <div class="text-secondary-custom" style="font-size:0.7rem;">TOTAL</div>
+                <div class="fw-black text-korange fs-5">Bs. {{ Number(order.total).toFixed(2) }}</div>
+              </div>
+              <button
+                @click="openCheckout(order)"
+                class="btn btn-korange rounded-pill px-3 fw-bold d-flex align-items-center gap-2"
               >
-                <option v-for="m in metodosPago" :key="m.id" :value="m.id">
-                  {{ m.nombre }}
-                </option>
-              </select>
+                <CreditCard :size="16" /> Cobrar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
-              <input
-                v-model.number="pago.monto"
-                type="number"
-                min="0"
-                step="0.01"
-                class="form-control form-control-sm pos-pago-row__amount"
-                placeholder="Monto"
-              />
+    </div>
+  </main>
 
-              <input
-                v-if="pago.metodo_pago_id"
-                v-model="pago.referencia"
-                type="text"
-                class="form-control form-control-sm pos-pago-row__ref"
-                placeholder="Referencia (opcional)"
-              />
+  <!-- ══════════ MODAL DE COBRO ══════════ -->
+  <template v-if="selected">
+    <div class="modal-backdrop fade show" style="z-index:1050;"></div>
+    <div class="modal fade show d-block" tabindex="-1" style="z-index:1055;" @click.self="closeModal">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable px-2 px-md-0" style="max-width:520px;">
+        <div class="modal-content bg-surface-custom border-color shadow-lg">
 
-              <button class="pos-pago-row__remove" @click="removePago(idx)" aria-label="Eliminar pago">
-                <X :size="14" />
+          <!-- Header -->
+          <div class="modal-header border-bottom border-color">
+            <div>
+              <h5 class="modal-title fw-bold text-primary-custom mb-0">
+                <CreditCard :size="20" class="me-2 text-korange" />Cobrar {{ selected.codigo }}
+              </h5>
+              <small class="text-secondary-custom">{{ mesaLabel(selected) }}</small>
+            </div>
+            <button class="btn-close" @click="closeModal"></button>
+          </div>
+
+          <!-- Resumen del pedido -->
+          <div class="modal-body px-4 py-3">
+            <h6 class="fw-bold text-secondary-custom text-uppercase small mb-2">Resumen del Pedido</h6>
+            <ul class="list-unstyled mb-3">
+              <li v-for="item in selected.items" :key="item.id"
+                  class="d-flex justify-content-between py-1 border-bottom border-color text-primary-custom small"
+                  style="border-style:dashed !important;">
+                <span>{{ item.cantidad }}× {{ item.nombre }}</span>
+                <span class="fw-semibold">Bs. {{ Number(item.subtotal).toFixed(2) }}</span>
+              </li>
+            </ul>
+            <div class="d-flex justify-content-between text-secondary-custom small mb-1">
+              <span>Subtotal</span><span>Bs. {{ Number(selected.subtotal).toFixed(2) }}</span>
+            </div>
+            <div class="d-flex justify-content-between text-secondary-custom small mb-2">
+              <span>IVA</span><span>Bs. {{ Number(selected.impuestos).toFixed(2) }}</span>
+            </div>
+            <div class="d-flex justify-content-between fw-black fs-5 text-primary-custom border-top border-color pt-2 mb-3">
+              <span>Total</span><span class="text-korange">Bs. {{ Number(selected.total).toFixed(2) }}</span>
+            </div>
+
+            <!-- Métodos de pago -->
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h6 class="fw-bold text-secondary-custom text-uppercase small mb-0">Métodos de Pago</h6>
+              <button @click="addPago" class="btn btn-sm btn-outline-secondary rounded-pill px-2 py-0" style="font-size:0.75rem;">
+                + Agregar
               </button>
             </div>
 
-            <button
-              v-if="metodosPago.length"
-              class="pos-add-pago-btn"
-              @click="addPago"
-            >
-              <Plus :size="16" /> Agregar otro método de pago
-            </button>
+            <div v-for="(pago, idx) in pagos" :key="idx" class="mb-2 p-2 rounded-3 border border-color">
+              <div class="d-flex gap-2 align-items-center">
+                <select
+                  class="form-select form-select-sm bg-transparent border-color text-primary-custom"
+                  :value="pago.metodo_pago_id"
+                  @change="onMetodoChange(idx, Number(($event.target as HTMLSelectElement).value))"
+                >
+                  <option v-for="m in metodos" :key="m.id" :value="m.id">{{ m.nombre }}</option>
+                </select>
+                <input
+                  v-model.number="pago.monto"
+                  type="number" min="0" step="0.01"
+                  class="form-control form-control-sm bg-transparent border-color text-primary-custom"
+                  placeholder="Monto"
+                  style="max-width:110px;"
+                />
+                <button v-if="pagos.length > 1" @click="removePago(idx)"
+                  class="btn btn-sm btn-outline-danger rounded-circle p-1">✕</button>
+              </div>
+              <input
+                v-model="pago.referencia"
+                type="text"
+                class="form-control form-control-sm bg-transparent border-color text-secondary-custom mt-1"
+                placeholder="Referencia / N° operación (opcional)"
+              />
+            </div>
 
-            <!-- Change / Balance Summary -->
-            <div class="pos-modal__balance">
-              <div class="pos-modal__balance-row">
-                <span>Total cobrado</span>
-                <span :class="totalPagado >= total ? 'pos-ok' : 'pos-warn'">
-                  Bs. {{ totalPagado.toFixed(2) }}
-                </span>
+            <!-- Resumen de pagos -->
+            <div class="rounded-3 p-3 mt-2" :class="faltante > 0 ? 'bg-danger-subtle' : 'bg-success-subtle'">
+              <div class="d-flex justify-content-between small mb-1">
+                <span class="text-secondary-custom">Total pagado</span>
+                <span class="fw-bold">Bs. {{ totalPagado.toFixed(2) }}</span>
               </div>
-              <div v-if="faltante > 0" class="pos-modal__balance-row">
-                <span>Faltante</span>
-                <span class="pos-warn">Bs. {{ faltante.toFixed(2) }}</span>
+              <div v-if="faltante > 0" class="d-flex justify-content-between small text-danger fw-bold">
+                <span>Faltante</span><span>Bs. {{ faltante.toFixed(2) }}</span>
               </div>
-              <div v-if="vuelto > 0" class="pos-modal__balance-row pos-modal__balance-row--change">
-                <span>Vuelto</span>
-                <strong class="pos-ok">Bs. {{ vuelto.toFixed(2) }}</strong>
+              <div v-if="vuelto > 0" class="d-flex justify-content-between small text-success fw-bold">
+                <span>Vuelto</span><span>Bs. {{ vuelto.toFixed(2) }}</span>
               </div>
+            </div>
+
+            <!-- Alerta pago insuficiente -->
+            <div v-if="faltante > 0" class="d-flex align-items-center gap-2 mt-2 text-danger small">
+              <AlertCircle :size="15" /> El monto ingresado es menor al total del pedido.
             </div>
           </div>
 
-          <div class="pos-modal__footer">
-            <button class="pos-btn-cancel" @click="closePaymentModal">Cancelar</button>
+          <!-- Footer -->
+          <div class="modal-footer border-top border-color justify-content-between">
+            <button @click="closeModal" class="btn btn-outline-secondary rounded-pill px-4">Cancelar</button>
             <button
-              class="pos-btn-confirm"
-              :disabled="loading || pagos.length === 0"
-              @click="handleConfirm"
+              @click="submitCheckout"
+              :disabled="!canCheckout || processing"
+              class="btn btn-korange rounded-pill px-4 fw-bold d-flex align-items-center gap-2"
             >
-              <Send :size="16" />
-              <span v-if="loading">Procesando...</span>
-              <span v-else>Confirmar Venta</span>
+              <span v-if="processing" class="spinner-border spinner-border-sm"></span>
+              <CheckCircle2 v-else :size="18" />
+              {{ processing ? 'Procesando...' : 'Confirmar Cobro' }}
             </button>
           </div>
+
         </div>
       </div>
-    </Transition>
-  </div>
-  </div>
+    </div>
+  </template>
+
+</div>
 </template>
 
 <style scoped>
-/* ========== LAYOUT ========== */
-.pos-layout {
-  display: flex;
-  flex-direction: column;
+.pos-main {
+  background-color: var(--bg-body);
   min-height: 100vh;
-  background: var(--bg-body);
-  position: relative;
   width: 100%;
 }
-
-@media (min-width: 992px) {
-  .pos-layout {
-    display: grid;
-    grid-template-columns: 1fr 360px;
-  }
-}
-
 @media (min-width: 768px) {
-  .main-content {
-    margin-left: 260px;
-    width: calc(100% - 260px);
-  }
+  .main-content { margin-left: 260px; width: calc(100% - 260px); }
+}
+/* En móvil, el botón hamburguesa tiene 48px + 1rem, dejamos espacio */
+@media (max-width: 767.98px) {
+  .pos-content { padding-top: 4.5rem !important; }
+  .modal-dialog { margin: 0.5rem; max-width: 100% !important; }
 }
 
-/* ========== CATALOG ========== */
-.pos-catalog {
-  padding: 1.5rem 2rem;
-  overflow-y: auto;
-  max-height: 100vh;
-}
-
-.pos-catalog__header {
-  margin-bottom: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.pos-catalog__title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text-main);
-  margin: 0;
-}
-
-.pos-catalog__controls {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.pos-client-input {
-  max-width: 280px;
-}
-
-.pos-catalog__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 1rem;
-}
-
-.pos-empty-catalog {
-  text-align: center;
-  color: var(--text-muted);
-  margin-top: 2rem;
-}
-
-/* Loading skeleton */
-.pos-loading {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 1rem;
-}
-
-.pos-skeleton-card {
-  height: 160px;
-  border-radius: 1rem;
-  background: linear-gradient(90deg, var(--bg-surface) 25%, var(--border-color) 50%, var(--bg-surface) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.4s infinite;
-}
-
-@keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-/* ========== TICKET ========== */
-.pos-ticket {
-  display: flex;
-  flex-direction: column;
+/* KPIs */
+.kpi-card {
   background: var(--bg-surface);
-  border-left: 1px solid var(--border-color);
-  max-height: 100vh;
-}
-
-.pos-ticket__header {
-  padding: 1rem 1.25rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.pos-ticket__select { flex: 1; font-weight: 600; }
-
-.pos-ticket__body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0.75rem 1.25rem;
-}
-
-.pos-ticket__empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  gap: 0.5rem;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  text-align: center;
-}
-
-.pos-ticket__empty-icon { font-size: 2.5rem; opacity: 0.5; }
-
-/* ========== FOOTER TOTALS ========== */
-.pos-ticket__footer {
-  padding: 1rem 1.25rem;
-  border-top: 1px solid var(--border-color);
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.pos-ticket__totals { display: flex; flex-direction: column; gap: 0.25rem; }
-
-.pos-ticket__row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.875rem;
-  color: var(--text-muted);
-  padding: 0.2rem 0;
-}
-
-.pos-ticket__row--total {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: var(--text-main);
-  padding-top: 0.5rem;
-  margin-top: 0.25rem;
-  border-top: 2px solid var(--border-color);
-}
-
-/* ========== BUTTONS ========== */
-.pos-confirm-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  padding: 1rem;
-  border: none;
-  border-radius: 0.75rem;
-  font-weight: 700;
-  font-size: 1rem;
-  background: linear-gradient(135deg, var(--KOrange), var(--KOrange-hover));
-  color: #fff;
-  cursor: pointer;
-  transition: all var(--transition-speed);
-  user-select: none;
-}
-
-.pos-confirm-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(253, 126, 20, 0.35);
-}
-
-.pos-confirm-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-
-.pos-clear-btn {
-  width: 100%;
-  padding: 0.5rem;
   border: 1px solid var(--border-color);
-  border-radius: 0.5rem;
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: all var(--transition-speed);
+  transition: transform 0.2s ease;
+}
+.kpi-card:hover { transform: translateY(-3px); }
+.kpi-icon { width: 40px; height: 40px; }
+.kpi-value { font-size: 1.9rem; line-height: 1; }
+.kpi-label { font-size: 0.75rem; }
+
+/* Tarjeta de pedido */
+.order-card {
+  transition: box-shadow 0.2s ease;
+}
+.order-card:hover { box-shadow: 0 4px 24px rgba(0,0,0,.1) !important; }
+.order-card--ready {
+  border-color: #198754 !important;
+  box-shadow: 0 0 0 2px rgba(25,135,84,.2);
 }
 
-.pos-clear-btn:hover { border-color: #dc3545; color: #dc3545; }
-
-/* ========== TOAST ========== */
+/* Toast */
 .pos-toast {
-  position: fixed;
-  top: 1.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.85rem 1.5rem;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  font-size: 0.9rem;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-  white-space: nowrap;
+  position: fixed; top: 1rem; right: 1rem; z-index: 9999;
+  padding: .75rem 1.25rem; border-radius: .75rem;
+  font-weight: 600; font-size: .9rem; box-shadow: 0 4px 20px rgba(0,0,0,.15);
+  animation: slideIn .3s ease;
 }
+.pos-toast--ok  { background: #d1e7dd; color: #0a3622; border: 1px solid #a3cfbb; }
+.pos-toast--err { background: #f8d7da; color: #58151c; border: 1px solid #f1aeb5; }
+@keyframes slideIn { from { transform: translateX(60px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-.pos-toast--success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-.pos-toast--error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-
-.toast-slide-enter-active, .toast-slide-leave-active { transition: all 0.35s ease; }
-.toast-slide-enter-from, .toast-slide-leave-to { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-
-/* ========== MODAL ========== */
-.pos-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1050;
-  padding: 1rem;
-}
-
-.pos-modal {
-  background: var(--bg-body);
-  border-radius: 1rem;
-  width: 100%;
-  max-width: 520px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  display: flex;
-  flex-direction: column;
-  max-height: 90vh;
-  overflow: hidden;
-}
-
-.pos-modal__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.pos-modal__header h2 {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--text-main);
-}
-
-.pos-modal__close {
-  border: none;
-  background: transparent;
-  color: var(--text-muted);
-  cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 0.375rem;
-  line-height: 1;
-  transition: color var(--transition-speed);
-}
-
-.pos-modal__close:hover { color: var(--text-main); }
-
-.pos-modal__body {
-  padding: 1.25rem 1.5rem;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.pos-modal__summary {
-  background: var(--bg-surface);
-  border-radius: 0.75rem;
-  padding: 1rem;
-}
-
-.pos-modal__summary-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.pos-modal__total {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--KOrange);
-}
-
-.pos-modal__section-title {
-  font-weight: 700;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-muted);
-}
-
-.pos-modal__warn {
-  font-size: 0.875rem;
-  color: #856404;
-  background: #fff3cd;
-  border: 1px solid #ffc107;
-  border-radius: 0.5rem;
-  padding: 0.75rem 1rem;
-}
-
-/* Payment Row */
-.pos-pago-row {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.pos-pago-row__select { flex: 2; min-width: 120px; }
-.pos-pago-row__amount { flex: 1; min-width: 90px; }
-.pos-pago-row__ref { flex: 2; min-width: 100px; font-size: 0.8rem; }
-
-.pos-pago-row__remove {
-  border: none;
-  background: transparent;
-  color: #dc3545;
-  cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 0.375rem;
-  line-height: 1;
-  flex-shrink: 0;
-}
-
-.pos-add-pago-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  border: 1.5px dashed var(--border-color);
-  background: transparent;
-  color: var(--text-muted);
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all var(--transition-speed);
-  width: fit-content;
-}
-
-.pos-add-pago-btn:hover { border-color: var(--KOrange); color: var(--KOrange); }
-
-/* Balance */
-.pos-modal__balance {
-  background: var(--bg-surface);
-  border-radius: 0.75rem;
-  padding: 0.875rem 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.pos-modal__balance-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.9rem;
-  color: var(--text-muted);
-}
-
-.pos-modal__balance-row--change {
-  font-size: 1rem;
-  font-weight: 700;
-  padding-top: 0.4rem;
-  margin-top: 0.25rem;
-  border-top: 1px solid var(--border-color);
-}
-
-.pos-ok { color: #198754; font-weight: 700; }
-.pos-warn { color: #dc3545; font-weight: 700; }
-
-/* Modal Footer */
-.pos-modal__footer {
-  padding: 1.25rem 1.5rem;
-  border-top: 1px solid var(--border-color);
-  display: flex;
-  gap: 0.75rem;
-  justify-content: flex-end;
-}
-
-.pos-btn-cancel {
-  padding: 0.75rem 1.5rem;
-  border: 1px solid var(--border-color);
-  border-radius: 0.6rem;
-  background: transparent;
-  color: var(--text-muted);
-  cursor: pointer;
-  font-weight: 600;
-  transition: all var(--transition-speed);
-}
-
-.pos-btn-cancel:hover { border-color: var(--text-main); color: var(--text-main); }
-
-.pos-btn-confirm {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.75rem;
-  border: none;
-  border-radius: 0.6rem;
-  background: linear-gradient(135deg, var(--KOrange), var(--KOrange-hover));
-  color: #fff;
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all var(--transition-speed);
-}
-
-.pos-btn-confirm:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(253, 126, 20, 0.4);
-}
-
-.pos-btn-confirm:disabled { opacity: 0.5; cursor: not-allowed; }
-
-/* Modal animation */
-.modal-fade-enter-active, .modal-fade-leave-active { transition: all 0.3s ease; }
-.modal-fade-enter-from, .modal-fade-leave-to { opacity: 0; }
-.modal-fade-enter-from .pos-modal, .modal-fade-leave-to .pos-modal {
-  transform: scale(0.95) translateY(20px);
-}
-
-/* ========== RESPONSIVE ========== */
-@media (max-width: 992px) {
-  .pos-layout {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr auto;
-  }
-  .pos-catalog { max-height: none; padding: 1rem; }
-  .pos-ticket { border-left: none; border-top: 1px solid var(--border-color); max-height: 55vh; }
-  .pos-catalog__grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
-}
-
-@media (max-width: 576px) {
-  .pos-catalog__grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
-  .pos-catalog { padding: 0.75rem; }
-  .pos-catalog__title { font-size: 1.25rem; }
-  .pos-pago-row { flex-direction: column; }
-  .pos-pago-row__select, .pos-pago-row__amount, .pos-pago-row__ref { min-width: 100%; }
-}
+/* Tokens */
+.text-primary-custom   { color: var(--text-primary); }
+.text-secondary-custom { color: var(--text-muted); }
+.bg-surface-custom     { background: var(--bg-surface); }
+.border-color          { border-color: var(--border-color) !important; }
+.text-korange          { color: var(--KOrange) !important; }
+.btn-korange           { background: var(--KOrange); border: none; color: white; }
+.btn-korange:hover     { background: #e06d0e; color: white; }
+.btn-korange:disabled  { background: #f0a060; cursor: not-allowed; }
+.bg-korange-subtle     { background: rgba(253,126,20,.12) !important; }
 </style>

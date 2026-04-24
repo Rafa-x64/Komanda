@@ -1,4 +1,5 @@
 import { Conexion } from "../../config/database";
+import { OperacionesPedidos } from "../pos/domain/pedido.entity";
 import { Pedido } from "../pos/domain/pedido.entity";
 
 export class KitchenService {
@@ -51,5 +52,17 @@ export class KitchenService {
         await orderRepo.save(order);
         
         return order;
+    }
+
+    static async notifyPForPayment(pedidoId: number, restaurantId: number): Promise<void> {
+        const pedido = await Conexion.getRepository(OperacionesPedidos).findOne({
+            where: { id: pedidoId, restaurante_id: restaurantId },
+        });
+        
+        if (!pedido) return;
+        
+        // Update estado to 'pagado' to trigger POS notification
+        pedido.estado = 'pagado';
+        await Conexion.getRepository(OperacionesPedidos).save(pedido);
     }
 }
