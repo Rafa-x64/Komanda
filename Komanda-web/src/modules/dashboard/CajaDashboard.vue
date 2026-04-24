@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import html2pdf from 'html2pdf.js'
 import { RefreshCw, CreditCard, CheckCircle2, Clock, TrendingUp, Printer } from 'lucide-vue-next'
 import Sidebar from '../../components/Sidebar.vue'
 import { useAuth } from '../../core/composables/useAuth'
@@ -21,6 +22,7 @@ let pollInterval: ReturnType<typeof setInterval> | null = null
 const showReportModal = ref(false)
 const isPrinting = ref(false)
 const reportData = ref<any>(null)
+const ticketRef = ref<HTMLElement | null>(null)
 
 // ─── KPIs derivados de datos reales ───────────────────────
 const listasParaCobrar = computed(() => orders.value.filter(o => o.estado === 'listo').length)
@@ -83,7 +85,17 @@ const handlePrintReport = async () => {
 }
 
 const printReport = () => {
-  window.print()
+  if (!ticketRef.value) return
+  
+  const opt = {
+    margin:       10,
+    filename:     `cierre_caja_${new Date().toISOString().split('T')[0]}.pdf`,
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'mm', format: [80, 200], orientation: 'portrait' } // Formato de ticket térmico aprox 80mm
+  }
+  
+  html2pdf().set(opt).from(ticketRef.value).save()
 }
 
 onMounted(() => { load(); pollInterval = setInterval(load, 20000) })
@@ -261,7 +273,7 @@ onUnmounted(() => { if (pollInterval) clearInterval(pollInterval) })
           </div>
 
           <!-- TICKET IMPRIMIBLE -->
-          <div class="modal-body p-4 ticket-area" style="font-family: monospace; color: #000; background: #fff;">
+          <div class="modal-body p-4 ticket-area" ref="ticketRef" style="font-family: monospace; color: #000; background: #fff;">
             <div class="text-center mb-3">
               <h3 class="fw-bold mb-1" style="color: #000;">KOMANDA</h3>
               <p class="mb-0" style="font-size: 0.9rem;">REPORTE DE CIERRE DE CAJA</p>
@@ -351,18 +363,6 @@ onUnmounted(() => { if (pollInterval) clearInterval(pollInterval) })
 .bg-korange-subtle { background: rgba(253,126,20,.12) !important; }
 
 .table-success-subtle { background: rgba(25,135,84,.04); }
-
-/* Estilos de impresión (solo se imprime el ticket) */
-@media print {
-  body * { visibility: hidden; }
-  .modal { position: absolute; left: 0; top: 0; margin: 0; padding: 0; min-height: 550px; }
-  .modal-dialog { margin: 0; width: 100%; max-width: 100%; }
-  .modal-content { border: none; box-shadow: none; width: 100%; max-width: 300px; margin: 0 auto; }
-  .ticket-area, .ticket-area * {
-    visibility: visible;
-  }
-  .d-print-none { display: none !important; }
-}
 
 /* Toast */
 .caja-toast {
