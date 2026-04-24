@@ -6,6 +6,21 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ---
 
+## [v0.2.0] - 2026-04-23
+
+### 🚀 Novedades (Features)
+- **Cajero y POS Unificados:** Rediseño arquitectónico del POS pasando de un "catálogo de productos" a una **Cola de Cobros centralizada (Cashier-centric Queue)**.
+- **Reporte de Cierre de Caja:** Nuevo endpoint `/api/v1/pos/cash-report` que calcula pedidos cobrados y desglose por método de pago del día/turno.
+- **Impresión Térmica de Tickets:** Integración de `html2pdf.js` en el dashboard del cajero para generar e imprimir de forma aislada los reportes de cierre de caja en formato ticket de 80mm.
+- **Control de Acceso (RBAC):** El rol `cajero` ahora tiene un menú lateral restringido, ocultando opciones administrativas, inventario y gastos.
+
+### 🐛 Correcciones (Fixes)
+- **Base de Datos TypeORM:** Eliminadas las columnas `total_pagado` y `pagado_completo` de la entidad `Pedido` para evitar errores de sincronización e inserción con el esquema PostgreSQL nativo.
+- **Sockets de Cocina:** Corregida ruta de importación errónea en `useSocketCocina.ts` y eliminadas llamadas a funciones de pago inexistentes que rompían el renderizado del frontend.
+- **Responsive Web Design:** Solapamiento del botón hamburguesa corregido en la vista del Cajero en móviles mediante `padding-top`.
+
+---
+
 ## [v0.1.0] - 2026-03-31
 
 ### 📋 Revisión y Consolidación de Módulos (Correcciones Académicas)

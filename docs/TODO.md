@@ -60,13 +60,13 @@
   - [ ] Pantalla de selección de platos por categoría.
   - [ ] Indicador visual de disponibilidad de stock (plato activo/inactivo).
   - [ ] Carrito de venta (agregar, quitar platos, ver subtotales).
-- [ ] **Cobro y Transacciones**
-  - [ ] Selección de método(s) de pago: Efectivo, Pago Móvil, Tarjeta, Divisa.
-  - [ ] Ingreso de monto por cada método seleccionado (soporte pago mixto).
-  - [ ] Generación de ticket/comprobante de venta con detalle de métodos.
-- [ ] **Cierre de Caja**
-  - [ ] Vista de cierre diario (arqueo) con resumen por método de pago.
-  - [ ] Registro de fondo inicial de caja.
+- [x] **Cobro y Transacciones**
+  - [x] Selección de método(s) de pago: Efectivo, Pago Móvil, Tarjeta, Divisa.
+  - [x] Ingreso de monto por cada método seleccionado (soporte pago mixto).
+  - [x] Generación de ticket/comprobante de venta con detalle de métodos.
+- [x] **Cierre de Caja**
+  - [x] Vista de cierre diario (arqueo) con resumen por método de pago.
+  - [x] Registro de fondo inicial de caja.
 - [ ] **KDS — Cocina (opcional)**
   - [ ] Tablero de comandas en tiempo real (Kanban o lista).
   - [ ] Botón de cambio de estado: Pendiente → Preparando → Listo.
@@ -152,9 +152,9 @@
 
 ### 💳 Fase 4: Módulo Punto de Venta (`modules/pos`)
 
-- [ ] `POST /sales`: Transacción atómica: valida stock → crea venta → registra métodos de pago → dispara back-flushing → genera asientos contables.
-- [ ] Soporte de múltiples `payment_transactions` por `sale_id`.
-- [ ] `POST /cash-closures`: Cierre de caja con resumen por método de pago.
+- [x] `POST /sales`: Transacción atómica: valida stock → crea venta → registra métodos de pago → dispara back-flushing → genera asientos contables.
+- [x] Soporte de múltiples `payment_transactions` por `sale_id`.
+- [x] `GET /cash-report` y reporte en frontend.
 - [ ] Endpoint de envío de comanda a cocina (KDS).
 
 ---
