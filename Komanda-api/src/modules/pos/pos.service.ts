@@ -134,6 +134,45 @@ export class POSService {
         return result[0];
     }
 
+    // Reporte de cierre de caja (turno actual o del día)
+    static async getCashReport(restaurantId: number) {
+        // Pedidos del día pagados
+        const resultPedidos = await Conexion.query(
+            `SELECT COUNT(id) AS pedidos_cobrados, COALESCE(SUM(total), 0) AS monto_total
+             FROM operaciones.pedidos
+             WHERE restaurante_id = $1
+               AND estado_cuenta = 'pagada'
+               AND DATE(created_at) = CURRENT_DATE`,
+            [restaurantId]
+        );
+
+        // Desglose por método de pago del día
+        const resultPagos = await Conexion.query(
+            `SELECT 
+                tp.metodo,
+                COUNT(tp.id) AS num_transacciones,
+                COALESCE(SUM(tp.monto), 0) AS total
+             FROM operaciones.transacciones_pago tp
+             JOIN operaciones.pedidos p ON p.id = tp.pedido_id
+             WHERE tp.restaurante_id = $1
+               AND DATE(tp.created_at) = CURRENT_DATE
+             GROUP BY tp.metodo
+             ORDER BY total DESC`,
+            [restaurantId]
+        );
+
+        return {
+            fecha: new Date().toISOString(),
+            pedidos_cobrados: parseInt(resultPedidos[0]?.pedidos_cobrados || '0', 10),
+            monto_total: parseFloat(resultPedidos[0]?.monto_total || '0'),
+            desglose_pagos: resultPagos.map((row: any) => ({
+                metodo: row.metodo,
+                num_transacciones: parseInt(row.num_transacciones, 10),
+                total: parseFloat(row.total)
+            }))
+        };
+    }
+
     static async createSale(data: CreateSaleInput, restaurantId: number, userId: number) {
         const qr = Conexion.createQueryRunner();
         await qr.connect();

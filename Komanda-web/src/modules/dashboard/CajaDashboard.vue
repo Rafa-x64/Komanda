@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { RefreshCw, CreditCard, CheckCircle2, Clock, TrendingUp } from 'lucide-vue-next'
+import { RefreshCw, CreditCard, CheckCircle2, Clock, TrendingUp, Printer } from 'lucide-vue-next'
 import Sidebar from '../../components/Sidebar.vue'
 import { useAuth } from '../../core/composables/useAuth'
-import { fetchReadyOrders, type ReadyOrder } from '../pos/pos.api'
+import { fetchReadyOrders, fetchCashReport, type ReadyOrder } from '../pos/pos.api'
 
 const auth   = useAuth()
 const router = useRouter()
@@ -16,6 +16,11 @@ const orders  = ref<ReadyOrder[]>([])
 const loading = ref(true)
 const toast   = ref<{ type: 'success' | 'error'; message: string } | null>(null)
 let pollInterval: ReturnType<typeof setInterval> | null = null
+
+// Modal y reporte
+const showReportModal = ref(false)
+const isPrinting = ref(false)
+const reportData = ref<any>(null)
 
 // ─── KPIs derivados de datos reales ───────────────────────
 const listasParaCobrar = computed(() => orders.value.filter(o => o.estado === 'listo').length)
@@ -65,6 +70,22 @@ const load = async () => {
   }
 }
 
+const handlePrintReport = async () => {
+  isPrinting.value = true
+  try {
+    reportData.value = await fetchCashReport()
+    showReportModal.value = true
+  } catch (e: any) {
+    showToast('error', 'No se pudo generar el reporte: ' + (e.message || ''))
+  } finally {
+    isPrinting.value = false
+  }
+}
+
+const printReport = () => {
+  window.print()
+}
+
 onMounted(() => { load(); pollInterval = setInterval(load, 20000) })
 onUnmounted(() => { if (pollInterval) clearInterval(pollInterval) })
 </script>
@@ -91,9 +112,13 @@ onUnmounted(() => { if (pollInterval) clearInterval(pollInterval) })
           </h2>
           <p class="text-secondary-custom small mb-0">Responsable: <strong>{{ userName }}</strong></p>
         </div>
-        <div class="d-flex gap-2 flex-wrap">
+        <div class="d-flex gap-2 flex-wrap d-print-none">
           <button @click="load" class="btn btn-outline-secondary btn-sm rounded-pill d-flex align-items-center gap-2">
             <RefreshCw :size="15" /> Actualizar
+          </button>
+          <button @click="handlePrintReport" :disabled="isPrinting" class="btn btn-outline-primary btn-sm rounded-pill d-flex align-items-center gap-2">
+            <span v-if="isPrinting" class="spinner-border spinner-border-sm"></span>
+            <Printer v-else :size="15" /> Cierre de Caja
           </button>
           <button @click="router.push('/pos')" class="btn btn-korange rounded-pill px-4 fw-bold d-flex align-items-center gap-2">
             <CreditCard :size="16" /> Ir a Cobrar
@@ -219,6 +244,77 @@ onUnmounted(() => { if (pollInterval) clearInterval(pollInterval) })
 
     </div>
   </main>
+
+  <!-- MODAL DE REPORTE -->
+  <template v-if="showReportModal && reportData">
+    <div class="modal-backdrop fade show d-print-none" style="z-index:1050;"></div>
+    <div class="modal fade show d-block" tabindex="-1" style="z-index:1055;" @click.self="showReportModal = false">
+      <div class="modal-dialog modal-dialog-centered print-modal" style="max-width: 400px;">
+        <div class="modal-content bg-surface-custom border-color shadow-lg print-content">
+          
+          <!-- Modal Header (no se imprime) -->
+          <div class="modal-header border-bottom border-color d-print-none">
+            <h5 class="modal-title fw-bold text-primary-custom mb-0 d-flex align-items-center">
+              <Printer :size="20" class="me-2 text-korange" /> Reporte de Turno
+            </h5>
+            <button class="btn-close" @click="showReportModal = false"></button>
+          </div>
+
+          <!-- TICKET IMPRIMIBLE -->
+          <div class="modal-body p-4 ticket-area" style="font-family: monospace; color: #000; background: #fff;">
+            <div class="text-center mb-3">
+              <h3 class="fw-bold mb-1" style="color: #000;">KOMANDA</h3>
+              <p class="mb-0" style="font-size: 0.9rem;">REPORTE DE CIERRE DE CAJA</p>
+              <div class="mt-2" style="font-size: 0.8rem; border-bottom: 1px dashed #000; padding-bottom: 5px;">
+                Fecha: {{ new Date(reportData.fecha).toLocaleDateString('es-VE') }}<br>
+                Hora: {{ new Date(reportData.fecha).toLocaleTimeString('es-VE') }}<br>
+                Cajero: {{ userName }}
+              </div>
+            </div>
+
+            <div class="my-3">
+              <h6 class="fw-bold" style="color: #000;">RESUMEN DE VENTAS</h6>
+              <div class="d-flex justify-content-between">
+                <span>Pedidos Cobrados:</span>
+                <span>{{ reportData.pedidos_cobrados }}</span>
+              </div>
+              <div class="d-flex justify-content-between fw-bold mt-1">
+                <span>TOTAL RECAUDADO:</span>
+                <span>Bs. {{ reportData.monto_total.toFixed(2) }}</span>
+              </div>
+            </div>
+
+            <div style="border-top: 1px dashed #000; padding-top: 10px;">
+              <h6 class="fw-bold" style="color: #000;">DESGLOSE POR MÉTODO</h6>
+              <div v-if="!reportData.desglose_pagos || reportData.desglose_pagos.length === 0" class="text-center small py-2">
+                Sin transacciones
+              </div>
+              <div v-else>
+                <div v-for="(pago, idx) in reportData.desglose_pagos" :key="idx" class="d-flex justify-content-between mb-1" style="font-size: 0.9rem;">
+                  <span style="text-transform: capitalize;">{{ pago.metodo.replace('_', ' ') }} (x{{ pago.num_transacciones }})</span>
+                  <span>Bs. {{ pago.total.toFixed(2) }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="text-center mt-4 pt-3" style="border-top: 1px dashed #000; font-size: 0.8rem;">
+              <p class="mb-0">*** FIN DEL REPORTE ***</p>
+            </div>
+          </div>
+
+          <!-- Footer (no se imprime) -->
+          <div class="modal-footer border-top border-color justify-content-between d-print-none">
+            <button @click="showReportModal = false" class="btn btn-outline-secondary rounded-pill px-4">Cerrar</button>
+            <button @click="printReport" class="btn btn-korange rounded-pill px-4 fw-bold d-flex align-items-center gap-2">
+              <Printer :size="18" /> Imprimir
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </template>
+
 </div>
 </template>
 
@@ -250,9 +346,23 @@ onUnmounted(() => { if (pollInterval) clearInterval(pollInterval) })
 .text-korange { color: var(--KOrange) !important; }
 .btn-korange { background: var(--KOrange); border: none; color: white; }
 .btn-korange:hover { background: #e06d0e; color: white; }
+.btn-outline-primary { border-color: var(--KOrange); color: var(--KOrange); }
+.btn-outline-primary:hover { background: var(--KOrange); color: white; }
 .bg-korange-subtle { background: rgba(253,126,20,.12) !important; }
 
 .table-success-subtle { background: rgba(25,135,84,.04); }
+
+/* Estilos de impresión (solo se imprime el ticket) */
+@media print {
+  body * { visibility: hidden; }
+  .modal { position: absolute; left: 0; top: 0; margin: 0; padding: 0; min-height: 550px; }
+  .modal-dialog { margin: 0; width: 100%; max-width: 100%; }
+  .modal-content { border: none; box-shadow: none; width: 100%; max-width: 300px; margin: 0 auto; }
+  .ticket-area, .ticket-area * {
+    visibility: visible;
+  }
+  .d-print-none { display: none !important; }
+}
 
 /* Toast */
 .caja-toast {

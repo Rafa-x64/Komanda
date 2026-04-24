@@ -70,3 +70,9 @@ export async function fetchSales() {
   const res = await fetchWithAuth('/pos/sales')
   return res.data
 }
+
+/** Reporte de caja actual */
+export async function fetchCashReport() {
+  const res = await fetchWithAuth('/pos/cash-report')
+  return res.data
+}

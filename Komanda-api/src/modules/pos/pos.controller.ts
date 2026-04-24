@@ -139,4 +139,14 @@ export class POSController {
             }
         }
     }
+
+    static async getCashReport(req: Request, res: Response): Promise<void> {
+        try {
+            const { restaurantId } = (req as any).user;
+            const report = await POSService.getCashReport(restaurantId);
+            res.status(200).json({ status: "success", data: report });
+        } catch (error: any) {
+            res.status(500).json({ status: "error", message: error.message });
+        }
+    }
 }

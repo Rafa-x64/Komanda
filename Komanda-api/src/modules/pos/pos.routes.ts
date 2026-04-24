@@ -25,4 +25,5 @@ posRouter.patch("/orders/:id/status", POSController.updateOrderStatus);
 // Cola del cajero y checkout
 posRouter.get("/ready-orders", POSController.getReadyOrders);
 posRouter.post("/orders/:id/checkout", POSController.checkoutOrder);
+posRouter.get("/cash-report", POSController.getCashReport);
 
