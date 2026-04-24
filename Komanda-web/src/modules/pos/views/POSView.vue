@@ -123,7 +123,7 @@ const submitCheckout = async () => {
       {{ toast.message }}
     </div>
 
-    <div class="container-fluid py-4 px-3 px-md-4">
+    <div class="container-fluid py-4 px-3 px-md-4 pos-content">
 
       <!-- Header -->
       <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
@@ -165,7 +165,7 @@ const submitCheckout = async () => {
 
       <!-- Cola de pedidos -->
       <div v-else class="row g-3">
-        <div v-for="order in orders" :key="order.id" class="col-12 col-md-6 col-xl-4">
+        <div v-for="order in orders" :key="order.id" class="col-12 col-sm-6 col-xl-4">
           <div
             class="order-card rounded-4 h-100 border border-color bg-surface-custom"
             :class="{ 'order-card--ready': order.estado === 'listo' }"
@@ -228,7 +228,7 @@ const submitCheckout = async () => {
   <template v-if="selected">
     <div class="modal-backdrop fade show" style="z-index:1050;"></div>
     <div class="modal fade show d-block" tabindex="-1" style="z-index:1055;" @click.self="closeModal">
-      <div class="modal-dialog modal-dialog-centered" style="max-width:520px;">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable px-2 px-md-0" style="max-width:520px;">
         <div class="modal-content bg-surface-custom border-color shadow-lg">
 
           <!-- Header -->
@@ -348,6 +348,11 @@ const submitCheckout = async () => {
 }
 @media (min-width: 768px) {
   .main-content { margin-left: 260px; width: calc(100% - 260px); }
+}
+/* En móvil, el botón hamburguesa tiene 48px + 1rem, dejamos espacio */
+@media (max-width: 767.98px) {
+  .pos-content { padding-top: 4.5rem !important; }
+  .modal-dialog { margin: 0.5rem; max-width: 100% !important; }
 }
 
 /* KPIs */
