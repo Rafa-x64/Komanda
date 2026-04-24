@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { POSService } from "./pos.service";
-import { CreateSaleSchema, CashClosureSchema } from "./pos.validator";
+import { CreateSaleSchema, CashClosureSchema, CheckoutOrderSchema } from "./pos.validator";
 import { ZodError } from "zod";
 
 export class POSController {
@@ -51,6 +51,34 @@ export class POSController {
             res.status(200).json({ status: "success", data: sales });
         } catch (error: any) {
             res.status(500).json({ status: "error", message: error.message });
+        }
+    }
+
+    // Pedidos listos para pagar (Cola del cajero)
+    static async getReadyOrders(req: Request, res: Response): Promise<void> {
+        try {
+            const { restaurantId } = (req as any).user;
+            const orders = await POSService.getReadyOrders(restaurantId);
+            res.status(200).json({ status: "success", data: orders });
+        } catch (error: any) {
+            res.status(500).json({ status: "error", message: error.message });
+        }
+    }
+
+    static async checkoutOrder(req: Request, res: Response): Promise<void> {
+        try {
+            const payload = CheckoutOrderSchema.parse(req.body);
+            const { restaurantId, userId } = (req as any).user;
+            const pedidoId = Number(req.params.id);
+            const result = await POSService.checkoutOrder(pedidoId, payload, restaurantId, userId);
+            res.status(200).json({ status: "success", data: result });
+        } catch (error: any) {
+            if (error?.constructor?.name === 'ZodError') {
+                res.status(400).json({ status: "fail", message: error.message });
+            } else {
+                res.status(error.message.includes('no encontrado') || error.message.includes('ya fue pagado') ? 422 : 500)
+                   .json({ status: "error", message: error.message });
+            }
         }
     }
 

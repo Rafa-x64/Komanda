@@ -1,4 +1,5 @@
 import { ref, onMounted, onUnmounted } from 'vue';
+import { useSocketPago } from '../composables/useSocketPago'
 
 export function useSocketCocina(onNuevoPedido: () => void, onActualizarEstado: (payload: any) => void) {
   const ws = ref<WebSocket | null>(null);
@@ -22,6 +23,9 @@ export function useSocketCocina(onNuevoPedido: () => void, onActualizarEstado: (
           onNuevoPedido();
         } else if (data.action === 'actualizar_estado') {
           onActualizarEstado(data.payload);
+        } else if (data.action === 'pedido_listo_pago') {
+          // Notify POS that order is ready for payment
+          onPagoPendiente(data.payload.pedidoId, data.payload.restaurante_id);
         }
       } catch (e) {
         console.error('Error parseando mensaje WS:', e);
@@ -40,8 +44,46 @@ export function useSocketCocina(onNuevoPedido: () => void, onActualizarEstado: (
     };
   };
 
+
+  // POS socket for payment notifications
+  const posWs = ref<WebSocket | null>(null);
+  const isPozConnected = ref(false);
+
+  const connectPOS = () => {
+    // Connect to POS endpoint
+    posWs.value = new WebSocket(wsUrl + '?type=pos');
+    
+    posWs.value.onopen = () => {
+      console.log('[POS Socket] Conectado para pagos');
+      isPozConnected.value = true;
+    };
+
+    posWs.value.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.action === 'pago_completado') {
+          // Handle payment completion
+          console.log('[POS Socket] Pago completado para pedido:', data.payload.pedidoId);
+          onPagoCompletado(data.payload.pedidoId);
+        }
+      } catch (e) {
+        console.error('Error parseando mensaje POS:', e);
+      }
+    };
+
+    posWs.value.onclose = () => {
+      isPozConnected.value = false;
+    };
+
+    posWs.value.onerror = (error) => {
+      console.error('[POS Socket] Error:', error);
+      posWs.value?.close();
+    };
+  };
+
   onMounted(() => {
     connect();
+    connectPOS();
   });
 
   onUnmounted(() => {
@@ -52,5 +94,5 @@ export function useSocketCocina(onNuevoPedido: () => void, onActualizarEstado: (
     }
   });
 
-  return { isConnected };
+  return { isConnected, isPozConnected };
 }

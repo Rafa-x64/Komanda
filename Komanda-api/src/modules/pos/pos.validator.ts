@@ -27,3 +27,15 @@ export const CashClosureSchema = z.object({
 });
 
 export type CashClosureInput = z.infer<typeof CashClosureSchema>;
+
+export const CheckoutOrderSchema = z.object({
+    pagos: z.array(
+        z.object({
+            metodo_pago_id: z.number().int().positive(),
+            monto: z.number().positive(),
+            referencia: z.string().nullable().optional()
+        })
+    ).min(1, "Debe ingresar al menos un método de pago"),
+});
+
+export type CheckoutOrderInput = z.infer<typeof CheckoutOrderSchema>;
