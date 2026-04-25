@@ -55,12 +55,8 @@ Conexion.initialize()
     setupKitchenSocket(wss);
 
     const shutdown = () => {
-      console.log('Shutting down server...');
-      wss.close();
-      server.close(() => {
-        console.log('HTTP server closed');
-        process.exit(0);
-      });
+      console.log('Forzando cierre del servidor para liberar el puerto...');
+      process.exit(0);
     };
 
     process.on('SIGINT', shutdown);
