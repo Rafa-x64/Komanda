@@ -71,20 +71,9 @@ export class TablesService {
             throw new Error('Mesa no encontrada');
         }
 
-        // Podríamos hacer un delete físico o lógico. En este caso un remove físico.
-        // NOTA: Si la mesa tiene pedidos asociados, PostgreSQL fallará por Foreign Key si no es ON DELETE CASCADE.
-        // Pero en pos/domain/mesa.entity.ts, pedidos.mesa_id referencia a mesas.
-        // Si PostgreSQL arroja error de FK, el controlador atrapará el error.
-        try {
-            await repo.remove(table);
-        } catch (e: any) {
-            if (e.code === '23503') { // Foreign Key violation
-                // Soft delete: cambiar a inactiva
-                table.estado = 'inactiva';
-                await repo.save(table);
-                throw new Error('La mesa tiene pedidos históricos y no puede ser eliminada, se ha marcado como inactiva.');
-            }
-            throw e;
-        }
+        // Desvincular pedidos históricos para poder eliminar la mesa
+        await Conexion.query('UPDATE operaciones.pedidos SET mesa_id = NULL WHERE mesa_id = $1', [tableId]);
+        
+        await repo.remove(table);
     }
 }

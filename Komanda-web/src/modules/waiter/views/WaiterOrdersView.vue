@@ -16,7 +16,6 @@ const router = useRouter()
 const tables = ref<any[]>([])
 const products = ref<any[]>([])
 const categories = ref<any[]>([])
-const activeOrders = ref<ActiveOrder[]>([])
 const loading = ref(true)
 const sending = ref(false)
 
@@ -69,7 +68,7 @@ const clearCart = () => { cart.value = []; clienteName.value = ''; selectedTable
 // ─── Send order ───────────────────────────────────────────
 const sendOrder = async () => {
   if (!cart.value.length) { showToast('error', 'El carrito está vacío'); return }
-  if (selectedTable.value === undefined) { showToast('error', 'Selecciona una mesa o elige Para Llevar'); return }
+  if (selectedTable.value === undefined) { showToast('error', 'Selecciona una mesa'); return }
 
   sending.value = true
   try {
@@ -84,7 +83,6 @@ const sendOrder = async () => {
     })
     showToast('success', '¡Pedido enviado a cocina! 🍳')
     clearCart()
-    await fetchActiveOrders()
   } catch (e: any) {
     showToast('error', e.message || 'Error enviando pedido')
   } finally {
@@ -92,26 +90,7 @@ const sendOrder = async () => {
   }
 }
 
-// ─── Status update ────────────────────────────────────────
-const updatingStatus = ref<number | null>(null)
-
-const updateStatus = async (orderId: number, estado: string) => {
-  updatingStatus.value = orderId
-  try {
-    await waiterApi.updateOrderStatus(orderId, estado)
-    showToast('success', 'Estado actualizado correctamente')
-    await fetchActiveOrders()
-  } catch (e: any) {
-    showToast('error', e.message)
-  } finally {
-    updatingStatus.value = null
-  }
-}
-
 // ─── Fetch ────────────────────────────────────────────────
-const fetchActiveOrders = async () => {
-  activeOrders.value = await waiterApi.getActiveOrders()
-}
 
 onMounted(async () => {
   try {
@@ -123,7 +102,6 @@ onMounted(async () => {
     tables.value = t
     products.value = p.map((x: any) => ({ ...x, precio_venta: parseFloat(x.precio_venta) }))
     categories.value = c
-    await fetchActiveOrders()
   } catch (e) {
     showToast('error', 'Error cargando datos del servidor')
   } finally {
@@ -132,18 +110,6 @@ onMounted(async () => {
 })
 
 // ─── Helpers ──────────────────────────────────────────────
-const statusBadge = (estado: string) => ({
-  class: { pendiente: 'bg-warning text-dark', preparando: 'bg-primary text-white', listo: 'bg-success text-white', anulado: 'bg-secondary text-white' }[estado] || 'bg-secondary text-white',
-  label: { pendiente: 'Pendiente', preparando: 'En Cocina', listo: '¡Listo!', anulado: 'Anulado' }[estado] || estado
-})
-
-const nextStates = (estado: string): { label: string; value: string; variant: string }[] => {
-  if (estado === 'pendiente') return [{ label: 'Cancelar', value: 'anulado', variant: 'btn-outline-danger btn-sm' }]
-  if (estado === 'listo') return [{ label: '✓ Notificar Cajero', value: 'listo', variant: 'btn-success btn-sm disabled' }]
-  return []
-}
-
-const formatTime = (d: string) => new Date(d).toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' })
 </script>
 
 <template>
@@ -164,59 +130,6 @@ const formatTime = (d: string) => new Date(d).toLocaleTimeString('es-VE', { hour
     </div>
 
     <div v-else class="orders-layout">
-      <!-- ═══ IZQUIERDA: Lista pedidos activos ═══ -->
-      <aside class="orders-sidebar bg-surface-custom border-end border-color">
-        <div class="p-3 border-bottom border-color d-flex justify-content-between align-items-center">
-          <h5 class="fw-bold text-primary-custom mb-0 d-flex align-items-center gap-2">
-            <ClipboardList :size="20" class="text-korange" /> Pedidos Activos
-          </h5>
-          <button @click="fetchActiveOrders" class="btn btn-sm btn-outline-secondary rounded-circle p-1">
-            <RefreshCw :size="14" />
-          </button>
-        </div>
-
-        <div class="overflow-auto" style="flex:1">
-          <div v-if="!activeOrders.length" class="text-center py-5 text-secondary-custom small px-3">
-            <UtensilsCrossed :size="32" class="mb-2 opacity-40" />
-            <p>No hay pedidos activos</p>
-          </div>
-
-          <div v-for="order in activeOrders" :key="order.id" class="order-item border-bottom border-color p-3">
-            <div class="d-flex justify-content-between align-items-start mb-1">
-              <span class="fw-bold text-primary-custom small">#{{ order.codigo }}</span>
-              <span class="badge rounded-pill small fw-semibold" :class="statusBadge(order.estado).class">
-                {{ statusBadge(order.estado).label }}
-              </span>
-            </div>
-            <div class="text-secondary-custom small mb-1">
-              🕒 {{ formatTime(order.fecha_hora) }}
-              · {{ order.mesa_numero ? `Mesa ${order.mesa_numero}` : '🛵 Llevar' }}
-            </div>
-            <ul class="list-unstyled small mb-2 text-secondary-custom">
-              <li v-for="item in (order.items || []).slice(0, 3)" :key="item.id">
-                {{ item.cantidad }}× {{ item.nombre }}
-              </li>
-              <li v-if="(order.items || []).length > 3" class="text-korange">+{{ (order.items || []).length - 3 }} más</li>
-            </ul>
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="fw-bold text-primary-custom small">Bs. {{ Number(order.total).toFixed(2) }}</span>
-              <div class="d-flex gap-1">
-                <button
-                  v-for="action in nextStates(order.estado)"
-                  :key="action.value"
-                  @click="!action.variant.includes('disabled') && updateStatus(order.id, action.value)"
-                  :class="['btn rounded-pill', action.variant]"
-                  :disabled="updatingStatus === order.id"
-                >
-                  <span v-if="updatingStatus === order.id" class="spinner-border spinner-border-sm"></span>
-                  <span v-else>{{ action.label }}</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </aside>
-
       <!-- ═══ CENTRO: Catálogo de platos ═══ -->
       <section class="orders-catalog">
         <div class="p-3 border-bottom border-color">
@@ -263,7 +176,6 @@ const formatTime = (d: string) => new Date(d).toLocaleTimeString('es-VE', { hour
           <label class="form-label small fw-bold text-secondary-custom">Mesa</label>
           <select v-model="selectedTable" class="form-select form-select-sm bg-transparent border-color text-primary-custom mb-2">
             <option :value="undefined" disabled>— Selecciona mesa —</option>
-            <option :value="null">🛵 Para llevar</option>
             <option v-for="t in tables" :key="t.id" :value="t.id">
               {{ t.nombre || `Mesa ${t.numero}` }}
             </option>
@@ -337,7 +249,7 @@ const formatTime = (d: string) => new Date(d).toLocaleTimeString('es-VE', { hour
 
 .orders-layout {
   display: grid;
-  grid-template-columns: 280px 1fr 300px;
+  grid-template-columns: 1fr 300px;
   height: 100vh;
   overflow: hidden;
 }
@@ -350,10 +262,6 @@ const formatTime = (d: string) => new Date(d).toLocaleTimeString('es-VE', { hour
   }
   .orders-ticket { min-height: 350px; }
 }
-
-/* Sidebar pedidos activos */
-.orders-sidebar { display: flex; flex-direction: column; overflow: hidden; }
-.order-item:hover { background: rgba(253,126,20,0.03); }
 
 /* Catálogo */
 .orders-catalog { overflow-y: auto; }
