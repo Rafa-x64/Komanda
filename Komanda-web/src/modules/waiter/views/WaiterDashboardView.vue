@@ -41,26 +41,22 @@ onUnmounted(() => {
   if (pollInterval) clearInterval(pollInterval)
 })
 
-// KPI calculados de los datos reales
-const pendingOrders = computed(() => orders.value.filter(o => o.estado === 'pendiente').length)
-const inPreparationOrders = computed(() => orders.value.filter(o => o.estado === 'preparando').length)
+// KPI calculados (solo 2 estados como se solicitó)
+const visibleOrders = computed(() => orders.value.filter(o => o.estado !== 'listo'))
+const pendingOrders = computed(() => orders.value.filter(o => o.estado !== 'listo').length)
 const readyOrders = computed(() => orders.value.filter(o => o.estado === 'listo').length)
 
 const kpis = computed(() => [
   { label: 'Pendientes', value: pendingOrders.value, icon: Clock, color: 'text-warning', bg: 'bg-warning-subtle' },
-  { label: 'En Preparación', value: inPreparationOrders.value, icon: UtensilsCrossed, color: 'text-primary', bg: 'bg-primary-subtle' },
-  { label: 'Listos para Cobrar', value: readyOrders.value, icon: CheckCircle2, color: 'text-success', bg: 'bg-success-subtle' },
+  { label: 'Listos', value: readyOrders.value, icon: CheckCircle2, color: 'text-success', bg: 'bg-success-subtle' },
   { label: 'Total Activos', value: orders.value.length, icon: ClipboardList, color: 'text-korange', bg: 'bg-korange-subtle' },
 ])
 
 const statusBadge = (estado: string) => {
-  switch(estado) {
-    case 'pendiente': return { class: 'badge-pending', label: 'Pendiente' }
-    case 'preparando': return { class: 'badge-prep', label: 'En Cocina' }
-    case 'listo': return { class: 'badge-ready', label: '¡Listo!' }
-    case 'anulado': return { class: 'badge-cancelled', label: 'Anulado' }
-    default: return { class: 'badge-pending', label: estado }
-  }
+  if (estado === 'listo') return { class: 'badge-ready', label: '¡Listo!' }
+  if (estado === 'anulado') return { class: 'badge-cancelled', label: 'Anulado' }
+  // Cualquier otro estado (pendiente, preparando) se considera Pendiente para el mesero
+  return { class: 'badge-pending', label: 'Pendiente' }
 }
 
 const formatTime = (dateStr: string) => {
@@ -73,6 +69,23 @@ const viewOrderDetails = (order: ActiveOrder) => {
 }
 const closeOrderDetails = () => {
   selectedOrder.value = null
+}
+
+const updating = ref(false)
+const cancelOrder = async (order: ActiveOrder) => {
+  if (!confirm(`¿Estás seguro de que deseas anular el pedido #${order.codigo}?`)) return
+  
+  updating.value = true
+  try {
+    await waiterApi.updateOrderStatus(order.id, 'anulado')
+    showToast('success', 'Pedido anulado correctamente')
+    closeOrderDetails()
+    await fetchOrders()
+  } catch (e: any) {
+    showToast('error', e.message || 'Error anulando pedido')
+  } finally {
+    updating.value = false
+  }
 }
 </script>
 
@@ -106,9 +119,8 @@ const closeOrderDetails = () => {
         </div>
       </div>
 
-      <!-- KPI Cards -->
       <div class="row g-3 mb-4">
-        <div class="col-6 col-xl-3" v-for="kpi in kpis" :key="kpi.label">
+        <div class="col-12 col-md-4" v-for="kpi in kpis" :key="kpi.label">
           <div class="kpi-card rounded-4 p-3 h-100">
             <div class="d-flex align-items-center gap-3">
               <div :class="['kpi-icon rounded-3 d-flex align-items-center justify-content-center', kpi.bg]">
@@ -130,7 +142,7 @@ const closeOrderDetails = () => {
       </div>
 
       <!-- Empty state -->
-      <div v-else-if="!orders.length" class="text-center py-5 rounded-4 bg-surface-custom border border-color">
+      <div v-else-if="!visibleOrders.length" class="text-center py-5 rounded-4 bg-surface-custom border border-color">
         <Table2 :size="48" class="text-secondary-custom mb-3 opacity-40" />
         <h5 class="fw-bold text-primary-custom">No hay pedidos activos</h5>
         <p class="text-secondary-custom small mb-4">¡Perfecto! Cuando registres un nuevo pedido aparecerá aquí.</p>
@@ -141,9 +153,9 @@ const closeOrderDetails = () => {
 
       <!-- Pedidos activos -->
       <div v-else>
-        <h6 class="fw-bold text-secondary-custom text-uppercase small mb-3">Pedidos Activos ({{ orders.length }})</h6>
+        <h6 class="fw-bold text-secondary-custom text-uppercase small mb-3">Pedidos Activos ({{ visibleOrders.length }})</h6>
         <div class="row g-3">
-          <div class="col-12 col-md-6 col-xl-4" v-for="order in orders" :key="order.id">
+          <div class="col-12 col-md-6 col-xl-4" v-for="order in visibleOrders" :key="order.id">
             <div class="order-card rounded-4 p-3 h-100 border border-color bg-surface-custom">
               <!-- Header del card -->
               <div class="d-flex justify-content-between align-items-start mb-2">
@@ -230,7 +242,18 @@ const closeOrderDetails = () => {
         </div>
         <div class="modal-footer border-top border-color d-flex justify-content-between align-items-center bg-body-tertiary">
           <span class="fw-bold fs-5 text-primary-custom">Total: <span class="text-korange">Bs. {{ Number(selectedOrder.total).toFixed(2) }}</span></span>
-          <button type="button" class="btn btn-outline-secondary rounded-pill" @click="closeOrderDetails">Cerrar</button>
+          <div class="d-flex gap-2">
+            <button 
+              type="button" 
+              class="btn btn-outline-danger rounded-pill px-3" 
+              @click="cancelOrder(selectedOrder)"
+              :disabled="updating"
+            >
+              <span v-if="updating" class="spinner-border spinner-border-sm me-1"></span>
+              Anular
+            </button>
+            <button type="button" class="btn btn-outline-secondary rounded-pill px-3" @click="closeOrderDetails">Cerrar</button>
+          </div>
         </div>
       </div>
     </div>

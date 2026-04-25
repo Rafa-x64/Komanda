@@ -97,6 +97,7 @@
                      <option value="gastos">Gastos Operativos (Opex)</option>
                      <option value="contabilidad">Libro Diario Contable</option>
                      <option value="mermas">Control de Mermas</option>
+                     <option value="predicciones">Pronóstico de Ventas (Predicciones)</option>
                    </select>
                  </div>
                  <div class="col-12 col-sm-6 col-xl-3">
@@ -164,6 +165,12 @@
                       <th>Motivo Desperdicio</th>
                       <th>Costo Perdido</th>
                     </tr>
+                    <tr v-else-if="currentDisplayedReportType === 'predicciones'">
+                      <th>Fecha Proyectada</th>
+                      <th>Concepto de Pronóstico</th>
+                      <th>Monto Estimado</th>
+                      <th>Método de Análisis</th>
+                    </tr>
                   </thead>
                   <tbody>
                     <tr v-for="(row, i) in visibleReportData" :key="i">
@@ -221,6 +228,7 @@ import KpiCard from '../components/KpiCard.vue'
 import SalesChart from '../components/SalesChart.vue'
 import ProfitabilityTable from '../components/ProfitabilityTable.vue'
 import { useAuth } from '../../../core/composables/useAuth'
+import { fetchWithAuth } from '../../../core/api/auth.api'
 
 // @ts-ignore
 import html2pdf from 'html2pdf.js'
@@ -257,64 +265,9 @@ const reportTitle = computed(() => {
   if (currentDisplayedReportType.value === 'gastos') return 'Gastos Operativos y Administrativos'
   if (currentDisplayedReportType.value === 'contabilidad') return 'Libro Diario - Asientos Contables'
   if (currentDisplayedReportType.value === 'mermas') return 'Control de Mermas y Desperdicios'
+  if (currentDisplayedReportType.value === 'predicciones') return 'Predicciones y Pronósticos de Ventas (7 días)'
   return '-'
 })
-
-// === Datos Simulados basados en el Tipo de Reporte ===
-// Generaremos más de 30 registros falsos para validar el paginado y los filtros de fecha.
-const _generateMockData = (count: number, generator: (i: number, randomDateStr: string) => any) => {
-  const data = []
-  // Rango de fechas: Desde hace un mes hasta hoy
-  const todayTime = new Date().getTime()
-  const baseTime = todayTime - (30 * 24 * 60 * 60 * 1000) 
-  
-  for(let i=0; i<count; i++) {
-    const randomTime = baseTime + Math.random() * (todayTime - baseTime)
-    const randomDateObj = new Date(randomTime)
-    const randomDateStr = randomDateObj.toISOString().split('T')[0]
-    data.push(generator(i, randomDateStr))
-  }
-  // Sort DESC por fecha (los más nuevos primero)
-  return data.sort((a,b) => new Date(b.fecha || b.fecha_entrada || '1970-01-01').getTime() - new Date(a.fecha || a.fecha_entrada || '1970-01-01').getTime())
-}
-
-const mockDataVentas = _generateMockData(85, (i, d) => ({
-  fecha: d, ticket: `#T-42${i.toString().padStart(3, '0')}`,
-  base: `$${(20 + i % 15).toFixed(2)}`,
-  tax: `$${((20 + i % 15)*0.16).toFixed(2)}`,
-  total: `$${((20 + i % 15)*1.16).toFixed(2)}`
-}))
-
-// Inventario no tiene fecha temporal como tal que se filtre por periodo
-const mockDataInventario = Array.from({ length: 45 }, (_, i) => ({
-  insumo: `Insumo Especial ${i+1}`,
-  actual: `${(Math.random()*10).toFixed(1)} kg`,
-  reorden: '5.0 kg',
-  estado: i % 4 === 0 ? 'Crítico' : 'Óptimo'
-}))
-
-// Empleados tampoco se suele filtrar por fecha (dependiendo de la métrica)
-const mockDataEmpleados = Array.from({ length: 35 }, (_, i) => ({
-  empleado: `Empleado ${i+1}`, cargo: i % 3 === 0 ? 'Cajero' : (i % 2 === 0 ? 'Cocinero' : 'Mesero'),
-  ventas: i % 2 !== 0 ? `$${(Math.random()*2000).toFixed(2)}` : 'N/A', horas: `${30 + (i%20)} hs`
-}))
-
-const mockDataGastos = _generateMockData(60, (i, d) => ({
-  fecha: d, categoria: i % 2 === 0 ? 'Servicios Básicos' : (i % 3 === 0 ? 'Suministros' : 'Mantenimiento'),
-  descripcion: `Gasto Operativo ${i+1}`, monto: `$${(50 + i*2).toFixed(2)}`, responsable: 'Admin'
-}))
-
-const mockDataContabilidad = _generateMockData(120, (i, d) => ({
-  fecha: d, asiento: `AS-10${i.toString().padStart(3, '0')}`,
-  cuenta_debe: i%2===0?'Banco (Caja Principal)':'Costo de Ventas',
-  cuenta_haber: i%2===0?'Ventas de Servicios':'Inventario de Materia Prima',
-  monto: `$${(100 + i%50).toFixed(2)}`
-}))
-
-const mockDataMermas = _generateMockData(40, (i, d) => ({
-  fecha: d, insumo: `Insumo ${i%10 + 1}`, cantidad: `${(0.5 + i%3).toFixed(1)} kg`,
-  motivo: `Desperdicio Tipo ${i%4}`, costo_perdido: `$${(5 + i).toFixed(2)}`
-}))
 
 // === Paginación y Filtrado ===
 const visibleLimit = ref(30)
@@ -327,44 +280,25 @@ const loadMore = () => {
   visibleLimit.value += 30
 }
 
-const generateReportData = () => {
+const generateReportData = async () => {
   currentDisplayedReportType.value = selectedReportType.value
-  
-  let baseData: any[] = []
-  if (selectedReportType.value === 'ventas') {
-    baseData = mockDataVentas
-  } else if (selectedReportType.value === 'inventario') {
-    baseData = mockDataInventario
-  } else if (selectedReportType.value === 'empleados') {
-    baseData = mockDataEmpleados
-  } else if (selectedReportType.value === 'gastos') {
-    baseData = mockDataGastos
-  } else if (selectedReportType.value === 'contabilidad') {
-    baseData = mockDataContabilidad
-  } else if (selectedReportType.value === 'mermas') {
-    baseData = mockDataMermas
-  }
-
-  // Filtrado de FECHAS reales (desde un input type="date")
-  if (dateFrom.value && dateTo.value) {
-    const fromTime = new Date(dateFrom.value + 'T00:00:00').getTime()
-    const toTime = new Date(dateTo.value + 'T23:59:59').getTime()
-
-    baseData = baseData.filter((item: any) => {
-      // Las columnas de fecha pueden tener distinto nombre según el reporte
-      const dateField = item.fecha || item.fecha_entrada || null
-      // Si el item tiene un campo de fecha, aplicamos el filtro
-      if (dateField) {
-        const itemTime = new Date(dateField + 'T00:00:00').getTime()
-        return itemTime >= fromTime && itemTime <= toTime
-      }
-      // Reportes sin fecha (Empleados, Inventario) simplemente retornan todos sus items
-      return true
-    })
-  }
-
+  reportData.value = [] // clear while loading
   visibleLimit.value = 30 // reset visible en cada filtro
-  reportData.value = baseData
+
+  try {
+    let url = `/reports?type=${selectedReportType.value}`
+    if (dateFrom.value && dateTo.value) {
+      url += `&dateFrom=${dateFrom.value}&dateTo=${dateTo.value}`
+    }
+    const res = await fetchWithAuth(url)
+    if (res.status === 'success') {
+      reportData.value = res.data || []
+    } else {
+      console.error("Error fetching report data:", res.message)
+    }
+  } catch (error) {
+    console.error("Error connecting to reports API:", error)
+  }
 }
 
 // === Exportación PDF ====
