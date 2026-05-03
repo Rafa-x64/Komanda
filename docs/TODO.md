@@ -67,9 +67,9 @@
 - [x] **Cierre de Caja**
   - [x] Vista de cierre diario (arqueo) con resumen por método de pago.
   - [x] Registro de fondo inicial de caja.
-- [ ] **KDS — Cocina (opcional)**
-  - [ ] Tablero de comandas en tiempo real (Kanban o lista).
-  - [ ] Botón de cambio de estado: Pendiente → Preparando → Listo.
+- [x] **KDS — Cocina (opcional)**
+  - [x] Tablero de comandas en tiempo real (Kanban o lista).
+  - [x] Botón de cambio de estado: Pendiente → Preparando → Listo.
 
 ---
 
@@ -81,10 +81,10 @@
 - [ ] **Estado de Resultados**
   - [ ] Vista con Ingresos, Costo de Ventas, Gastos Operativos y Utilidad Neta.
   - [ ] Filtro por período.
-- [ ] **Reporte de Rentabilidad**
-  - [ ] Tabla comparativa: plato, costo producción, precio venta, margen real.
-- [ ] **Libro Diario**
-  - [ ] Vista de asientos contables generados automáticamente.
+- [x] **Reporte de Rentabilidad**
+  - [x] Tabla comparativa: plato, costo producción, precio venta, margen real.
+- [x] **Libro Diario**
+  - [x] Vista de asientos contables generados automáticamente.
 
 ---
 
@@ -98,9 +98,9 @@
 
 ### 📊 Fase 7: Dashboard Gerencial
 
-- [ ] **KPIs del día:** Ventas totales, costo de ventas, utilidad bruta, alertas de stock crítico.
-- [ ] **Gráfica de ventas** por período.
-- [ ] **Resumen de gastos** del mes.
+- [x] **KPIs del día:** Ventas totales, costo de ventas, utilidad bruta, alertas de stock crítico.
+- [x] **Gráfica de ventas** por período.
+- [x] **Resumen de gastos** del mes.
 
 ---
 
@@ -155,7 +155,7 @@
 - [x] `POST /sales`: Transacción atómica: valida stock → crea venta → registra métodos de pago → dispara back-flushing → genera asientos contables.
 - [x] Soporte de múltiples `payment_transactions` por `sale_id`.
 - [x] `GET /cash-report` y reporte en frontend.
-- [ ] Endpoint de envío de comanda a cocina (KDS).
+- [x] Endpoint de envío de comanda a cocina (KDS).
 
 ---
 
@@ -164,8 +164,8 @@
 - [ ] Generación automática de asientos contables en cada evento de negocio.
 - [ ] `GET /balance-sheet?from=&to=`: Balance General.
 - [ ] `GET /income-statement?from=&to=`: Estado de Resultados.
-- [ ] `GET /profitability-report`: Rentabilidad por plato.
-- [ ] `GET /journal?from=&to=`: Libro Diario (listado de asientos).
+- [x] `GET /profitability-report`: Rentabilidad por plato.
+- [x] `GET /journal?from=&to=`: Libro Diario (listado de asientos).
 
 ---
 

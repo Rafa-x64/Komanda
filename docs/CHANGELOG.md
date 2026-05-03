@@ -6,6 +6,20 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ---
 
+## [v0.3.0] - 2026-05-03
+
+### 🚀 Novedades (Features)
+- **Métricas Reales en Dashboard:** Sustituida la data de prueba en el panel de administración por KPIs reales sincronizados con la BD y soporte temporal.
+- **Reportes Analíticos y Predictivos:** Implementación completa del módulo de reportes con soporte exportable y pronóstico de ventas a 7 días.
+- **Sincronización POS/Cocina (KDS):** Flujo de tiempo real robustecido entre cajero, cocina y mesero; estado de órdenes sincronizado por WebSockets.
+- **Optimización de Entorno Legacy:** Creación de scripts automatizados para asegurar el rendimiento sobre hardware Dell Inspiron 1525 (CachyOS + Wayland).
+
+### 🐛 Correcciones (Fixes)
+- **Conflictos de Puertos:** Corregido el error EADDRINUSE en el puerto 3000 con asignación dinámica o resolución automática de procesos zombies.
+- **Integridad de Base de Datos:** Corrección y aplicación rigurosa de esquema SQLite / PostgreSQL para asegurar la integración perfecta entre el backend y frontend.
+
+---
+
 ## [v0.2.0] - 2026-04-23
 
 ### 🚀 Novedades (Features)
