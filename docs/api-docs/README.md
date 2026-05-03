@@ -22,6 +22,8 @@ Cada modulo tiene su propia documentacion detallada con endpoints, request/respo
 | 4 | Inventory | [inventory.md](./inventory.md) | 2 | Stock de insumos y registro de compras |
 | 5 | Kitchen (KDS) | [kitchen.md](./kitchen.md) | 2 + WS | Pantalla de cocina y notificaciones en tiempo real |
 | 6 | Employees | [employees.md](./employees.md) | 6 | Gestion de personal, roles y permisos |
+| 7 | Dashboard | [dashboard.md](./dashboard.md) | 4 | KPIs, gráficas y resúmenes de operaciones |
+| 8 | Reports | [reports.md](./reports.md) | 2 | Reportes contables, ventas y predicciones |
 
 ---
 
