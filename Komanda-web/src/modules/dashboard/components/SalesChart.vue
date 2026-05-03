@@ -67,14 +67,20 @@ const PAD_R = 10
 const PAD_T = 16
 const PAD_B = 10
 
-// Mock data: ventas y costos de los últimos 7 días
-const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Hoy']
-const salesData = [1200, 980, 1450, 1100, 1680, 2100, 1420]
-const costData  = [740,  600,  870,  680, 1020, 1250,  860]
+const props = defineProps<{
+  data: { date: string, revenue: number, cost: number }[]
+}>()
 
-const maxVal = computed(() => Math.max(...salesData) * 1.15)
+const days = computed(() => props.data.length ? props.data.map(d => d.date) : ['-', '-', '-', '-', '-', '-', '-'])
+const salesData = computed(() => props.data.length ? props.data.map(d => d.revenue) : [0,0,0,0,0,0,0])
+const costData  = computed(() => props.data.length ? props.data.map(d => d.cost) : [0,0,0,0,0,0,0])
 
-const xPos = (i: number) => PAD_L + (i / (salesData.length - 1)) * (W - PAD_L - PAD_R)
+const maxVal = computed(() => {
+  const max = Math.max(...salesData.value)
+  return max === 0 ? 100 : max * 1.15
+})
+
+const xPos = (i: number) => PAD_L + (i / (Math.max(salesData.value.length - 1, 1))) * (W - PAD_L - PAD_R)
 const yPos = (v: number) => PAD_T + (1 - v / maxVal.value) * (H - PAD_T - PAD_B)
 
 const linePath = (data: number[]) =>

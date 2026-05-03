@@ -25,4 +25,15 @@ export class ReportsController {
             res.status(500).json({ status: "error", message: error.message });
         }
     }
+
+    static async getOverview(req: Request, res: Response): Promise<void> {
+        try {
+            const restaurantId = (req as any).user.restaurantId;
+            const data = await ReportsService.getDashboardOverview(restaurantId);
+            res.status(200).json({ status: "success", data });
+        } catch (error: any) {
+            console.error("ReportsController.getOverview error:", error);
+            res.status(500).json({ status: "error", message: error.message });
+        }
+    }
 }

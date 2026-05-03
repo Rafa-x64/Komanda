@@ -53,8 +53,10 @@
             </td>
             <td>
               <div class="margin-bar-wrapper">
-                <div class="margin-bar" :class="item.marginPct >= 0 ? 'margin-bar--profit' : 'margin-bar--loss'"
-                  :style="{ width: Math.min(Math.abs(item.marginPct), 100) + '%' }">
+                <div class="margin-bar-track">
+                  <div class="margin-bar" :class="item.marginPct >= 0 ? 'margin-bar--profit' : 'margin-bar--loss'"
+                    :style="{ width: Math.min(Math.abs(item.marginPct), 100) + '%' }">
+                  </div>
                 </div>
                 <span class="margin-pct-label">{{ item.marginPct.toFixed(1) }}%</span>
               </div>
@@ -93,22 +95,12 @@ const tabs: { key: 'top' | 'bottom', label: string }[] = [
 
 const activeTab = ref<'top' | 'bottom'>('top')
 
-// Datos mock simulando el JOIN de sale_details + ingredients (Costo Promedio Ponderado)
-const allItems: DishProfit[] = [
-  { name: 'Lomito a la Parrilla', emoji: '🥩', price: 28.00, cost: 9.80, units: 87, margin: 18.20, marginPct: 65.0, totalGain: 1583.40 },
-  { name: 'Pasta Carbonara',      emoji: '🍝', price: 18.50, cost: 5.20, units: 112, margin: 13.30, marginPct: 71.9, totalGain: 1489.60 },
-  { name: 'Ceviche Clásico',      emoji: '🐟', price: 22.00, cost: 8.40, units: 64,  margin: 13.60, marginPct: 61.8, totalGain: 870.40 },
-  { name: 'Ensalada César',       emoji: '🥗', price: 14.00, cost: 4.10, units: 93,  margin: 9.90,  marginPct: 70.7, totalGain: 920.70 },
-  { name: 'Tacos al Pastor',      emoji: '🌮', price: 16.00, cost: 5.80, units: 120, margin: 10.20, marginPct: 63.8, totalGain: 1224.00 },
-  { name: 'Piña Colada',          emoji: '🍹', price: 9.00,  cost: 8.90, units: 45,  margin: 0.10,  marginPct: 1.1,  totalGain: 4.50 },
-  { name: 'Agua fresca 500ml',    emoji: '🥤', price: 3.50,  cost: 3.80, units: 210, margin: -0.30, marginPct: -8.6, totalGain: -63.00 },
-  { name: 'Pan de Ajo',           emoji: '🧄', price: 5.00,  cost: 5.50, units: 88,  margin: -0.50, marginPct: -10.0, totalGain: -44.00 },
-  { name: 'Café Especial',        emoji: '☕', price: 4.00,  cost: 5.20, units: 67,  margin: -1.20, marginPct: -30.0, totalGain: -80.40 },
-  { name: 'Sopa del Día',         emoji: '🍲', price: 8.00,  cost: 11.00, units: 39, margin: -3.00, marginPct: -37.5, totalGain: -117.00 },
-]
+const props = defineProps<{
+  data: DishProfit[]
+}>()
 
-const topItems    = computed(() => [...allItems].sort((a, b) => b.totalGain - a.totalGain).slice(0, 5))
-const bottomItems = computed(() => [...allItems].sort((a, b) => a.totalGain - b.totalGain).slice(0, 5))
+const topItems    = computed(() => [...props.data].sort((a, b) => b.totalGain - a.totalGain).slice(0, 5))
+const bottomItems = computed(() => [...props.data].sort((a, b) => a.totalGain - b.totalGain).slice(0, 5))
 const displayedItems = computed(() => activeTab.value === 'top' ? topItems.value : bottomItems.value)
 
 const rankClass = (idx: number, tab: string) => {
@@ -172,14 +164,21 @@ const rankClass = (idx: number, tab: string) => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  min-width: 100px;
+  min-width: 120px;
+}
+
+.margin-bar-track {
+  flex: 1;
+  height: 6px;
+  background-color: var(--border-color);
+  border-radius: 3px;
+  overflow: hidden;
 }
 
 .margin-bar {
-  height: 6px;
+  height: 100%;
   border-radius: 3px;
   transition: width 0.4s ease;
-  flex-shrink: 0;
 }
 
 .margin-bar--profit { background: #20c997; }

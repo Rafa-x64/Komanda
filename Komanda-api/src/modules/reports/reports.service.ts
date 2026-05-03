@@ -31,12 +31,12 @@ export class ReportsService {
                 query = `
                     SELECT 
                         nombre as insumo, 
-                        stock_actual || ' ' || (SELECT abreviatura FROM core.unidad_medida WHERE id = unidad_medida_id LIMIT 1) as actual,
-                        stock_minimo || ' ' || (SELECT abreviatura FROM core.unidad_medida WHERE id = unidad_medida_id LIMIT 1) as reorden,
-                        CASE WHEN stock_actual <= stock_minimo THEN 'Crítico' ELSE 'Óptimo' END as estado 
+                        cantidad_disponible || ' ' || (SELECT abreviatura FROM core.unidad_medida WHERE id = unidad_id LIMIT 1) as actual,
+                        cantidad_minima || ' ' || (SELECT abreviatura FROM core.unidad_medida WHERE id = unidad_id LIMIT 1) as reorden,
+                        CASE WHEN cantidad_disponible <= cantidad_minima THEN 'Crítico' ELSE 'Óptimo' END as estado 
                     FROM inventario.ingredientes 
                     WHERE restaurante_id = $1
-                    ORDER BY stock_actual ASC
+                    ORDER BY cantidad_disponible ASC
                 `;
                 break;
 
@@ -48,7 +48,7 @@ export class ReportsService {
                         '$' || ROUND(COALESCE(SUM(p.total), 0), 2) as ventas, 
                         COUNT(p.id) || ' turnos/órdenes' as horas 
                     FROM core.usuarios u 
-                    JOIN core.roles r ON u.role_id = r.id 
+                    JOIN core.roles r ON u.rol_id = r.id 
                     LEFT JOIN operaciones.pedidos p ON p.mesero_id = u.id AND p.restaurante_id = $1
                 `;
                 if (dateFrom && dateTo) {
@@ -107,9 +107,9 @@ export class ReportsService {
                     SELECT 
                         TO_CHAR(m.created_at, 'YYYY-MM-DD HH24:MI:SS') as fecha, 
                         i.nombre as insumo, 
-                        m.cantidad || ' ' || (SELECT abreviatura FROM core.unidad_medida WHERE id = i.unidad_medida_id LIMIT 1) as cantidad, 
+                        m.cantidad || ' ' || (SELECT abreviatura FROM core.unidad_medida WHERE id = i.unidad_id LIMIT 1) as cantidad, 
                         m.razon as motivo, 
-                        '$' || ROUND((m.cantidad * i.costo_unitario), 2) as costo_perdido 
+                        '$' || ROUND((m.cantidad * i.costo_promedio), 2) as costo_perdido 
                     FROM inventario.mermas m 
                     JOIN inventario.ingredientes i ON m.ingrediente_id = i.id 
                     WHERE m.restaurante_id = $1
@@ -150,5 +150,81 @@ export class ReportsService {
 
         const results = await Conexion.query(query, params);
         return results;
+    }
+
+    static async getDashboardOverview(restaurantId: number) {
+        // KPIs (This week vs Last week would be ideal, but let's just do "This Week" totals)
+        const [kpis] = await Conexion.query(
+            `SELECT 
+                COALESCE(SUM(CASE WHEN tipo = 'venta' THEN debe ELSE 0 END), 0) as ingreso_bruto,
+                COALESCE(SUM(CASE WHEN tipo IN ('costo_venta', 'gasto') THEN debe ELSE 0 END), 0) as costo_operativo
+             FROM contabilidad.libro_diario
+             WHERE restaurante_id = $1 AND fecha >= CURRENT_DATE - INTERVAL '7 days'`,
+            [restaurantId]
+        );
+        
+        const [tickets] = await Conexion.query(
+            `SELECT COUNT(id) as total_tickets
+             FROM operaciones.pedidos
+             WHERE restaurante_id = $1 AND fecha_hora >= CURRENT_DATE - INTERVAL '7 days'`,
+            [restaurantId]
+        );
+
+        // Profitability (Sales vs Cost)
+        const rentabilidad = await Conexion.query(
+            `SELECT 
+                r.nombre as name,
+                '🍽️' as emoji,
+                CAST(r.precio_venta AS NUMERIC) as price,
+                CAST(r.costo_produccion AS NUMERIC) as cost,
+                CAST(COALESCE(SUM(pd.cantidad), 0) AS INTEGER) as units
+             FROM menu.recetas r
+             LEFT JOIN operaciones.pedido_detalle pd ON pd.receta_id = r.id
+             LEFT JOIN operaciones.pedidos p ON p.id = pd.pedido_id AND p.fecha_hora >= CURRENT_DATE - INTERVAL '30 days'
+             WHERE r.restaurante_id = $1
+             GROUP BY r.id, r.nombre, r.precio_venta, r.costo_produccion
+             ORDER BY units DESC`,
+            [restaurantId]
+        );
+
+        // Chart Data (Last 7 days)
+        const chartData = await Conexion.query(
+            `SELECT 
+                TO_CHAR(fecha, 'DD/MM') as date,
+                COALESCE(SUM(CASE WHEN tipo = 'venta' THEN debe ELSE 0 END), 0) as revenue,
+                COALESCE(SUM(CASE WHEN tipo IN ('costo_venta', 'gasto') THEN debe ELSE 0 END), 0) as cost
+             FROM contabilidad.libro_diario
+             WHERE restaurante_id = $1 AND fecha >= CURRENT_DATE - INTERVAL '6 days'
+             GROUP BY fecha
+             ORDER BY fecha ASC`,
+            [restaurantId]
+        );
+
+        return {
+            kpis: {
+                ingreso_bruto: parseFloat(kpis.ingreso_bruto),
+                costo_operativo: parseFloat(kpis.costo_operativo),
+                tickets_semana: parseInt(tickets.total_tickets)
+            },
+            rentabilidad: rentabilidad.map((r: any) => {
+                const margin = r.price - r.cost;
+                const marginPct = r.price > 0 ? (margin / r.price) * 100 : 0;
+                return {
+                    name: r.name,
+                    emoji: r.emoji,
+                    price: parseFloat(r.price),
+                    cost: parseFloat(r.cost),
+                    units: r.units,
+                    margin: margin,
+                    marginPct: marginPct,
+                    totalGain: margin * r.units
+                }
+            }),
+            chartData: chartData.map((c: any) => ({
+                date: c.date,
+                revenue: parseFloat(c.revenue),
+                cost: parseFloat(c.cost)
+            }))
+        };
     }
 }
