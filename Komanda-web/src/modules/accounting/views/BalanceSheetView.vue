@@ -103,6 +103,14 @@
               </tr>
               <CollapsibleAccountRow :accounts="liabilitiesData" :depth="0" />
               
+              <!-- Patrimonio -->
+              <tr class="bg-light-success mt-3">
+                <td colspan="2" class="py-3 px-4 fw-bold text-success d-flex align-items-center border-top">
+                  <i class="bi bi-briefcase-fill me-2 bg-white rounded-circle"></i>
+                  PATRIMONIO
+                </td>
+              </tr>
+              <CollapsibleAccountRow :accounts="equityData" :depth="0" />
             </tbody>
           </table>
         </div>
@@ -113,13 +121,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import Sidebar from '../../../components/Sidebar.vue'
 import CollapsibleAccountRow from '../components/CollapsibleAccountRow.vue'
 import { useAuth } from '../../../core/composables/useAuth'
+import { fetchBalanceSheet as fetchBalanceSheetApi, type Account } from '../accounting.api'
 
 const auth = useAuth()
-// @ts-ignore Si se queja de restaurantName
+// @ts-ignore
 const restaurantName = computed(() => (auth.user.value as any)?.restaurantName || 'Komanda Restaurant')
 const userName = computed(() => auth.user.value?.nombre || 'Contador')
 
@@ -127,42 +136,17 @@ const today = new Date().toISOString().split('T')[0]
 const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 const filterDateFrom = ref(thirtyDaysAgo)
 const filterDateTo = ref(today)
+const loading = ref(false)
 
-// --- MOCK DATA PARA LA VISTA --- //
-const assetsData = ref([
-  { id: '1.1', name: 'Caja Principal', balance: 1200 },
-  { id: '1.2', name: 'Bancos', balance: 8500, children: [
-    { id: '1.2.1', name: 'Cuenta Corriente', balance: 5000 },
-    { id: '1.2.2', name: 'Cuenta de Ahorros', balance: 3500 }
-  ]},
-  { id: '1.3', name: 'Inventario (Valorizado)', balance: 4800 },
-  { id: '2.1', name: 'Maquinaria y Equipo', balance: 25000 },
-  { id: '2.2', name: 'Mobiliario', balance: 10000 }
-])
+// --- DATA --- //
+const assetsData = ref<Account[]>([])
+const liabilitiesData = ref<Account[]>([])
+const equityData = ref<Account[]>([])
+const totals = ref({ assets: 0, liabilities: 0, equity: 0 })
 
-const liabilitiesData = ref([
-  { id: '3.1', name: 'Cuentas por Pagar (Proveedores)', balance: 3500 },
-  { id: '3.2', name: 'Impuestos por Pagar', balance: 1500 },
-  { id: '4.1', name: 'Préstamos Bancarios', balance: 12000 }
-])
-
-const equityData = ref([
-  {
-    id: '5', name: 'Capital Social', balance: 25000
-  },
-  {
-    id: '6', name: 'Utilidades Retenidas', balance: 7500
-  }
-])
-
-// El cálculo recursivo para obtener el total de cada categoría superior usando los nodos nivel 0
-const sumBalances = (nodes: any[]) => nodes.reduce((sum, node) => sum + node.balance, 0)
-
-const totalAssets = computed(() => sumBalances(assetsData.value))
-const totalLiabilities = computed(() => sumBalances(liabilitiesData.value))
-const totalEquity = computed(() => sumBalances(equityData.value))
-
-
+const totalAssets = computed(() => totals.value.assets)
+const totalLiabilities = computed(() => totals.value.liabilities)
+const totalEquity = computed(() => totals.value.equity)
 
 const formatCurrency = (val: number) => {
   return new Intl.NumberFormat('es-US', {
@@ -175,10 +159,24 @@ const printReport = () => {
   window.print()
 }
 
-const fetchBalanceSheet = () => {
-  // Lógica futura para llamar a /api/accounting/balance-sheet?startDate=X&endDate=Y
-  console.log('Fetching balance sheet from', filterDateFrom.value, 'to', filterDateTo.value)
+const fetchBalanceSheet = async () => {
+  loading.value = true
+  try {
+    const data = await fetchBalanceSheetApi(filterDateFrom.value, filterDateTo.value)
+    assetsData.value = data.assets
+    liabilitiesData.value = data.liabilities
+    equityData.value = data.equity
+    totals.value = data.totals
+  } catch (error) {
+    console.error('Error fetching balance sheet:', error)
+  } finally {
+    loading.value = false
+  }
 }
+
+onMounted(() => {
+  fetchBalanceSheet()
+})
 </script>
 
 <style scoped>

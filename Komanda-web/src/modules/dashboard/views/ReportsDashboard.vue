@@ -33,16 +33,16 @@
         <!-- Chart + Donut -->
         <section class="row g-3 mb-4">
           <div class="col-12 col-xl-8">
-            <SalesChart />
+            <SalesChart :data="overviewData?.chartData || []" />
           </div>
           <div class="col-12 col-xl-4">
             <div class="summary-panel h-100">
               <h6 class="summary-panel__title">Distribución de Margen</h6>
               <p class="summary-panel__sub">Ingresos del período seleccionado</p>
 
-              <div class="donut-chart mx-auto mb-4">
+              <div class="donut-chart mx-auto mb-4" :style="{ background: donutGradient }">
                 <div class="donut-inner">
-                  <span class="donut-value">34.2%</span>
+                  <span class="donut-value">{{ donutPct }}</span>
                   <span class="donut-label">Utilidad</span>
                 </div>
               </div>
@@ -67,7 +67,7 @@
 
         <!-- Profitability Table -->
         <section class="mb-4">
-          <ProfitabilityTable />
+          <ProfitabilityTable :data="overviewData?.rentabilidad || []" />
         </section>
 
         <!-- Detailed Data Table Seleccionada -->
@@ -204,13 +204,13 @@
         </section>
 
         <!-- Insight Banner -->
-        <section class="insight-banner mb-2">
+        <section class="insight-banner mb-2" v-if="worstDish">
           <i class="bi bi-lightbulb-fill text-warning me-2 fs-5"></i>
           <div>
             <strong>Insight Automatizado:</strong>
             <span class="ms-1 text-secondary-custom">
-              Durante este período el platillo <span class="text-korange fw-bold">Sopa del Día</span> refleja
-              una pérdida progresiva de <span class="text-danger fw-bold">-$117.00</span> atribuído al costo de sus insumos internos. 
+              Durante este período el platillo <span class="text-korange fw-bold">{{ worstDish.name }}</span> refleja
+              un margen crítico de <span class="text-danger fw-bold">${{ worstDish.totalGain.toFixed(2) }}</span> atribuído al costo de sus insumos internos. 
               Sugerencia Comercial: Alterar precio final o ajustar gramaje de la receta.
             </span>
           </div>
@@ -326,21 +326,64 @@ const downloadPDF = () => {
   })
 }
 
-// === Datos de Componentes Superiores (Mockeados para la gráfica rápida) ===
-const kpis = [
-  { label: 'Ingreso Bruto',    value: '$9,930.00', icon: 'bi-cash-stack',    variant: 'revenue' as const, trend: 12,  subtitle: 'Esta semana' },
-  { label: 'Costo Operativo', value: '$6,516.00', icon: 'bi-receipt-cutoff', variant: 'cost'    as const, trend: -3,  subtitle: 'Esta semana' },
-  { label: 'Utilidad Neta',   value: '$3,414.00', icon: 'bi-graph-up',       variant: 'profit'  as const, trend: 8,   subtitle: 'Margen: 34.4%' },
-  { label: 'Tickets / Día',   value: '47',        icon: 'bi-ticket-perforated', variant: 'tickets' as const, trend: 5, subtitle: 'Promedio semanal' },
-]
+// === Datos Dinámicos del Dashboard Overview ===
+const overviewData = ref<any>(null)
 
-const summaryItems = [
-  { label: 'Ingreso',         value: '$9,930', pct: 100, color: 'var(--KOrange)' },
-  { label: 'Costo Ingredientes', value: '$6,516', pct: 65.6, color: '#dc3545' },
-  { label: 'Utilidad',        value: '$3,414', pct: 34.4, color: '#20c997' },
-]
+const fetchOverview = async () => {
+  try {
+    const res = await fetchWithAuth('/reports/overview')
+    if (res.status === 'success') {
+      overviewData.value = res.data
+    }
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+const kpis = computed(() => {
+  if (!overviewData.value) return []
+  const o = overviewData.value.kpis
+  return [
+    { label: 'Ingreso Bruto',    value: `$${o.ingreso_bruto.toFixed(2)}`, icon: 'bi-cash-stack',    variant: 'revenue' as const, subtitle: 'Últimos 7 días' },
+    { label: 'Costo Operativo', value: `$${o.costo_operativo.toFixed(2)}`, icon: 'bi-receipt-cutoff', variant: 'cost'    as const, subtitle: 'Últimos 7 días' },
+    { label: 'Utilidad Neta',   value: `$${(o.ingreso_bruto - o.costo_operativo).toFixed(2)}`, icon: 'bi-graph-up',       variant: 'profit'  as const },
+    { label: 'Tickets',         value: `${o.tickets_semana}`,        icon: 'bi-ticket-perforated', variant: 'tickets' as const, subtitle: 'Últimos 7 días' },
+  ]
+})
+
+const summaryItems = computed(() => {
+  if (!overviewData.value) return []
+  const o = overviewData.value.kpis
+  const margin = o.ingreso_bruto - o.costo_operativo
+  return [
+    { label: 'Ingreso Bruto', value: `$${o.ingreso_bruto.toFixed(2)}`, pct: 100, color: 'var(--KOrange)' },
+    { label: 'Costo Operativo', value: `$${o.costo_operativo.toFixed(2)}`, pct: o.ingreso_bruto > 0 ? (o.costo_operativo / o.ingreso_bruto)*100 : 0, color: '#dc3545' },
+    { label: 'Utilidad Neta', value: `$${margin.toFixed(2)}`, pct: o.ingreso_bruto > 0 ? (margin / o.ingreso_bruto)*100 : 0, color: '#20c997' },
+  ]
+})
+
+const donutPct = computed(() => {
+  if (!overviewData.value) return '0%'
+  const o = overviewData.value.kpis
+  if (o.ingreso_bruto === 0) return '0%'
+  return ((o.ingreso_bruto - o.costo_operativo) / o.ingreso_bruto * 100).toFixed(1) + '%'
+})
+
+const donutGradient = computed(() => {
+  if (!overviewData.value) return 'conic-gradient(#ccc 0% 100%)'
+  const o = overviewData.value.kpis
+  if (o.ingreso_bruto === 0) return 'conic-gradient(#ccc 0% 100%)'
+  const marginPct = ((o.ingreso_bruto - o.costo_operativo) / o.ingreso_bruto * 100).toFixed(1)
+  return `conic-gradient(var(--KOrange) 0% ${marginPct}%, #dc3545 ${marginPct}% 100%)`
+})
+
+const worstDish = computed(() => {
+  if (!overviewData.value || !overviewData.value.rentabilidad?.length) return null
+  return [...overviewData.value.rentabilidad].sort((a: any, b: any) => a.totalGain - b.totalGain)[0]
+})
 
 onMounted(() => {
+  fetchOverview()
   generateReportData()
 })
 </script>
@@ -393,10 +436,6 @@ onMounted(() => {
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  background: conic-gradient(
-    var(--KOrange) 0% 34.4%,
-    #dc3545 34.4% 100%
-  );
   display: flex;
   align-items: center;
   justify-content: center;
