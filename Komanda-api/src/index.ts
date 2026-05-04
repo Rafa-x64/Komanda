@@ -15,6 +15,7 @@ import tablesRouter from "./modules/tables/tables.routes";
 import { reportsRouter } from "./modules/reports/reports.routes";
 import { dashboardRouter } from "./modules/dashboard/dashboard.route";
 import { accountingRouter } from "./modules/accounting/accounting.routes";
+import { warehouseRouter } from "./modules/warehouse/warehouse.route";
 import { setupKitchenSocket } from "./modules/kitchen/kitchen.socket";
 import { WebSocketServer } from "ws";
 
@@ -40,6 +41,7 @@ app.use("/api/v1/mesas", tablesRouter);
 app.use("/api/v1/reports", reportsRouter);
 app.use("/api/v1/dashboard", dashboardRouter);
 app.use("/api/v1/accounting", accountingRouter);
+app.use("/api/v1/warehouse", warehouseRouter);
 
 app.get('/', (_req, res) => {
   res.json({

@@ -213,7 +213,7 @@ const getBlankItem = () => ({
   ingrediente_nombre: '', // para cuando useText = true (nuevo ingrediente)
   useText: false,
   cantidad_compra: null as number | null,
-  unidad_compra_id: 10,
+  unidad_compra_id: 1,
   precio_unitario: null as number | null,
   factor_conversion: 1
 });
