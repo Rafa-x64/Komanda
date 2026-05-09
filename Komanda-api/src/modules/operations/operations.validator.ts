@@ -17,17 +17,20 @@ export const updateProveedorSchema = createProveedorSchema.partial().extend({
 
 export const createCompraSchema = z.object({
     fecha: z.string(), // YYYY-MM-DD
-    numero_factura_proveedor: z.string().max(50).optional().nullable(),
-    proveedor_id: z.number().int().positive().optional().nullable(),
-    descripcion: z.string().max(255).optional().nullable(),
+    numero_factura_proveedor: z.string().max(50).nullish(),
+    proveedor_id: z.number().int().positive().nullish(),
+    descripcion: z.string().max(255).nullish(),
     estado_pago: z.enum(["pagada", "pendiente", "abonada"]).default("pagada"),
     items: z.array(z.object({
-        ingrediente_id: z.number().int().positive().optional().nullable(),
-        ingrediente_nombre: z.string().max(100).optional().nullable(),
+        ingrediente_id: z.number().int().positive().nullish(),
+        ingrediente_nombre: z.string().max(100).nullish(),
+        unidad_id: z.number().int().positive().nullish(),   // unidad de medida del nuevo ing
         cantidad_compra: z.number().positive(),
-        unidad_compra_id: z.number().int().positive().default(1),
+        unidad_compra_id: z.number().int().positive().nullish(), // siempre opcional
         precio_unitario: z.number().nonnegative(),
         factor_conversion: z.number().positive().default(1),
+        cantidad_minima: z.number().min(0).nullish(),
+        merma_teorica_porcentaje: z.number().min(0).max(100).nullish(),
     })).min(1, "Debe incluir al menos un ítem en la compra"),
 });
 

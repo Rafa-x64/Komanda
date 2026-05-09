@@ -53,6 +53,12 @@ const router = createRouter({
             component: () => import('../modules/inventory/view/InventoryView.vue'),
             meta: { requiresAuth: false, roles: ['admin'] }
         },
+        {
+            path: '/almacen',
+            name: 'almacen',
+            component: () => import('../modules/warehouse/views/WarehouseView.vue'),
+            meta: { requiresAuth: true, roles: ['admin'] }
+        },
         /* ----- Auth ----- */
         {
             path: '/singup',

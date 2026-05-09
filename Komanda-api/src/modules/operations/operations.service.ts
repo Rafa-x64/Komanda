@@ -162,10 +162,17 @@ export class OperationsService {
                 if (!ingredienteId && item.ingrediente_nombre) {
                     const [newIng] = await qr.manager.query(
                         `INSERT INTO inventario.ingredientes 
-                         (nombre, cantidad_disponible, cantidad_minima, unidad_id, costo_promedio, restaurante_id)
-                         VALUES ($1, 0, 0, 1, $2, $3)
+                         (nombre, cantidad_disponible, cantidad_minima, unidad_id, costo_promedio, merma_teorica_porcentaje, restaurante_id)
+                         VALUES ($1, 0, $6, $2, $3, $4, $5)
                          RETURNING id`,
-                        [item.ingrediente_nombre, item.precio_unitario, restaurantId]
+                        [
+                            item.ingrediente_nombre,
+                            item.unidad_id ?? 4, // default: Unidades
+                            item.precio_unitario,
+                            item.merma_teorica_porcentaje ?? 0,
+                            restaurantId,
+                            item.cantidad_minima ?? 0
+                        ]
                     );
                     ingredienteId = newIng.id;
                 }

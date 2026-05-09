@@ -1,7 +1,7 @@
 import { Conexion } from "../../config/database";
 import { Ingrediente } from "./inventory.model";
 import { Merma } from "./domain/merma.entity";
-import { UpdateIngredientInput, CreateMermaInput } from "./inventory.validator";
+import { UpdateIngredientInput, CreateMermaInput, CreateIngredientInput } from "./inventory.validator";
 
 export class InventoryService {
   private repository = Conexion.getRepository(Ingrediente);
@@ -22,6 +22,16 @@ export class InventoryService {
        ORDER BY ingrediente.nombre ASC`,
       [restauranteId]
     );
+  }
+
+  // 1.5. Crear nuevo ingrediente
+  async createIngredient(data: CreateIngredientInput, restauranteId: number) {
+    const ingrediente = this.repository.create({
+      ...data,
+      restaurante_id: restauranteId,
+    });
+    await this.repository.save(ingrediente);
+    return ingrediente;
   }
 
   // 2. Actualizar ingrediente (ajustes básicos)
