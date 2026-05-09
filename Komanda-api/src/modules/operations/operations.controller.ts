@@ -84,7 +84,10 @@ export class OperationsController {
             const result = await OperationsService.createCompra(data, req.user!.restaurantId);
             res.status(201).json({ status: "success", data: result });
         } catch (error: any) {
-            res.status(400).json({ status: "error", message: error.errors || error.message });
+            const message = error.issues
+                ? JSON.stringify(error.issues)
+                : (error.errors || error.message);
+            res.status(400).json({ status: "error", message });
         }
     }
 

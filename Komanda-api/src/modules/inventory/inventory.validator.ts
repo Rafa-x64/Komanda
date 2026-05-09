@@ -6,6 +6,17 @@ export const updateIngredientSchema = z.object({
     merma_teorica_porcentaje: z.number().min(0).max(100, "El porcentaje no puede superar 100").optional(),
 });
 
+export const createIngredientSchema = z.object({
+    nombre: z.string().min(2, "Nombre requerido").max(100),
+    cantidad_minima: z.number().min(0, "La cantidad mínima no puede ser negativa").default(0),
+    cantidad_disponible: z.number().min(0, "La cantidad disponible no puede ser negativa").default(0),
+    unidad_id: z.number().int().positive().default(1),
+    costo_promedio: z.number().nonnegative().default(0),
+    merma_teorica_porcentaje: z.number().min(0).max(100).default(0),
+    unidades_por_paquete: z.number().positive().default(1),
+});
+
+
 export const createMermaSchema = z.object({
     ingrediente_id: z.number().int().positive("ID de ingrediente inválido"),
     cantidad: z.number().positive("La cantidad debe ser mayor a 0"),
@@ -16,4 +27,5 @@ export const createMermaSchema = z.object({
 });
 
 export type UpdateIngredientInput = z.infer<typeof updateIngredientSchema>;
+export type CreateIngredientInput = z.infer<typeof createIngredientSchema>;
 export type CreateMermaInput = z.infer<typeof createMermaSchema>;

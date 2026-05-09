@@ -33,9 +33,10 @@ export class WarehouseService {
   }
 
   async create(data: CreateIngredientInput, restauranteId: number) {
-    const existe = await this.repo.findOne({
-      where: { nombre: data.nombre, restaurante_id: restauranteId },
-    });
+    const existe = await this.repo.createQueryBuilder("i")
+      .where("LOWER(i.nombre) = LOWER(:nombre)", { nombre: data.nombre })
+      .andWhere("i.restaurante_id = :restauranteId", { restauranteId })
+      .getOne();
     if (existe) throw new Error(`Ya existe un ingrediente llamado "${data.nombre}"`);
 
     const nuevo = this.repo.create({
@@ -43,8 +44,8 @@ export class WarehouseService {
       unidad_id: data.unidad_id,
       cantidad_minima: data.cantidad_minima,
       merma_teorica_porcentaje: data.merma_teorica_porcentaje,
-      cantidad_disponible: 0,
-      costo_promedio: 0,
+      cantidad_disponible: data.cantidad_disponible ?? 0,
+      costo_promedio: data.costo_promedio ?? 0,
       restaurante_id: restauranteId,
     });
     return await this.repo.save(nuevo);
@@ -54,7 +55,31 @@ export class WarehouseService {
     const ingrediente = await this.repo.findOne({ where: { id, restaurante_id: restauranteId } });
     if (!ingrediente) throw new Error("Ingrediente no encontrado");
 
+    if (data.nombre && data.nombre.toLowerCase() !== ingrediente.nombre.toLowerCase()) {
+      const existe = await this.repo.createQueryBuilder("i")
+        .where("LOWER(i.nombre) = LOWER(:nombre)", { nombre: data.nombre })
+        .andWhere("i.restaurante_id = :restauranteId", { restauranteId })
+        .andWhere("i.id != :id", { id })
+        .getOne();
+      
+      if (existe) {
+        throw new Error(`Ya existe otro ingrediente con el nombre "${data.nombre}"`);
+      }
+    }
+
     Object.assign(ingrediente, data);
     return await this.repo.save(ingrediente);
+  }
+
+  async delete(id: number, restauranteId: number) {
+    const ingrediente = await this.repo.findOne({ where: { id, restaurante_id: restauranteId } });
+    if (!ingrediente) throw new Error("Ingrediente no encontrado");
+
+    // Eliminar dependencias primero para evitar error de foreign key
+    await Conexion.query(`DELETE FROM inventario.compra_detalle WHERE ingrediente_id = $1`, [id]);
+    await Conexion.query(`DELETE FROM inventario.mermas WHERE ingrediente_id = $1`, [id]);
+
+    await this.repo.remove(ingrediente);
+    return true;
   }
 }

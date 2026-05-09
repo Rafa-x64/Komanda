@@ -19,13 +19,25 @@
 
         <div class="modal-body px-4 py-3">
           <form @submit.prevent="submitForm" id="ingredientForm">
-            <div class="mb-3">
-              <label class="form-label text-secondary-custom fw-semibold small">Nombre del Ingrediente <span class="text-korange">*</span></label>
-              <input v-model="form.nombre" type="text" class="form-control" placeholder="Ej. Harina de Trigo" required :disabled="isEdit">
-              <small v-if="isEdit" class="text-muted" style="font-size: 0.75rem;">El nombre no se puede modificar una vez creado.</small>
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label text-secondary-custom fw-semibold small">Nombre del Ingrediente <span class="text-korange">*</span></label>
+                <input v-model="form.nombre" type="text" class="form-control" placeholder="Ej. Harina de Trigo" required>
+              </div>
+              <div class="col-3">
+                <label class="form-label text-secondary-custom fw-semibold small">Stock Inicial</label>
+                <input v-model.number="form.cantidad_disponible" type="number" step="0.001" min="0" class="form-control" placeholder="0">
+              </div>
+              <div class="col-3">
+                <label class="form-label text-secondary-custom fw-semibold small">Precio Unit.</label>
+                <div class="input-group">
+                  <span class="input-group-text px-2 bg-transparent text-secondary-custom border-end-0">$</span>
+                  <input v-model.number="form.costo_promedio" type="number" step="0.01" min="0" class="form-control border-start-0 ps-0" placeholder="0.00">
+                </div>
+              </div>
             </div>
 
-            <div class="row mb-3">
+            <div class="row g-2 mb-3">
               <div class="col-6">
                 <label class="form-label text-secondary-custom fw-semibold small">Unidad de Medida <span class="text-korange">*</span></label>
                 <UnitSelector v-model="form.unidad_id" :unidades="unidades" />
@@ -34,15 +46,24 @@
                 <label class="form-label text-secondary-custom fw-semibold small">Stock Mínimo (Alerta) <span class="text-korange">*</span></label>
                 <input v-model.number="form.cantidad_minima" type="number" step="0.001" min="0" class="form-control" required placeholder="0.000">
               </div>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label text-secondary-custom fw-semibold small">Merma Teórica (%)</label>
-              <div class="input-group">
-                <input v-model.number="form.merma_teorica_porcentaje" type="number" step="0.1" min="0" max="100" class="form-control" placeholder="0">
-                <span class="input-group-text">%</span>
+              <div class="col-6">
+                <label class="form-label text-secondary-custom fw-semibold small d-flex align-items-center gap-1">
+                  Unid. por Paquete
+                </label>
+                <div class="input-group">
+                  <input v-model.number="form.unidades_por_paquete" type="number" step="0.001" min="0.001" class="form-control" placeholder="1">
+                  <span class="input-group-text small text-secondary-custom">u/c</span>
+                </div>
+                <div class="form-text" style="font-size: 0.7rem;">Unidades de inventario por unidad comprada.</div>
               </div>
-              <div class="form-text" style="font-size: 0.75rem;">Porcentaje estimado de pérdida natural (ej. descongelamiento).</div>
+              <div class="col-6">
+                <label class="form-label text-secondary-custom fw-semibold small">Merma Teórica (%)</label>
+                <div class="input-group">
+                  <input v-model.number="form.merma_teorica_porcentaje" type="number" step="0.1" min="0" max="100" class="form-control" placeholder="0">
+                  <span class="input-group-text">%</span>
+                </div>
+                <div class="form-text" style="font-size: 0.7rem;">Pérdida natural estimada (ej. descongelamiento).</div>
+              </div>
             </div>
           </form>
         </div>
@@ -80,7 +101,10 @@ const form = ref({
   nombre: '',
   unidad_id: '' as string | number,
   cantidad_minima: 0,
-  merma_teorica_porcentaje: 0
+  cantidad_disponible: 0,
+  costo_promedio: 0,
+  merma_teorica_porcentaje: 0,
+  unidades_por_paquete: 1,
 });
 
 watch(() => props.show, (newVal) => {
@@ -90,14 +114,20 @@ watch(() => props.show, (newVal) => {
         nombre: props.ingrediente.nombre,
         unidad_id: props.ingrediente.unidad_id,
         cantidad_minima: props.ingrediente.cantidad_minima || 0,
-        merma_teorica_porcentaje: props.ingrediente.merma_teorica_porcentaje || 0
+        cantidad_disponible: props.ingrediente.cantidad_disponible || 0,
+        costo_promedio: props.ingrediente.costo_promedio || 0,
+        merma_teorica_porcentaje: props.ingrediente.merma_teorica_porcentaje || 0,
+        unidades_por_paquete: props.ingrediente.unidades_por_paquete || 1,
       };
     } else {
       form.value = {
         nombre: '',
         unidad_id: '',
         cantidad_minima: 0,
-        merma_teorica_porcentaje: 0
+        cantidad_disponible: 0,
+        costo_promedio: 0,
+        merma_teorica_porcentaje: 0,
+        unidades_por_paquete: 1,
       };
     }
   }

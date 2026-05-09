@@ -15,8 +15,8 @@ export class CompraDetalle {
     @Column({ type: "numeric", precision: 10, scale: 3, transformer: { to: (val) => val, from: (val) => parseFloat(val) } })
     cantidad_compra!: number;
 
-    @Column({ type: "int" })
-    unidad_compra_id!: number;
+    @Column({ type: "int", nullable: true })
+    unidad_compra_id!: number | null;
 
     @Column({ type: "numeric", precision: 10, scale: 2, transformer: { to: (val) => val, from: (val) => parseFloat(val) } })
     precio_unitario!: number;

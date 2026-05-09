@@ -100,6 +100,7 @@
                                     :key="item.id" 
                                     :item="item" 
                                     @edit="openEditModal" 
+                                    @delete="handleDelete"
                                 />
                             </tbody>
                         </table>
@@ -145,7 +146,7 @@ import IngredientRow from '../components/IngredientRow.vue';
 import IngredientFormModal from '../components/IngredientFormModal.vue';
 
 const auth = useAuth();
-const { ingredientes, unidades, loading, stockCriticoCount, fetchAll, fetchUnidades, createIngredient, updateIngredient } = useWarehouse();
+const { ingredientes, unidades, loading, stockCriticoCount, fetchAll, fetchUnidades, createIngredient, updateIngredient, deleteIngredient } = useWarehouse();
 
 const searchQuery = ref('');
 const filterStatus = ref<'all' | 'critical' | 'normal'>('all');
@@ -197,8 +198,11 @@ const handleSave = async (formData: any) => {
     try {
         if (selectedIngredient.value) {
             await updateIngredient(selectedIngredient.value.id, {
+                nombre: formData.nombre,
                 unidad_id: formData.unidad_id,
                 cantidad_minima: formData.cantidad_minima,
+                cantidad_disponible: formData.cantidad_disponible,
+                costo_promedio: formData.costo_promedio,
                 merma_teorica_porcentaje: formData.merma_teorica_porcentaje
             });
             showToast('success', 'Ingrediente actualizado correctamente');
@@ -211,6 +215,18 @@ const handleSave = async (formData: any) => {
         showToast('error', e.message);
     } finally {
         saving.value = false;
+    }
+};
+
+const handleDelete = async (id: number) => {
+    try {
+        console.log("Intentando eliminar ingrediente con ID:", id);
+        await deleteIngredient(id);
+        console.log("Ingrediente eliminado con éxito");
+        showToast('success', 'Ingrediente eliminado correctamente');
+    } catch (e: any) {
+        console.error("Error al eliminar ingrediente:", e);
+        showToast('error', e.message);
     }
 };
 </script>

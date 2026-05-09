@@ -58,4 +58,15 @@ export class WarehouseController {
       }
     }
   }
+
+  static async delete(req: Request, res: Response): Promise<void> {
+    try {
+      const restauranteId = (req as any).user?.restaurante_id ?? 1;
+      await service.delete(Number(req.params.id), restauranteId);
+      res.json({ status: "success", message: "Ingrediente eliminado" });
+    } catch (error: unknown) {
+      const msg = error instanceof Error ? error.message : "Error al eliminar";
+      res.status(400).json({ status: "error", message: msg });
+    }
+  }
 }

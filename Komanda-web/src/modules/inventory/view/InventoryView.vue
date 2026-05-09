@@ -7,6 +7,7 @@ import { useAuth } from '../../../core/composables/useAuth';
 import { inventoryApi } from '../inventory.api';
 import { operationsApi } from '../../operations/operations.api';
 import EditIngredientModal from '../components/EditIngredientModal.vue';
+import AddIngredientModal from '../components/AddIngredientModal.vue';
 import MermaModal from '../components/MermaModal.vue';
 import PurchaseModal from '../../operations/components/PurchaseModal.vue';
 
@@ -28,6 +29,7 @@ const proveedores = ref<any[]>([]);
 const loading = ref({ stock: false, mermas: false });
 
 // Modales
+const showAddModal = ref(false);
 const showEditModal = ref(false);
 const showMermaModal = ref(false);
 const selectedIngredient = ref<any>(null);
@@ -98,6 +100,24 @@ const handleSaveIngredient = async (formData: any) => {
     } catch (e: any) {
         showToast('error', e.message);
     }
+};
+
+const handleCreateIngredient = async (formData: any) => {
+    try {
+        await inventoryApi.createIngredient(formData);
+        showToast('success', 'Insumo creado exitosamente');
+        showAddModal.value = false;
+        fetchIngredientes();
+    } catch (e: any) {
+        showToast('error', e.message);
+    }
+};
+
+const goToPurchaseFromAdd = () => {
+    showAddModal.value = false;
+    onOpenPurchaseModal();
+    // @ts-ignore
+    window.bootstrap?.Modal?.getOrCreateInstance(document.getElementById('purchaseModal'))?.show();
 };
 
 const handleSaveMerma = async (formData: any) => {
@@ -216,10 +236,15 @@ const handleSavePurchase = async (data: any) => {
                 <!-- TAB STOCK -->
                 <div v-if="activeTab === 'stock'">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div class="search-box position-relative shadow-sm rounded-pill w-100" style="max-width: 400px;">
-                            <Search class="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary" :size="18" />
-                            <input v-model="searchQuery" type="text" class="form-control ps-5 py-2 rounded-pill custom-input bg-light border-0"
-                                placeholder="Buscar insumo...">
+                        <div class="d-flex gap-2 w-100">
+                            <div class="search-box position-relative shadow-sm rounded-pill flex-grow-1" style="max-width: 400px;">
+                                <Search class="position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary" :size="18" />
+                                <input v-model="searchQuery" type="text" class="form-control ps-5 py-2 rounded-pill custom-input bg-light border-0"
+                                    placeholder="Buscar insumo...">
+                            </div>
+                            <button class="btn btn-outline-korange rounded-pill fw-bold px-4 pulse-btn" @click="showAddModal = true">
+                                + Nuevo Insumo
+                            </button>
                         </div>
                     </div>
 
@@ -324,6 +349,13 @@ const handleSavePurchase = async (data: any) => {
     </div>
 
     <!-- Modales -->
+    <AddIngredientModal 
+        :show="showAddModal" 
+        @close="showAddModal = false" 
+        @save="handleCreateIngredient" 
+        @go-to-purchase="goToPurchaseFromAdd"
+    />
+
     <EditIngredientModal 
         :show="showEditModal" 
         :ingrediente="selectedIngredient" 
@@ -399,6 +431,17 @@ const handleSavePurchase = async (data: any) => {
 
 .border-korange { border-color: var(--KOrange) !important; }
 .text-korange { color: var(--KOrange) !important; }
+
+.btn-outline-korange {
+    color: var(--KOrange);
+    border-color: var(--KOrange);
+    background-color: transparent;
+}
+.btn-outline-korange:hover {
+    color: white;
+    background-color: var(--KOrange);
+    border-color: var(--KOrange);
+}
 
 .hover-translate-y:hover {
     transform: translateY(-3px);

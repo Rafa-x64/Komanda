@@ -62,108 +62,111 @@
                 </button>
               </div>
 
-              <div class="table-responsive">
-                <table class="table mb-0" style="--bs-table-bg: transparent;">
-                  <thead style="background: var(--bg-body); border-bottom: 1px solid var(--border-color);">
-                    <tr>
-                      <th class="ps-3 text-secondary-custom fw-semibold small text-uppercase py-2" style="min-width:240px;">
-                        Ingrediente
-                      </th>
-                      <th class="text-secondary-custom fw-semibold small text-uppercase py-2" style="min-width:110px;">Cantidad</th>
-                      <th class="text-secondary-custom fw-semibold small text-uppercase py-2" style="min-width:110px;">Precio Unit.</th>
-                      <th class="text-secondary-custom fw-semibold small text-uppercase py-2" style="min-width:130px;">
-                        <span class="d-flex align-items-center gap-1">
-                          Unid. p/ compra
-                          <span tabindex="0" data-bs-toggle="tooltip"
-                            title="¿Cuántas unidades de inventario (ej. gramos, litros) trae cada unidad que compras? Ej: si compras un saco de 50kg, el factor es 50000 gramos.">
-                            <Info :size="13" class="text-secondary-custom" style="cursor:help;" />
-                          </span>
-                        </span>
-                      </th>
-                      <th class="text-secondary-custom fw-semibold small text-uppercase py-2">Subtotal</th>
-                      <th class="pe-3"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="(item, idx) in form.items" :key="idx"
-                      style="border-bottom: 1px solid var(--border-color);">
-                      <!-- Ingrediente: toggle entre select y texto libre -->
-                      <td class="ps-3 py-2">
-                        <div class="d-flex gap-1">
-                          <div class="flex-grow-1">
-                            <!-- SELECT: ingrediente existente -->
-                            <select v-if="!item.useText" v-model="item.ingrediente_id"
-                              class="form-select form-select-sm" required>
-                              <option value="" disabled>Seleccione ingrediente...</option>
-                              <option v-for="ing in ingredients" :key="ing.id" :value="ing.id">
-                                {{ ing.nombre }} (stock: {{ ing.cantidad_disponible }})
-                              </option>
-                            </select>
-                            <!-- TEXT: ingrediente nuevo -->
-                            <input v-else v-model="item.ingrediente_nombre" type="text"
-                              class="form-control form-control-sm" required
-                              placeholder="Nombre del nuevo ingrediente">
-                          </div>
-                          <!-- Botón toggle -->
-                          <button type="button"
-                            class="btn btn-sm flex-shrink-0 d-flex align-items-center justify-content-center"
-                            style="width:32px;height:31px;border:1px solid var(--border-color);background:transparent;"
-                            :title="item.useText ? 'Seleccionar existente' : 'Escribir nuevo'"
-                            @click="toggleIngredientMode(item)">
-                            <ToggleLeft v-if="!item.useText" :size="16" class="text-korange" />
-                            <ToggleRight v-else :size="16" class="text-korange" />
-                          </button>
-                        </div>
-                        <div class="mt-1">
-                          <small class="text-secondary-custom" style="font-size:0.72rem;">
-                            {{ item.useText ? '✏️ Nuevo ingrediente (se creará al guardar)' : '📦 Ingrediente existente (actualiza stock)' }}
-                          </small>
-                        </div>
-                      </td>
+              <!-- Items -->
+              <div v-for="(item, idx) in form.items" :key="idx"
+                class="item-row p-3" style="border-bottom: 1px solid var(--border-color);">
+                
+                <!-- Fila 1: Ingrediente + toggle + eliminar en una sola línea -->
+                <div class="d-flex gap-2 align-items-center mb-2">
+                  <div class="flex-grow-1">
+                    <div class="d-flex gap-1 align-items-center">
+                      <select v-if="!item.useText" v-model="item.ingrediente_id"
+                        class="form-select form-select-sm" required>
+                        <option value="" disabled>Seleccione ingrediente...</option>
+                        <option v-for="ing in ingredients" :key="ing.id" :value="ing.id">
+                          {{ ing.nombre }} ({{ ing.cantidad_disponible }})
+                        </option>
+                      </select>
+                      <input v-else v-model="item.ingrediente_nombre" type="text"
+                        class="form-control form-control-sm" required
+                        placeholder="Ej: Sardinas enlatadas">
+                      <!-- Toggle: existente ↔ nuevo -->
+                      <button type="button"
+                        class="btn btn-sm flex-shrink-0 d-flex align-items-center justify-content-center"
+                        style="width:30px;height:30px;border:1px solid var(--border-color);background:transparent;"
+                        :title="item.useText ? 'Usar existente' : 'Crear nuevo'"
+                        @click="toggleIngredientMode(item)">
+                        <ToggleLeft v-if="!item.useText" :size="15" class="text-korange" />
+                        <ToggleRight v-else :size="15" class="text-korange" />
+                      </button>
+                    </div>
+                    <small class="text-secondary-custom" style="font-size:0.68rem;">
+                      {{ item.useText ? '✏️ Nuevo (se creará al guardar)' : '📦 Existente (actualiza stock)' }}
+                    </small>
+                  </div>
+                  <button type="button"
+                    class="btn btn-sm d-inline-flex align-items-center justify-content-center rounded-circle flex-shrink-0"
+                    style="width:28px;height:28px;background:rgba(220,53,69,0.1);color:#dc3545;border:1px solid rgba(220,53,69,0.3);"
+                    @click="removeItem(idx)" :disabled="form.items.length === 1">
+                    <Trash2 :size="13" />
+                  </button>
+                </div>
 
-                      <td class="py-2">
-                        <input v-model.number="item.cantidad_compra" type="number"
-                          step="0.001" min="0.001" class="form-control form-control-sm"
-                          required placeholder="1.000">
-                      </td>
+                <!-- Fila 2: Campos numéricos en una sola fila compacta -->
+                <div class="row g-2">
+                  <div class="col">
+                    <label class="form-label text-secondary-custom fw-semibold" style="font-size:0.68rem;">CANTIDAD *</label>
+                    <input v-model.number="item.cantidad_compra" type="number"
+                      step="0.001" min="0.001" class="form-control form-control-sm"
+                      required placeholder="1.000">
+                  </div>
+                  <div class="col">
+                    <label class="form-label text-secondary-custom fw-semibold" style="font-size:0.68rem;">PRECIO UNIT. *</label>
+                    <div class="input-group input-group-sm">
+                      <span class="input-group-text bg-transparent border-end-0 px-2">$</span>
+                      <input v-model.number="item.precio_unitario" type="number"
+                        step="0.01" min="0" class="form-control border-start-0 ps-0"
+                        required placeholder="0.00">
+                    </div>
+                  </div>
+                  <div class="col">
+                    <label class="form-label text-secondary-custom fw-semibold" style="font-size:0.68rem;">UNID/PAQUETE</label>
+                    <div class="input-group input-group-sm">
+                      <input v-model.number="item.factor_conversion" type="number"
+                        step="0.001" min="0.001" class="form-control"
+                        required placeholder="1">
+                      <span class="input-group-text bg-transparent px-1 small">u/c</span>
+                    </div>
+                    <div style="font-size:0.62rem;" class="text-secondary-custom">
+                      = {{ ((item.cantidad_compra || 0) * (item.factor_conversion || 0)).toFixed(2) }} uds stock
+                    </div>
+                  </div>
+                  <div class="col">
+                    <label class="form-label text-secondary-custom fw-semibold" style="font-size:0.68rem;">MERMA (%)</label>
+                    <div class="input-group input-group-sm">
+                      <input v-model.number="item.merma_teorica_porcentaje" type="number"
+                        step="0.1" min="0" max="100" class="form-control" placeholder="0">
+                      <span class="input-group-text bg-transparent px-2">%</span>
+                    </div>
+                  </div>
+                  <div class="col-auto d-flex flex-column justify-content-end">
+                    <span class="fw-bold text-main" style="font-size:1rem; line-height:2.2; white-space:nowrap;">
+                      ${{ ((item.cantidad_compra || 0) * (item.precio_unitario || 0)).toFixed(2) }}
+                    </span>
+                  </div>
+                </div>
 
-                      <td class="py-2">
-                        <div class="input-group input-group-sm">
-                          <span class="input-group-text bg-transparent border-end-0 small">$</span>
-                          <input v-model.number="item.precio_unitario" type="number"
-                            step="0.01" min="0" class="form-control border-start-0 ps-0"
-                            required placeholder="0.00">
-                        </div>
-                      </td>
-
-                      <td class="py-2">
-                        <div class="input-group input-group-sm">
-                          <input v-model.number="item.factor_conversion" type="number"
-                            step="0.001" min="0.001" class="form-control"
-                            required placeholder="1.000"
-                            title="Cuántas unidades de stock equivale 1 unidad de compra">
-                          <span class="input-group-text bg-transparent small text-secondary-custom">u/c</span>
-                        </div>
-                        <div style="font-size:0.7rem;" class="text-secondary-custom mt-1">
-                          = {{ ((item.cantidad_compra || 0) * (item.factor_conversion || 0)).toFixed(2) }} en stock
-                        </div>
-                      </td>
-
-                      <td class="py-2 fw-bold text-main">
-                        ${{ ((item.cantidad_compra || 0) * (item.precio_unitario || 0)).toFixed(2) }}
-                      </td>
-
-                      <td class="py-2 pe-3">
-                        <button type="button"
-                          class="btn btn-sm d-inline-flex align-items-center justify-content-center rounded-circle"
-                          style="width:30px;height:30px;background:rgba(220,53,69,0.1);color:#dc3545;border:1px solid rgba(220,53,69,0.3);"
-                          @click="removeItem(idx)" :disabled="form.items.length === 1">
-                          <Trash2 :size="14" />
-                        </button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                <!-- Fila 3: Solo para nuevos ingredientes -->
+                <div v-if="item.useText" class="row g-2 pt-2 mt-1" style="border-top: 1px dashed var(--border-color);">
+                  <div class="col-12">
+                    <small class="text-korange fw-semibold" style="font-size:0.68rem;">⚙️ CONFIGURACIÓN DEL NUEVO INSUMO</small>
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label text-secondary-custom fw-semibold" style="font-size:0.68rem;">UNIDAD DE MEDIDA *</label>
+                    <select v-model.number="item.unidad_id" class="form-select form-select-sm" required>
+                      <option :value="1">Gramos (g)</option>
+                      <option :value="3">Kilogramos (kg)</option>
+                      <option :value="2">Litros (L)</option>
+                      <option :value="5">Mililitros (ml)</option>
+                      <option :value="4">Unidades (und)</option>
+                    </select>
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label text-secondary-custom fw-semibold" style="font-size:0.68rem;">STOCK MÍNIMO</label>
+                    <input v-model.number="item.cantidad_minima" type="number"
+                      step="any" min="0" class="form-control form-control-sm" placeholder="0">
+                  </div>
+                </div>
               </div>
 
               <!-- Total footer -->
@@ -210,12 +213,15 @@ const today = new Date().toISOString().slice(0, 10);
 
 const getBlankItem = () => ({
   ingrediente_id: '' as string | number,
-  ingrediente_nombre: '', // para cuando useText = true (nuevo ingrediente)
+  ingrediente_nombre: '',
   useText: false,
   cantidad_compra: null as number | null,
-  unidad_compra_id: 1,
   precio_unitario: null as number | null,
-  factor_conversion: 1
+  factor_conversion: 1,
+  // Campos solo para nuevos ingredientes
+  unidad_id: 4, // Unidades por defecto
+  cantidad_minima: 0,
+  merma_teorica_porcentaje: 0,
 });
 
 const form = ref({
@@ -253,11 +259,14 @@ const handleSubmit = () => {
     ...form.value,
     items: form.value.items.map(i => ({
       ingrediente_id: i.useText ? null : Number(i.ingrediente_id),
-      ingrediente_nombre: i.useText ? i.ingrediente_nombre : null,
+      ingrediente_nombre: i.useText ? i.ingrediente_nombre.trim() : null,
+      unidad_id: i.useText ? Number(i.unidad_id) : null,
+      cantidad_minima: i.useText ? Number(i.cantidad_minima) : null,
+      merma_teorica_porcentaje: i.useText ? Number(i.merma_teorica_porcentaje) : null,
       cantidad_compra: Number(i.cantidad_compra),
-      unidad_compra_id: Number(i.unidad_compra_id),
+      unidad_compra_id: null, // campo legado, no usado en UI
       precio_unitario: Number(i.precio_unitario),
-      factor_conversion: Number(i.factor_conversion)
+      factor_conversion: Number(i.factor_conversion),
     }))
   });
 };

@@ -62,7 +62,7 @@ export function useWarehouse() {
     } catch { /* silencioso */ }
   };
 
-  const createIngredient = async (data: Omit<Ingrediente, 'id' | 'cantidad_disponible' | 'costo_promedio' | 'unidad_nombre' | 'alerta_critica'>) => {
+  const createIngredient = async (data: Omit<Ingrediente, 'id' | 'unidad_nombre' | 'alerta_critica'>) => {
     const token = auth.token.value ?? '';
     const res = await fetch(BASE, {
       method: 'POST',
@@ -88,5 +88,17 @@ export function useWarehouse() {
     return json.data;
   };
 
-  return { ingredientes, unidades, loading, error, stockCriticoCount, fetchAll, fetchUnidades, createIngredient, updateIngredient };
+  const deleteIngredient = async (id: number) => {
+    const token = auth.token.value ?? '';
+    const res = await fetch(`${BASE}/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders(token),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.message ?? 'Error al eliminar');
+    await fetchAll();
+    return true;
+  };
+
+  return { ingredientes, unidades, loading, error, stockCriticoCount, fetchAll, fetchUnidades, createIngredient, updateIngredient, deleteIngredient };
 }

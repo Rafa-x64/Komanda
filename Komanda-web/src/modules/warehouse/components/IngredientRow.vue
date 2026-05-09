@@ -12,18 +12,23 @@
       ${{ Number(item.costo_promedio).toFixed(2) }}
     </td>
     <td class="px-4 text-center">
-      <button class="btn btn-sm text-primary hover-bg-light rounded-circle p-2" @click="$emit('edit', item)" title="Editar Mínimos y Unidad">
-        <Edit2 :size="16" />
-      </button>
+      <div class="d-flex justify-content-center gap-1">
+        <button class="btn btn-sm text-primary hover-bg-light rounded-circle p-2" @click="$emit('edit', item)" title="Editar Configuración">
+          <Edit2 :size="16" />
+        </button>
+        <button type="button" class="btn btn-sm text-danger hover-bg-light rounded-circle p-2" @click.prevent.stop="confirmDelete" title="Eliminar Ingrediente">
+          <Trash2 :size="16" />
+        </button>
+      </div>
     </td>
   </tr>
 </template>
 
 <script setup lang="ts">
-import { Edit2 } from 'lucide-vue-next';
+import { Edit2, Trash2 } from 'lucide-vue-next';
 import StockBadge from './StockBadge.vue';
 
-defineProps<{
+const props = defineProps<{
   item: {
     id: number;
     nombre: string;
@@ -35,7 +40,13 @@ defineProps<{
   };
 }>();
 
-defineEmits(['edit']);
+const emit = defineEmits(['edit', 'delete']);
+
+const confirmDelete = () => {
+  if (window.confirm(`¿Está seguro de eliminar "${props.item.nombre}"? Esta acción no se puede deshacer y fallará si tiene compras asociadas.`)) {
+    emit('delete', props.item.id);
+  }
+};
 </script>
 
 <style scoped>

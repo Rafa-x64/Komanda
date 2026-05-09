@@ -23,7 +23,10 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {})
        localStorage.removeItem('auth_restaurant')
        window.location.href = '/singin' // force redirect to clear reactive states if any
     }
-    throw new Error(json.message || 'Error en la petición')
+    const msg = typeof json.message === 'string'
+      ? json.message
+      : JSON.stringify(json.message)
+    throw new Error(msg || 'Error en la petición')
   }
   return json
 }
