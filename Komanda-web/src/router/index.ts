@@ -114,6 +114,18 @@ const router = createRouter({
             meta: { requiresAuth: true, roles: ['admin'] }
         },
         {
+            path: '/contabilidad/diario',
+            name: 'libro-diario',
+            component: () => import('../modules/accounting/views/JournalView.vue'),
+            meta: { requiresAuth: true, roles: ['admin'] }
+        },
+        {
+            path: '/contabilidad/estado-resultados',
+            name: 'estado-resultados',
+            component: () => import('../modules/accounting/views/IncomeStatementView.vue'),
+            meta: { requiresAuth: true, roles: ['admin'] }
+        },
+        {
             path: '/configuracion',
             name: 'configuracion',
             component: () => import('../modules/settings/views/SettingsView.vue'),

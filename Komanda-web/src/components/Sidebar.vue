@@ -81,7 +81,13 @@
             <div class="collapse" id="collapseAdmin" data-bs-parent="#sidebarAccordion">
               <ul class="nav flex-column ms-4 mt-1">
                 <li class="nav-item py-1">
-                  <router-link to="/contabilidad" class="nav-link text-secondary-custom p-1 px-2" active-class="active text-korange fw-bold mb-0">Contabilidad</router-link>
+                  <router-link to="/contabilidad" class="nav-link text-secondary-custom p-1 px-2" active-class="active text-korange fw-bold mb-0">Balance General</router-link>
+                </li>
+                <li class="nav-item py-1">
+                  <router-link to="/contabilidad/estado-resultados" class="nav-link text-secondary-custom p-1 px-2" active-class="active text-korange fw-bold mb-0">Estado de Resultados</router-link>
+                </li>
+                <li class="nav-item py-1">
+                  <router-link to="/contabilidad/diario" class="nav-link text-secondary-custom p-1 px-2" active-class="active text-korange fw-bold mb-0">Libro Diario</router-link>
                 </li>
                 <li class="nav-item py-1">
                   <router-link to="/reportes" class="nav-link text-secondary-custom p-1 px-2" active-class="active text-korange fw-bold mb-0">

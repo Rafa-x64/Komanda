@@ -7,11 +7,11 @@
       <header class="mb-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
         <div>
           <h1 class="fw-bold mb-1 text-primary-custom d-flex align-items-center">
-            <i class="bi bi-bank text-korange me-2"></i>
-            Balance General
+            <i class="bi bi-graph-up-arrow text-korange me-2"></i>
+            Estado de Resultados
           </h1>
           <p class="text-secondary-custom mb-0 small">
-            Estado de Situación Financiera de <strong class="text-korange">{{ restaurantName }}</strong>
+            Ganancias y Pérdidas de <strong class="text-korange">{{ restaurantName }}</strong>
           </p>
         </div>
 
@@ -36,72 +36,69 @@
       </header>
 
       <!-- Documento Formal -->
-      <div id="balance-sheet-report" class="bg-white p-5 rounded-4 shadow-sm text-dark formal-doc mx-auto" style="max-width: 900px;">
+      <div id="income-statement-report" class="bg-white p-5 rounded-4 shadow-sm text-dark formal-doc mx-auto" style="max-width: 800px;">
         <div class="text-center mb-5 border-bottom pb-4">
           <h2 class="fw-bold mb-1">{{ restaurantName }}</h2>
-          <h4 class="text-uppercase mb-2">Estado de Situación Financiera (Balance General)</h4>
+          <h4 class="text-uppercase mb-2">Estado de Resultados</h4>
           <p class="mb-0 text-muted">Período: {{ new Date(filterDateFrom).toLocaleDateString() }} - {{ new Date(filterDateTo).toLocaleDateString() }}</p>
           <p class="mb-0 text-muted">Expresado en Dólares Estadounidenses (USD)</p>
         </div>
 
-        <div class="row g-5">
-          <!-- Columna Activos -->
-          <div class="col-12 col-md-6">
-            <h5 class="fw-bold text-uppercase border-bottom pb-2 mb-3">Activos</h5>
-            <table class="table table-borderless table-sm formal-table">
-              <tbody>
-                <tr v-for="item in activos" :key="item.codigo">
-                  <td class="ps-3"><span class="me-2 text-muted small">{{ item.codigo }}</span>{{ item.cuenta }}</td>
-                  <td class="text-end">{{ formatCurrency(item.saldo) }}</td>
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr class="fw-bold border-top">
-                  <td class="py-2">TOTAL ACTIVOS</td>
-                  <td class="text-end py-2 text-success">{{ formatCurrency(totalActivos) }}</td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
+        <div class="report-content px-md-4">
+          <table class="table table-borderless table-sm formal-table">
+            <tbody>
+              <!-- Ingresos -->
+              <tr>
+                <td colspan="2"><h5 class="fw-bold text-uppercase border-bottom pb-2 mt-2 mb-3">Ingresos Operativos</h5></td>
+              </tr>
+              <tr v-for="item in ingresos" :key="item.cuenta">
+                <td class="ps-3">{{ item.cuenta }}</td>
+                <td class="text-end">{{ formatCurrency(item.total) }}</td>
+              </tr>
+              <tr class="fw-bold border-top bg-light">
+                <td class="py-2">TOTAL INGRESOS</td>
+                <td class="text-end py-2 text-success">{{ formatCurrency(totalIngresos) }}</td>
+              </tr>
 
-          <!-- Columna Pasivos y Patrimonio -->
-          <div class="col-12 col-md-6">
-            <h5 class="fw-bold text-uppercase border-bottom pb-2 mb-3">Pasivos</h5>
-            <table class="table table-borderless table-sm formal-table mb-4">
-              <tbody>
-                <tr v-for="item in pasivos" :key="item.codigo">
-                  <td class="ps-3"><span class="me-2 text-muted small">{{ item.codigo }}</span>{{ item.cuenta }}</td>
-                  <td class="text-end">{{ formatCurrency(item.saldo) }}</td>
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr class="fw-bold border-top">
-                  <td class="py-2">TOTAL PASIVOS</td>
-                  <td class="text-end py-2 text-danger">{{ formatCurrency(totalPasivos) }}</td>
-                </tr>
-              </tfoot>
-            </table>
+              <!-- Costos -->
+              <tr>
+                <td colspan="2"><h5 class="fw-bold text-uppercase border-bottom pb-2 mt-5 mb-3">Costos de Ventas</h5></td>
+              </tr>
+              <tr v-for="item in costos" :key="item.cuenta">
+                <td class="ps-3">{{ item.cuenta }}</td>
+                <td class="text-end text-danger">- {{ formatCurrency(item.total) }}</td>
+              </tr>
+              <tr class="fw-bold border-top bg-light">
+                <td class="py-2">TOTAL COSTOS</td>
+                <td class="text-end py-2 text-danger">- {{ formatCurrency(totalCostos) }}</td>
+              </tr>
 
-            <h5 class="fw-bold text-uppercase border-bottom pb-2 mb-3 mt-4">Patrimonio</h5>
-            <table class="table table-borderless table-sm formal-table">
-              <tbody>
-                <tr v-for="item in patrimonio" :key="item.codigo">
-                  <td class="ps-3"><span class="me-2 text-muted small">{{ item.codigo }}</span>{{ item.cuenta }}</td>
-                  <td class="text-end">{{ formatCurrency(item.saldo) }}</td>
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr class="fw-bold border-top">
-                  <td class="py-2">TOTAL PATRIMONIO</td>
-                  <td class="text-end py-2 text-primary">{{ formatCurrency(totalPatrimonio) }}</td>
-                </tr>
-                <tr class="fw-bold border-top bg-light mt-3">
-                  <td class="py-3">TOTAL PASIVO Y PATRIMONIO</td>
-                  <td class="text-end py-3 text-dark">{{ formatCurrency(totalPasivos + totalPatrimonio) }}</td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
+              <!-- Utilidad Bruta -->
+              <tr class="fw-bold" style="border-bottom: 2px solid #000; border-top: 2px solid #000;">
+                <td class="py-3 text-uppercase fs-5">Utilidad Bruta</td>
+                <td class="text-end py-3 fs-5">{{ formatCurrency(utilidadBruta) }}</td>
+              </tr>
+
+              <!-- Gastos -->
+              <tr>
+                <td colspan="2"><h5 class="fw-bold text-uppercase border-bottom pb-2 mt-5 mb-3">Gastos Operativos</h5></td>
+              </tr>
+              <tr v-for="item in gastos" :key="item.cuenta">
+                <td class="ps-3">{{ item.cuenta }}</td>
+                <td class="text-end text-danger">- {{ formatCurrency(item.total) }}</td>
+              </tr>
+              <tr class="fw-bold border-top bg-light">
+                <td class="py-2">TOTAL GASTOS</td>
+                <td class="text-end py-2 text-danger">- {{ formatCurrency(totalGastos) }}</td>
+              </tr>
+
+              <!-- Utilidad Neta -->
+              <tr class="fw-bold text-white mt-4" :class="utilidadNeta >= 0 ? 'bg-success' : 'bg-danger'">
+                <td class="py-3 text-uppercase fs-4 ps-3">Utilidad / (Pérdida) Neta</td>
+                <td class="text-end py-3 fs-4 pe-3">{{ formatCurrency(utilidadNeta) }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </main>
@@ -113,7 +110,7 @@ import { ref, computed, onMounted } from 'vue'
 import html2pdf from 'html2pdf.js'
 import Sidebar from '../../../components/Sidebar.vue'
 import { useAuth } from '../../../core/composables/useAuth'
-import { fetchVBalanceGeneral } from '../accounting.api'
+import { fetchVEstadoResultados } from '../accounting.api'
 
 const auth = useAuth()
 // @ts-ignore
@@ -126,13 +123,16 @@ const filterDateFrom = ref(thirtyDaysAgo)
 const filterDateTo = ref(today)
 const loading = ref(false)
 
-const activos = ref<any[]>([])
-const pasivos = ref<any[]>([])
-const patrimonio = ref<any[]>([])
+const ingresos = ref<any[]>([])
+const costos = ref<any[]>([])
+const gastos = ref<any[]>([])
 
-const totalActivos = computed(() => activos.value.reduce((acc, curr) => acc + Number(curr.saldo), 0))
-const totalPasivos = computed(() => pasivos.value.reduce((acc, curr) => acc + Number(curr.saldo), 0))
-const totalPatrimonio = computed(() => patrimonio.value.reduce((acc, curr) => acc + Number(curr.saldo), 0))
+const totalIngresos = computed(() => ingresos.value.reduce((acc, curr) => acc + Number(curr.total), 0))
+const totalCostos = computed(() => costos.value.reduce((acc, curr) => acc + Number(curr.total), 0))
+const totalGastos = computed(() => gastos.value.reduce((acc, curr) => acc + Number(curr.total), 0))
+
+const utilidadBruta = computed(() => totalIngresos.value - totalCostos.value)
+const utilidadNeta = computed(() => utilidadBruta.value - totalGastos.value)
 
 const formatCurrency = (val: number | string) => {
   return new Intl.NumberFormat('es-US', {
@@ -142,10 +142,10 @@ const formatCurrency = (val: number | string) => {
 }
 
 const printReport = () => {
-  const element = document.getElementById('balance-sheet-report')
+  const element = document.getElementById('income-statement-report')
   const opt = {
     margin:       0.5,
-    filename:     `balance_general_${filterDateFrom.value}_${filterDateTo.value}.pdf`,
+    filename:     `estado_resultados_${filterDateFrom.value}_${filterDateTo.value}.pdf`,
     image:        { type: 'jpeg', quality: 0.98 },
     html2canvas:  { scale: 2 },
     jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
@@ -156,12 +156,12 @@ const printReport = () => {
 const fetchData = async () => {
   loading.value = true
   try {
-    const data = await fetchVBalanceGeneral(filterDateFrom.value, filterDateTo.value)
-    activos.value = data.filter(d => d.tipo === 'activo')
-    pasivos.value = data.filter(d => d.tipo === 'pasivo')
-    patrimonio.value = data.filter(d => d.tipo === 'patrimonio')
+    const data = await fetchVEstadoResultados(filterDateFrom.value, filterDateTo.value)
+    ingresos.value = data.filter(d => d.tipo === 'ingreso')
+    costos.value = data.filter(d => d.tipo === 'costo')
+    gastos.value = data.filter(d => d.tipo === 'gasto')
   } catch (error) {
-    console.error('Error fetching balance sheet:', error)
+    console.error('Error fetching income statement:', error)
   } finally {
     loading.value = false
   }
