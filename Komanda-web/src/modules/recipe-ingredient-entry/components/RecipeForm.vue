@@ -17,7 +17,7 @@ export interface RecipeIngredient {
   id?: number;
   ingrediente_id: number;
   cantidad: number;
-  unidad: string; // 'kg', 'litros', 'unidad'
+  unidad?: string; // Unit from the ingredient's unit_medida (read-only reference)
   nombre_ingrediente?: string; // For display purposes
 }
 
@@ -38,7 +38,7 @@ export interface Recipe {
 const props = defineProps<{
   initialData?: Recipe | null;
   categorias: { id: number; nombre: string }[];
-  ingredientesDisponibles: { id: number; nombre: string; unidad_id?: number }[];
+  ingredientesDisponibles: { id: number; nombre: string; unidad_id?: number; unidad_abrev?: string; unidad_nombre?: string; costo_promedio?: number }[];
 }>();
 
 const emit = defineEmits<{
@@ -96,13 +96,54 @@ watch(() => props.categorias, (newCats) => {
   }
 }, { deep: true });
 
-// Ingredient Entry State
-const newIngredient = ref<RecipeIngredient>({
-  ingrediente_id: 0,
-  cantidad: 0,
-  unidad: 'kg'
-});
+// ── Unit system ──────────────────────────────────────────────────
+const UNIT_OPTIONS = [
+  { value: 'kg',     label: 'Kilogramos',   group: 'weight' },
+  { value: 'gramos', label: 'Gramos',       group: 'weight' },
+  { value: 'litros', label: 'Litros',       group: 'volume' },
+  { value: 'ml',     label: 'Mililitros',   group: 'volume' },
+  { value: 'unidad', label: 'Unidades',     group: 'unit'   },
+];
 
+const unitFullName = (abbrev: string): string => {
+  const map: Record<string, string> = {
+    'kg': 'Kilogramos', 'g': 'Gramos', 'gr': 'Gramos', 'gramos': 'Gramos',
+    'L': 'Litros', 'l': 'Litros', 'litros': 'Litros',
+    'ml': 'Mililitros', 'mL': 'Mililitros',
+    'u': 'Unidades', 'und': 'Unidades', 'unidad': 'Unidades', 'pza': 'Piezas',
+  };
+  return map[abbrev] || abbrev;
+};
+
+const getUnitGroup = (abbrev: string): 'weight' | 'volume' | 'unit' => {
+  const u = (abbrev || '').toLowerCase();
+  if (['kg', 'g', 'gr', 'gramos'].includes(u)) return 'weight';
+  if (['l', 'litros', 'ml', 'mililitros'].includes(u)) return 'volume';
+  return 'unit';
+};
+
+// Convert qty: entryUnit → nativeUnit (both directions handled correctly)
+const convertToNative = (qty: number, entryUnit: string, nativeUnit: string): number => {
+  // Normalize to grams (weight) or ml (volume) as base
+  const toBase: Record<string, number> = {
+    'kg': 1000, 'gramos': 1, 'g': 1, 'gr': 1,
+    'litros': 1000, 'l': 1000, 'ml': 1, 'mililitros': 1,
+    'unidad': 1, 'u': 1, 'und': 1,
+  };
+  const fromBase: Record<string, number> = {
+    'kg': 1/1000, 'g': 1, 'gr': 1, 'gramos': 1,
+    'l': 1/1000, 'litros': 1/1000, 'ml': 1, 'mililitros': 1,
+    'u': 1, 'und': 1, 'unidad': 1,
+  };
+  const entryFactor = toBase[(entryUnit || 'unidad').toLowerCase()] ?? 1;
+  const nativeFactor = fromBase[(nativeUnit || 'u').toLowerCase()] ?? 1;
+  return qty * entryFactor * nativeFactor;
+};
+
+const formatQty = (qty: number): string => Number(qty).toFixed(3);
+
+// ── Ingredient Entry State ────────────────────────────────────────
+const newIngredient = ref({ ingrediente_id: 0, cantidad: 0, entryUnidad: 'unidad' });
 const ingredientSearchQuery = ref('');
 const showIngredientDropdown = ref(false);
 
@@ -112,15 +153,33 @@ const filteredIngredientesDisponibles = computed(() => {
   return props.ingredientesDisponibles.filter(i => i.nombre.toLowerCase().includes(q));
 });
 
-const selectIngredient = (ing: {id: number, nombre: string}) => {
+// Only show compatible units (no litros for a kg ingredient)
+const availableUnits = computed(() => {
+  if (!newIngredient.value.ingrediente_id) return UNIT_OPTIONS;
+  const ing = props.ingredientesDisponibles.find(i => i.id === newIngredient.value.ingrediente_id);
+  const group = getUnitGroup(ing?.unidad_abrev || ing?.unidad_nombre || '');
+  return UNIT_OPTIONS.filter(u => u.group === group);
+});
+
+const selectIngredient = (ing: { id: number; nombre: string }) => {
   newIngredient.value.ingrediente_id = ing.id;
   ingredientSearchQuery.value = ing.nombre;
   showIngredientDropdown.value = false;
+  // Auto-select most intuitive entry unit for this ingredient
+  const ingData = props.ingredientesDisponibles.find(i => i.id === ing.id);
+  const group = getUnitGroup(ingData?.unidad_abrev || ingData?.unidad_nombre || '');
+  newIngredient.value.entryUnidad =
+    group === 'weight' ? 'gramos' :
+    group === 'volume' ? 'ml' : 'unidad';
 };
 
-const handleDropdownBlur = () => {
-  setTimeout(() => { showIngredientDropdown.value = false; }, 200);
+// Get full unit name for an ingredient (for table display)
+const getIngredientUnit = (ingredienteId: number) => {
+  const ing = props.ingredientesDisponibles.find(i => i.id === ingredienteId);
+  return unitFullName(ing?.unidad_abrev || ing?.unidad_nombre || '');
 };
+
+const handleDropdownBlur = () => setTimeout(() => { showIngredientDropdown.value = false; }, 200);
 
 const calculateMargin = () => {
   if (form.value.costo_produccion > 0 && form.value.precio_venta > 0) {
@@ -131,23 +190,35 @@ const calculateMargin = () => {
   }
 };
 
+// Qty in DB is always in the ingredient's native unit → cost = qty × costo_promedio
+watch(() => form.value.ingredientes, (newIngs) => {
+  let totalCosto = 0;
+  newIngs.forEach(ing => {
+    const orig = props.ingredientesDisponibles.find(i => i.id === ing.ingrediente_id);
+    if (orig?.costo_promedio) totalCosto += Number(ing.cantidad) * orig.costo_promedio;
+  });
+  form.value.costo_produccion = Number(totalCosto.toFixed(2));
+  calculateMargin();
+}, { deep: true, immediate: true });
+
 const addIngredient = () => {
-  if (newIngredient.value.ingrediente_id && newIngredient.value.cantidad > 0) {
-    const selectedIng = props.ingredientesDisponibles.find(i => i.id === newIngredient.value.ingrediente_id);
-    
-    form.value.ingredientes.push({
-      ...newIngredient.value,
-      nombre_ingrediente: selectedIng?.nombre || 'Desconocido'
-    });
-    
-    // Reset new ingredient form
-    newIngredient.value = {
-      ingrediente_id: 0,
-      cantidad: 0,
-      unidad: 'kg'
-    };
-    ingredientSearchQuery.value = '';
-  }
+  if (!newIngredient.value.ingrediente_id || newIngredient.value.cantidad <= 0) return;
+  const selectedIng = props.ingredientesDisponibles.find(i => i.id === newIngredient.value.ingrediente_id);
+  const nativeUnit = selectedIng?.unidad_abrev || selectedIng?.unidad_nombre || 'u';
+  const cantidadNativa = convertToNative(newIngredient.value.cantidad, newIngredient.value.entryUnidad, nativeUnit);
+
+  form.value.ingredientes.push({
+    ingrediente_id: newIngredient.value.ingrediente_id,
+    cantidad: Number(cantidadNativa.toFixed(6)),
+    nombre_ingrediente: selectedIng?.nombre || 'Desconocido'
+  });
+
+  const group = getUnitGroup(nativeUnit);
+  newIngredient.value = {
+    ingrediente_id: 0, cantidad: 0,
+    entryUnidad: group === 'weight' ? 'gramos' : group === 'volume' ? 'ml' : 'unidad'
+  };
+  ingredientSearchQuery.value = '';
 };
 
 const removeIngredient = (index: number) => {
@@ -290,26 +361,13 @@ const handleSubmit = () => {
               ></textarea>
             </div>
 
-            <div class="col-12">
-              <label class="form-label text-primary-custom fw-bold">URL Fotografía</label>
-              <div class="input-group">
-                <span class="input-group-text custom-input border-end-0 bg-transparent text-secondary-custom">
-                  🔗
-                </span>
-                <input 
-                  v-model="form.imagen_url" 
-                  type="url" 
-                  class="form-control custom-input rounded-end-3 py-2 border-start-0" 
-                  placeholder="https://tudominio.com/hamburguesa.jpg"
-                >
-              </div>
-            </div>
+
 
             <div class="col-12 mt-4">
               <div class="form-check form-switch py-3 px-4 rounded-4" style="background-color: var(--bg-body); border: 1px solid var(--border-color);">
                 <input v-model="form.activo" class="form-check-input ms-0 me-3 mt-1" type="checkbox" id="activoSwitch" style="transform: scale(1.2);">
                 <label class="form-check-label text-primary-custom fw-bold pt-0" for="activoSwitch">
-                  Hacer visible en el menú inmediatamente
+                  {{ form.activo ? 'Estado: ACTIVO (Visible en el menú)' : 'Estado: INACTIVO (Oculto del menú)' }}
                 </label>
               </div>
             </div>
@@ -354,20 +412,22 @@ const handleSubmit = () => {
                   </ul>
                 </div>
               </div>
-              <div class="col-md-2">
-                <label class="form-label text-primary-custom fw-bold small">Medida</label>
-                <select v-model="newIngredient.unidad" class="form-select custom-input py-2 rounded-3">
-                  <option value="kg">Kilos</option>
-                  <option value="litros">Litros</option>
-                  <option value="unidad">Unidades</option>
-                  <option value="gramos">Gramos</option>
+              <div class="col-md-3">
+                <label class="form-label text-primary-custom fw-bold small">Unidad de Entrada</label>
+                <select v-model="newIngredient.entryUnidad" class="form-select custom-input py-2 rounded-3">
+                  <option v-for="opt in availableUnits" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
                 </select>
               </div>
-              <div class="col-md-3">
-                <label class="form-label text-primary-custom fw-bold small">Cantidad</label>
-                <input v-model.number="newIngredient.cantidad" type="number" step="0.001" min="0" class="form-control custom-input py-2 rounded-3" placeholder="Ej. 1.5">
+              <div class="col-md-4">
+                <label class="form-label text-primary-custom fw-bold small">Cantidad
+                  <span v-if="newIngredient.ingrediente_id && getIngredientUnit(newIngredient.ingrediente_id)" class="badge ms-2 rounded-pill" style="background: rgba(253,126,20,0.12); color: var(--KOrange); font-size: 0.7rem;">
+                    → se guarda en {{ getIngredientUnit(newIngredient.ingrediente_id) }}
+                  </span>
+                </label>
+                <input v-model.number="newIngredient.cantidad" type="number" step="0.001" min="0" class="form-control custom-input py-2 rounded-3" placeholder="Cantidad">
               </div>
               <div class="col-md-2 text-end">
+                <label class="form-label text-primary-custom fw-bold small d-block">&nbsp;</label>
                 <button type="button" class="btn rounded-3 w-100 py-2 fw-bold text-white shadow-sm action-btn-add" style="background-color: var(--KOrange); border: none;" @click="addIngredient" :disabled="!newIngredient.ingrediente_id || newIngredient.cantidad <= 0">
                   <Plus :size="18" class="me-1"/> Añadir
                 </button>
@@ -397,13 +457,17 @@ const handleSubmit = () => {
                   <td class="text-primary-custom fw-bold ps-2 ps-sm-4 py-2 py-sm-3 border-0">
                     <div class="d-flex align-items-center gap-2 w-100" style="color: var(--text-main) !important; opacity: 1;">
                        <span class="bullet-dot bg-korange flex-shrink-0"></span>
-                       <span class="text-truncate" style="max-width: 150px;">{{ ing.nombre_ingrediente }}</span>
+                       <span class="text-truncate" style="max-width: 150px;">
+                         {{ ing.nombre_ingrediente || ingredientesDisponibles.find(i => i.id === ing.ingrediente_id)?.nombre || 'Desconocido' }}
+                       </span>
                     </div>
                   </td>
-                  <td class="text-center small text-uppercase py-2 py-sm-3 border-0">
-                    <span class="badge rounded-pill px-2 px-sm-3 py-1 py-sm-2 border shadow-sm" style="background-color: var(--bg-body); color: var(--text-main); border-color: var(--border-color) !important;">{{ ing.unidad }}</span>
+                  <td class="text-center small py-2 py-sm-3 border-0">
+                    <span class="badge rounded-pill px-2 px-sm-3 py-1 py-sm-2 border shadow-sm" style="background-color: var(--bg-body); color: var(--text-main); border-color: var(--border-color) !important;">
+                      {{ getIngredientUnit(ing.ingrediente_id) }}
+                    </span>
                   </td>
-                  <td class="text-primary-custom text-center fs-6 fs-sm-5 fw-bold py-2 py-sm-3 border-0" style="color: var(--text-main) !important;">{{ ing.cantidad }}</td>
+                  <td class="text-primary-custom text-center fs-6 fw-bold py-2 py-sm-3 border-0" style="color: var(--text-main) !important;">{{ formatQty(ing.cantidad) }}</td>
                   <td class="text-end pe-2 pe-sm-4 py-2 py-sm-3 border-0">
                     <button type="button" class="btn btn-sm btn-outline-danger custom-radius p-2 mx-1 rounded-circle flex-center" @click="removeIngredient(idx)" title="Eliminar Insumo">
                       <X :size="14" />
@@ -428,8 +492,8 @@ const handleSubmit = () => {
                   <input 
                     v-model.number="form.costo_produccion" 
                     type="number" step="0.01" min="0"
-                    class="form-control custom-input border-start-0 fs-5 text-center py-2" 
-                    @input="calculateMargin"
+                    class="form-control custom-input border-start-0 fs-5 text-center py-2 bg-light text-secondary-custom" 
+                    readonly
                   >
                 </div>
               </div>
@@ -496,7 +560,7 @@ const handleSubmit = () => {
             <ChevronRight :size="18" color="white" class="position-absolute" style="right: 1.25rem; top: 50%; transform: translateY(-50%);" />
           </button>
           
-          <button v-if="currentStep === 3" type="submit" class="btn rounded-pill nav-btn fw-bold position-relative shadow-sm pulse-btn text-white w-100 w-md-auto" style="background-color: var(--KOrange); border: none;" @click="handleSubmit">
+          <button v-if="currentStep === 3" type="submit" class="btn rounded-pill nav-btn fw-bold position-relative shadow-sm pulse-btn text-white w-100 w-md-auto" style="background-color: var(--KOrange); border: none;">
             <span>Guardar Plato</span> 
             <Save :size="18" color="white" class="position-absolute" style="right: 1.25rem; top: 50%; transform: translateY(-50%);" />
           </button>

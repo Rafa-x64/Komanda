@@ -20,11 +20,11 @@
           stroke="var(--border-color)" stroke-width="1" stroke-dasharray="4,4" />
 
         <!-- Cost Area -->
-        <path :d="areaPath(costData, true)" fill="rgba(220,53,69,0.08)" />
+        <path :d="areaPath(costData)" fill="rgba(220,53,69,0.08)" />
         <path :d="linePath(costData)" fill="none" stroke="#dc3545" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />
 
         <!-- Sales Area -->
-        <path :d="areaPath(salesData, false)" fill="rgba(253,126,20,0.12)" />
+        <path :d="areaPath(salesData)" fill="rgba(253,126,20,0.12)" />
         <path :d="linePath(salesData)" fill="none" stroke="var(--KOrange)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />
 
         <!-- Data points sales -->
@@ -76,7 +76,7 @@ const salesData = computed(() => props.data.length ? props.data.map(d => d.reven
 const costData  = computed(() => props.data.length ? props.data.map(d => d.cost) : [0,0,0,0,0,0,0])
 
 const maxVal = computed(() => {
-  const max = Math.max(...salesData.value)
+  const max = Math.max(...salesData.value, ...costData.value)
   return max === 0 ? 100 : max * 1.15
 })
 
@@ -86,9 +86,9 @@ const yPos = (v: number) => PAD_T + (1 - v / maxVal.value) * (H - PAD_T - PAD_B)
 const linePath = (data: number[]) =>
   data.map((d, i) => `${i === 0 ? 'M' : 'L'}${xPos(i)},${yPos(d)}`).join(' ')
 
-const areaPath = (data: number[], above: boolean) => {
+const areaPath = (data: number[]) => {
   const line = data.map((d, i) => `${i === 0 ? 'M' : 'L'}${xPos(i)},${yPos(d)}`).join(' ')
-  const base = above ? H : yPos(0)
+  const base = yPos(0)
   return `${line} L${xPos(data.length - 1)},${base} L${xPos(0)},${base} Z`
 }
 

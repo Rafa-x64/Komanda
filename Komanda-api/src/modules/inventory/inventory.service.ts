@@ -13,10 +13,12 @@ export class InventoryService {
       `SELECT 
         ingrediente.id AS id,
         ingrediente.nombre AS nombre,
+        ingrediente.unidad_id AS unidad_id,
         ingrediente.cantidad_disponible AS cantidad_disponible,
         ingrediente.cantidad_minima AS cantidad_minima,
         ingrediente.costo_promedio AS costo_promedio,
-        unidad.abreviatura AS unidad_nombre
+        unidad.abreviatura AS unidad_nombre,
+        unidad.abreviatura AS unidad_abrev
        FROM inventario.ingredientes ingrediente
        LEFT JOIN core.unidad_medida unidad ON unidad.id = ingrediente.unidad_id
        WHERE ingrediente.restaurante_id = $1
