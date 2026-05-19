@@ -61,8 +61,24 @@ Conexion.initialize()
     setupKitchenSocket(wss);
 
     const shutdown = () => {
-      console.log('Forzando cierre del servidor para liberar el puerto...');
-      process.exit(0);
+      console.log('Cerrando el servidor de forma segura para liberar el puerto...');
+      wss.close();
+      server.close(() => {
+        if (Conexion.isInitialized) {
+          Conexion.destroy().then(() => {
+            console.log('Conexión a la base de datos cerrada.');
+            process.exit(0);
+          });
+        } else {
+          process.exit(0);
+        }
+      });
+      
+      // Forzar cierre si tarda mucho
+      setTimeout(() => {
+        console.error('El cierre seguro tardó demasiado, forzando la salida...');
+        process.exit(1);
+      }, 5000).unref();
     };
 
     process.on('SIGINT', shutdown);
