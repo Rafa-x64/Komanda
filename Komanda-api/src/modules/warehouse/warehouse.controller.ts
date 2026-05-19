@@ -6,9 +6,19 @@ import { CreateIngredientSchema, StockAdjustmentSchema } from "./warehouse.valid
 const service = new WarehouseService();
 
 export class WarehouseController {
+  private static getRestaurantId(req: Request, res: Response): number | null {
+    const id = (req as any).user?.restaurantId;
+    if (!id) {
+      res.status(401).json({ status: "error", message: "Token sin restaurante válido. Vuelve a iniciar sesión." });
+      return null;
+    }
+    return Number(id);
+  }
+
   static async list(req: Request, res: Response): Promise<void> {
     try {
-      const restauranteId = (req as any).user?.restaurante_id ?? 1;
+      const restauranteId = WarehouseController.getRestaurantId(req, res);
+      if (!restauranteId) return;
       const data = await service.getAll(restauranteId);
       res.json({ status: "success", data });
     } catch (error: unknown) {
@@ -30,7 +40,8 @@ export class WarehouseController {
   static async create(req: Request, res: Response): Promise<void> {
     try {
       const payload = CreateIngredientSchema.parse(req.body);
-      const restauranteId = (req as any).user?.restaurante_id ?? 1;
+      const restauranteId = WarehouseController.getRestaurantId(req, res);
+      if (!restauranteId) return;
       const data = await service.create(payload, restauranteId);
       res.status(201).json({ status: "success", data });
     } catch (error: unknown) {
@@ -46,7 +57,8 @@ export class WarehouseController {
   static async update(req: Request, res: Response): Promise<void> {
     try {
       const payload = StockAdjustmentSchema.parse(req.body);
-      const restauranteId = (req as any).user?.restaurante_id ?? 1;
+      const restauranteId = WarehouseController.getRestaurantId(req, res);
+      if (!restauranteId) return;
       const data = await service.update(Number(req.params.id), payload, restauranteId);
       res.json({ status: "success", data });
     } catch (error: unknown) {
@@ -61,7 +73,8 @@ export class WarehouseController {
 
   static async delete(req: Request, res: Response): Promise<void> {
     try {
-      const restauranteId = (req as any).user?.restaurante_id ?? 1;
+      const restauranteId = WarehouseController.getRestaurantId(req, res);
+      if (!restauranteId) return;
       await service.delete(Number(req.params.id), restauranteId);
       res.json({ status: "success", message: "Ingrediente eliminado" });
     } catch (error: unknown) {

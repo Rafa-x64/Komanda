@@ -198,6 +198,10 @@ watch(() => form.value.ingredientes, (newIngs) => {
     if (orig?.costo_promedio) totalCosto += Number(ing.cantidad) * orig.costo_promedio;
   });
   form.value.costo_produccion = Number(totalCosto.toFixed(2));
+  // Sugerir precio con 30% food cost (margen recomendado en restaurantes)
+  if (totalCosto > 0) {
+    form.value.precio_sugerido = Number((totalCosto / 0.30).toFixed(2));
+  }
   calculateMargin();
 }, { deep: true, immediate: true });
 
@@ -517,15 +521,21 @@ const handleSubmit = () => {
 
             <div class="col-md-4">
               <div class="price-card p-4 rounded-4 text-center">
-                <label class="form-label text-secondary-custom small fw-bold text-uppercase">Precio Sugerido (Opcional)</label>
+                <label class="form-label text-secondary-custom small fw-bold text-uppercase">Precio Sugerido
+                  <span class="badge ms-1 rounded-pill" style="background:rgba(253,126,20,0.12);color:var(--KOrange);font-size:0.65rem;">30% food cost</span>
+                </label>
                 <div class="input-group mt-2">
                   <span class="input-group-text custom-input fw-bold bg-transparent border-end-0">$</span>
                   <input 
                     v-model.number="form.precio_sugerido" 
                     type="number" step="0.01" min="0"
-                    class="form-control custom-input border-start-0 fs-5 text-center py-2"
+                    class="form-control custom-input border-start-0 fs-5 text-center py-2 bg-light text-secondary-custom"
+                    readonly
                   >
                 </div>
+                <small class="text-secondary-custom mt-1 d-block" style="font-size:0.72rem;">
+                  Mínimo recomendado para 70% margen
+                </small>
               </div>
             </div>
 

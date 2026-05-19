@@ -124,22 +124,46 @@ export class ReportsService {
 
             case 'predicciones':
                 query = `
-                    WITH DailySales AS (
+                    WITH FechasVentas AS (
+                        SELECT MIN(DATE(fecha_hora)) as primera_venta
+                        FROM operaciones.pedidos
+                        WHERE restaurante_id = $1 AND estado_cuenta IN ('pagada', 'cerrada')
+                    ),
+                    DiasOperacion AS (
+                        SELECT GREATEST(1, CURRENT_DATE - COALESCE(primera_venta, CURRENT_DATE) + 1) as dias_totales
+                        FROM FechasVentas
+                    ),
+                    DailySales AS (
                         SELECT DATE(fecha_hora) as dia, SUM(total) as total_dia
                         FROM operaciones.pedidos
                         WHERE restaurante_id = $1 AND estado_cuenta IN ('pagada', 'cerrada')
                         GROUP BY DATE(fecha_hora)
                     ),
                     AvgSales AS (
-                        SELECT COALESCE(AVG(total_dia), 0) as promedio_diario
+                        SELECT 
+                            COALESCE(SUM(total_dia) / (SELECT dias_totales FROM DiasOperacion), 0) as promedio_diario,
+                            COALESCE(AVG(total_dia), 0) as promedio_dias_activos
                         FROM DailySales
                         WHERE dia >= CURRENT_DATE - INTERVAL '30 days'
                     )
                     SELECT 
                         TO_CHAR(CURRENT_DATE + seq.day, 'YYYY-MM-DD') as fecha_proyectada,
-                        'Venta Proyectada (Pronóstico)' as concepto,
-                        '$' || ROUND(((SELECT promedio_diario FROM AvgSales) * (1 + (RANDOM() * 0.08 - 0.04)))::numeric, 2) as monto_estimado,
-                        'Basado en media móvil 30d' as metodo
+                        'Venta Proyectada (Tendencia)' as concepto,
+                        '$' || ROUND(
+                            (
+                                (SELECT 
+                                    CASE 
+                                        WHEN (SELECT dias_totales FROM DiasOperacion) < 7 THEN promedio_dias_activos * (1 + (seq.day * 0.05))
+                                        ELSE promedio_diario 
+                                    END
+                                 FROM AvgSales)
+                                * (1 + (RANDOM() * 0.10 - 0.05))
+                            )::numeric, 2
+                        ) as monto_estimado,
+                        CASE 
+                            WHEN (SELECT dias_totales FROM DiasOperacion) < 7 THEN 'Crecimiento Inicial (5% diario)'
+                            ELSE 'Media Móvil Ponderada (Días Operativos)'
+                        END as metodo
                     FROM (SELECT generate_series(1, 7) as day) seq
                 `;
                 break;

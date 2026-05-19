@@ -6,9 +6,19 @@ import { ZodError } from "zod";
 const inventoryService = new InventoryService();
 
 export class InventoryController {
+    private static getRestaurantId(req: Request, res: Response): number | null {
+        const id = (req as any).user?.restaurantId;
+        if (!id) {
+            res.status(401).json({ status: "error", message: "Token sin restaurante válido. Vuelve a iniciar sesión." });
+            return null;
+        }
+        return Number(id);
+    }
+
     static async getInventory(req: Request, res: Response): Promise<void> {
         try {
-            const restaurantId = (req as any).user?.restaurante_id || (req as any).user?.restaurantId || 1;
+            const restaurantId = InventoryController.getRestaurantId(req, res);
+            if (!restaurantId) return;
             const data = await inventoryService.getAllByRestaurant(restaurantId);
             res.status(200).json({ status: "success", data });
         } catch (error: any) {
@@ -19,7 +29,8 @@ export class InventoryController {
     static async createIngredient(req: Request, res: Response): Promise<void> {
         try {
             const payload = createIngredientSchema.parse(req.body);
-            const restaurantId = (req as any).user?.restaurante_id || (req as any).user?.restaurantId || 1;
+            const restaurantId = InventoryController.getRestaurantId(req, res);
+            if (!restaurantId) return;
             const data = await inventoryService.createIngredient(payload, restaurantId);
             res.status(201).json({ status: "success", data });
         } catch (error: any) {
@@ -34,7 +45,8 @@ export class InventoryController {
     static async updateIngredient(req: Request, res: Response): Promise<void> {
         try {
             const payload = updateIngredientSchema.parse(req.body);
-            const restaurantId = (req as any).user?.restaurante_id || (req as any).user?.restaurantId || 1;
+            const restaurantId = InventoryController.getRestaurantId(req, res);
+            if (!restaurantId) return;
             const data = await inventoryService.updateIngredient(Number(req.params.id), payload, restaurantId);
             res.status(200).json({ status: "success", data });
         } catch (error: any) {
@@ -48,7 +60,8 @@ export class InventoryController {
 
     static async getMermas(req: Request, res: Response): Promise<void> {
         try {
-            const restaurantId = (req as any).user?.restaurante_id || (req as any).user?.restaurantId || 1;
+            const restaurantId = InventoryController.getRestaurantId(req, res);
+            if (!restaurantId) return;
             const data = await inventoryService.getMermas(restaurantId);
             res.status(200).json({ status: "success", data });
         } catch (error: any) {
@@ -59,10 +72,10 @@ export class InventoryController {
     static async createMerma(req: Request, res: Response): Promise<void> {
         try {
             const payload = createMermaSchema.parse(req.body);
-            const restaurantId = (req as any).user?.restaurante_id || (req as any).user?.restaurantId || 1;
+            const restaurantId = InventoryController.getRestaurantId(req, res);
+            if (!restaurantId) return;
             const userId = (req as any).user?.userId || 1;
             const result = await inventoryService.createMerma(payload, restaurantId, userId);
-            
             res.status(201).json({ status: "success", data: result.data });
         } catch (error: any) {
             if (error instanceof ZodError) {

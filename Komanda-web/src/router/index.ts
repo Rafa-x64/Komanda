@@ -51,7 +51,7 @@ const router = createRouter({
             path: '/inventario',
             name: 'inventory',
             component: () => import('../modules/inventory/view/InventoryView.vue'),
-            meta: { requiresAuth: false, roles: ['admin'] }
+            meta: { requiresAuth: true, roles: ['admin', 'cocina'] }
         },
         {
             path: '/almacen',

@@ -6,7 +6,7 @@ export class Pedido {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column({ type: "varchar", length: 20, unique: true })
+    @Column({ type: "varchar", length: 40, unique: true })
     codigo!: string;
 
     @Column({ type: "int", nullable: true })

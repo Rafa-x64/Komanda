@@ -9,16 +9,20 @@ import { CreateSaleInput, CashClosureInput, CheckoutOrderInput } from "./pos.val
 import { broadcastNewOrderToKitchen } from "../kitchen/kitchen.socket";
 import { AccountingService } from "../accounting/accounting.service";
 
-/** Genera código único: PED-20260401-0001 */
+/** Genera código único por restaurante: R{restaurantId}-PED-YYYYMMDD-0001 */
 const generateOrderCode = async (restaurantId: number): Promise<string> => {
     const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    const prefix = `R${restaurantId}-PED-${today}`;
+
+    // Lock-free: count existing codes with this prefix for this restaurant
     const result = await Conexion.getRepository(Pedido)
         .createQueryBuilder("p")
         .where("p.restaurante_id = :rid", { rid: restaurantId })
-        .andWhere("p.codigo LIKE :prefix", { prefix: `PED-${today}-%` })
+        .andWhere("p.codigo LIKE :prefix", { prefix: `${prefix}-%` })
         .getCount();
+
     const seq = String(result + 1).padStart(4, "0");
-    return `PED-${today}-${seq}`;
+    return `${prefix}-${seq}`;
 };
 
 export class POSService {
@@ -40,12 +44,11 @@ export class POSService {
         });
     }
 
-    static async getPaymentMethods(restaurantId: number) {
+    static async getPaymentMethods(_restaurantId: number) {
         return Conexion.query(
             `SELECT id, nombre, activo FROM core.metodos_pago 
-             WHERE (restaurante_id = $1) AND activo = true 
-             ORDER BY nombre`,
-            [restaurantId]
+             WHERE activo = true 
+             ORDER BY nombre`
         );
     }
 
