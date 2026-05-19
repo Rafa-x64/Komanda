@@ -36,12 +36,12 @@ export const createCompraSchema = z.object({
 
 export const createGastoSchema = z.object({
     categoria: z.enum(["agua", "gas", "electricidad", "internet", "alquiler", "otros"], {
-        invalid_type_error: "Categoría de gasto no válida."
+        message: "Categoría de gasto no válida."
     }),
     monto: z.number().positive("El monto debe ser mayor a 0"),
     fecha: z.string(), // YYYY-MM-DD
     metodo_pago: z.enum(["efectivo", "pago_movil", "tarjeta", "divisa"], {
-        invalid_type_error: "Método de pago no válido"
+        message: "Método de pago no válido"
     }),
     referencia: z.string().max(100).optional().nullable(),
     descripcion: z.string().max(255).optional().nullable(),
