@@ -121,7 +121,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
             <button type="button" class="btn btn-light fw-bold px-4 rounded-pill" @click="$emit('close')">
               <X :size="18" class="me-1"/> Cancelar
             </button>
-            <button type="submit" class="btn btn-danger fw-bold px-4 rounded-pill shadow-sm" :disabled="!formData.ingrediente_id || (formData.cantidad && formData.cantidad > maxStock)">
+            <button type="submit" class="btn btn-danger fw-bold px-4 rounded-pill shadow-sm" :disabled="!formData.ingrediente_id || Boolean(formData.cantidad && formData.cantidad > maxStock)">
               <Save :size="18" class="me-1"/> Registrar Merma
             </button>
           </div>

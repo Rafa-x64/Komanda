@@ -54,7 +54,7 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
           <button type="button" class="btn-close" @click="$emit('close')" aria-label="Close"></button>
         </div>
         
-        <form @submit.prevent="$emit('save', { ...formData.value })">
+        <form @submit.prevent="$emit('save', { ...formData })">
           <div class="modal-body py-4 px-4">
             
             <div class="mb-3">

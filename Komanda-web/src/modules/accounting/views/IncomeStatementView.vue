@@ -40,7 +40,7 @@
         <div class="text-center mb-5 border-bottom pb-4">
           <h2 class="fw-bold mb-1">{{ restaurantName }}</h2>
           <h4 class="text-uppercase mb-2">Estado de Resultados</h4>
-          <p class="mb-0 text-muted">Período: {{ new Date(filterDateFrom).toLocaleDateString() }} - {{ new Date(filterDateTo).toLocaleDateString() }}</p>
+          <p class="mb-0 text-muted">Período: {{ formattedDateFrom }} - {{ formattedDateTo }}</p>
           <p class="mb-0 text-muted">Expresado en Dólares Estadounidenses (USD)</p>
         </div>
 
@@ -113,8 +113,7 @@ import { useAuth } from '../../../core/composables/useAuth'
 import { fetchVEstadoResultados } from '../accounting.api'
 
 const auth = useAuth()
-// @ts-ignore
-const restaurantName = computed(() => (auth.user.value as any)?.restaurantName || 'Komanda Restaurant')
+const restaurantName = computed(() => auth.restaurant.value?.nombre || 'Komanda Restaurant')
 const userName = computed(() => auth.user.value?.nombre || 'Contador')
 
 const today = new Date().toISOString().split('T')[0]
@@ -134,6 +133,9 @@ const totalGastos = computed(() => gastos.value.reduce((acc, curr) => acc + Numb
 const utilidadBruta = computed(() => totalIngresos.value - totalCostos.value)
 const utilidadNeta = computed(() => utilidadBruta.value - totalGastos.value)
 
+const formattedDateFrom = computed(() => filterDateFrom.value ? new Date(filterDateFrom.value).toLocaleDateString() : '')
+const formattedDateTo = computed(() => filterDateTo.value ? new Date(filterDateTo.value).toLocaleDateString() : '')
+
 const formatCurrency = (val: number | string) => {
   return new Intl.NumberFormat('es-US', {
     style: 'currency',
@@ -143,12 +145,14 @@ const formatCurrency = (val: number | string) => {
 
 const printReport = () => {
   const element = document.getElementById('income-statement-report')
+  if (!element) return
+
   const opt = {
     margin:       0.5,
     filename:     `estado_resultados_${filterDateFrom.value}_${filterDateTo.value}.pdf`,
-    image:        { type: 'jpeg', quality: 0.98 },
+    image:        { type: 'jpeg' as const, quality: 0.98 },
     html2canvas:  { scale: 2 },
-    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    jsPDF:        { unit: 'in' as const, format: 'letter' as const, orientation: 'portrait' as const }
   }
   html2pdf().set(opt).from(element).save()
 }
@@ -156,10 +160,10 @@ const printReport = () => {
 const fetchData = async () => {
   loading.value = true
   try {
-    const data = await fetchVEstadoResultados(filterDateFrom.value, filterDateTo.value)
-    ingresos.value = data.filter(d => d.tipo === 'ingreso')
-    costos.value = data.filter(d => d.tipo === 'costo')
-    gastos.value = data.filter(d => d.tipo === 'gasto')
+    const data = await fetchVEstadoResultados(filterDateFrom.value, filterDateTo.value).catch(() => []) || []
+    ingresos.value = data.filter((d: any) => d.tipo === 'ingreso')
+    costos.value = data.filter((d: any) => d.tipo === 'costo')
+    gastos.value = data.filter((d: any) => d.tipo === 'gasto')
   } catch (error) {
     console.error('Error fetching income statement:', error)
   } finally {

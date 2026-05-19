@@ -2,6 +2,7 @@ import { Conexion } from "../../config/database";
 import { Ingrediente } from "./inventory.model";
 import { Merma } from "./domain/merma.entity";
 import { UpdateIngredientInput, CreateMermaInput, CreateIngredientInput } from "./inventory.validator";
+import { AccountingService } from "../accounting/accounting.service";
 
 export class InventoryService {
   private repository = Conexion.getRepository(Ingrediente);
@@ -102,21 +103,30 @@ export class InventoryService {
         
         if (costoTotalMerma > 0) {
             const fechaActual = new Date().toISOString().slice(0, 10);
-            await queryRunner.manager.query(
-                `INSERT INTO contabilidad.libro_diario 
-                (fecha, descripcion, tipo, debe, haber, referencia_tipo, referencia_id, restaurante_id)
-                VALUES 
-                ($1, $2, 'ajuste_inventario', $3, 0, 'merma', $4, $5),
-                ($1, $6, 'ajuste_inventario', 0, $3, 'merma', $4, $5)`,
+            
+            let [cuentaInventario] = await queryRunner.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '1.1.03' LIMIT 1`);
+            if (!cuentaInventario) [cuentaInventario] = await queryRunner.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE nombre ILIKE '%inventario%' LIMIT 1`);
+            
+            let [cuentaGasto] = await queryRunner.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE tipo = 'gasto' AND es_auxiliar = true LIMIT 1`);
+            if (!cuentaGasto) [cuentaGasto] = await queryRunner.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE tipo = 'gasto' LIMIT 1`);
+
+            if (!cuentaInventario || !cuentaGasto) {
+                throw new Error("No se encontraron las cuentas contables (Inventario o Gasto) para registrar la merma.");
+            }
+
+            await AccountingService.registrarAsientoContable(
+                fechaActual,
+                `Merma (${data.tipo}): ${ingrediente.nombre}`,
+                'ajuste_inventario',
                 [
-                  fechaActual,
-                  `Pérdida por merma (${data.tipo}): ${ingrediente.nombre}`,
-                  costoTotalMerma,
-                  merma.id,
-                  restauranteId,
-                  `Salida de inventario: ${ingrediente.nombre}`
-                ]
-              );
+                    { cuenta_id: cuentaGasto.id, tipo_movimiento: 'debe', monto: costoTotalMerma, descripcion: 'Pérdida por Merma' },
+                    { cuenta_id: cuentaInventario.id, tipo_movimiento: 'haber', monto: costoTotalMerma, descripcion: 'Salida de Inventario' }
+                ],
+                restauranteId,
+                merma.id,
+                userId,
+                queryRunner
+            );
         }
 
         await queryRunner.commitTransaction();

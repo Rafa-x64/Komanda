@@ -202,7 +202,7 @@ const isAdmin = computed(() => userRole.value === 'admin')
 // Formularios locales (States)
 const profileForm = ref({
   name: user?.nombre || '',
-  email: user?.correo || '',
+  email: auth.user.value?.email || '',
   newPassword: '',
   confirmPassword: ''
 })

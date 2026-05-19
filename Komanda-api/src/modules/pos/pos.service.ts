@@ -7,6 +7,7 @@ import { PedidoDetalle } from "./domain/pedido-detalle.entity";
 import { Restaurant } from "../signup/domain/restaurant.entity";
 import { CreateSaleInput, CashClosureInput, CheckoutOrderInput } from "./pos.validator";
 import { broadcastNewOrderToKitchen } from "../kitchen/kitchen.socket";
+import { AccountingService } from "../accounting/accounting.service";
 
 /** Genera código único: PED-20260401-0001 */
 const generateOrderCode = async (restaurantId: number): Promise<string> => {
@@ -323,19 +324,51 @@ export class POSService {
                 }
             }
 
-            // 11. Integración Contable -> Generar asientos en contabilidad.libro_diario
+            // 11. Integración Contable -> Generar asientos
             const fechaActual = new Date().toISOString().slice(0, 10);
             
-            await qr.manager.query(
-                `INSERT INTO contabilidad.libro_diario 
-                (fecha, descripcion, tipo, debe, haber, referencia_tipo, referencia_id, restaurante_id)
-                VALUES 
-                ($1, 'Ingreso a Caja/Bancos por Venta', 'venta', $2, 0, 'venta', $3, $4),
-                ($1, 'Ingresos por Ventas', 'venta', 0, $2, 'venta', $3, $4),
-                ($1, 'Costo de Ventas', 'costo_venta', $5, 0, 'venta', $3, $4),
-                ($1, 'Inventario', 'costo_venta', 0, $5, 'venta', $3, $4)`,
-                [fechaActual, total, pedido.id, restaurantId, totalCostoVenta]
-            );
+            let [cuentaInventario] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '1.1.03' LIMIT 1`);
+            if (!cuentaInventario) [cuentaInventario] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE nombre ILIKE '%inventario%' LIMIT 1`);
+
+            let [cuentaCosto] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '5.1.01' LIMIT 1`);
+            if (!cuentaCosto) [cuentaCosto] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE nombre ILIKE '%costo%' LIMIT 1`);
+
+            let [cuentaCaja] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '1.1.01' LIMIT 1`);
+            if (!cuentaCaja) [cuentaCaja] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE nombre ILIKE '%caja%' LIMIT 1`);
+
+            let [cuentaVentas] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '4.1.01' LIMIT 1`);
+            if (!cuentaVentas) [cuentaVentas] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE nombre ILIKE '%ventas%' LIMIT 1`);
+
+            const lineasAsiento: any[] = [];
+
+            if (totalCostoVenta > 0) {
+                if (!cuentaCosto || !cuentaInventario) throw new Error("No se encontraron las cuentas de Costo o Inventario para registrar la venta.");
+                lineasAsiento.push(
+                    { cuenta_id: cuentaCosto.id, tipo_movimiento: 'debe', monto: totalCostoVenta, descripcion: 'Costo de Ventas' },
+                    { cuenta_id: cuentaInventario.id, tipo_movimiento: 'haber', monto: totalCostoVenta, descripcion: 'Salida de Inventario' }
+                );
+            }
+
+            if (estado_cuenta === 'pagada' && total > 0) {
+                if (!cuentaCaja || !cuentaVentas) throw new Error("No se encontraron las cuentas de Caja o Ventas para registrar el cobro.");
+                lineasAsiento.push(
+                    { cuenta_id: cuentaCaja.id, tipo_movimiento: 'debe', monto: total, descripcion: 'Ingreso a Caja/Bancos por Venta' },
+                    { cuenta_id: cuentaVentas.id, tipo_movimiento: 'haber', monto: total, descripcion: 'Ingresos por Ventas' }
+                );
+            }
+
+            if (lineasAsiento.length > 0) {
+                await AccountingService.registrarAsientoContable(
+                    fechaActual,
+                    `Registro Pedido ${pedido.codigo}`,
+                    'venta',
+                    lineasAsiento,
+                    restaurantId,
+                    pedido.id,
+                    userId,
+                    qr
+                );
+            }
 
             await qr.commitTransaction();
 
@@ -427,14 +460,29 @@ export class POSService {
 
             // 7. Asientos contables
             const fecha = new Date().toISOString().slice(0, 10);
-            await qr.manager.query(
-                `INSERT INTO contabilidad.libro_diario
-                 (fecha, descripcion, tipo, debe, haber, referencia_tipo, referencia_id, restaurante_id)
-                 VALUES
-                 ($1, 'Cobro de Pedido - Caja', 'venta', $2, 0, 'venta', $3, $4),
-                 ($1, 'Ingresos por Ventas', 'venta', 0, $2, 'venta', $3, $4)`,
-                [fecha, pedido.total, pedidoId, restaurantId]
-            );
+            let [cuentaCaja] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '1.1.01' LIMIT 1`);
+            if (!cuentaCaja) [cuentaCaja] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE nombre ILIKE '%caja%' LIMIT 1`);
+
+            let [cuentaVentas] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '4.1.01' LIMIT 1`);
+            if (!cuentaVentas) [cuentaVentas] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE nombre ILIKE '%ventas%' LIMIT 1`);
+
+            if (pedido.total > 0) {
+                if (!cuentaCaja || !cuentaVentas) throw new Error("No se encontraron las cuentas contables (Caja o Ventas) para registrar el cobro.");
+                
+                await AccountingService.registrarAsientoContable(
+                    fecha,
+                    `Cobro de Pedido ${pedidoId}`,
+                    'venta',
+                    [
+                        { cuenta_id: cuentaCaja.id, tipo_movimiento: 'debe', monto: pedido.total, descripcion: 'Cobro de Pedido - Caja' },
+                        { cuenta_id: cuentaVentas.id, tipo_movimiento: 'haber', monto: pedido.total, descripcion: 'Ingresos por Ventas' }
+                    ],
+                    restaurantId,
+                    pedidoId,
+                    userId,
+                    qr
+                );
+            }
 
             await qr.commitTransaction();
 

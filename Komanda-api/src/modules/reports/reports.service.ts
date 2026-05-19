@@ -156,9 +156,9 @@ export class ReportsService {
         // KPIs (This week vs Last week would be ideal, but let's just do "This Week" totals)
         const [kpis] = await Conexion.query(
             `SELECT 
-                COALESCE(SUM(CASE WHEN tipo = 'venta' THEN debe ELSE 0 END), 0) as ingreso_bruto,
-                COALESCE(SUM(CASE WHEN tipo IN ('costo_venta', 'gasto') THEN debe ELSE 0 END), 0) as costo_operativo
-             FROM contabilidad.libro_diario
+                COALESCE(SUM(CASE WHEN tipo = 'ingreso' THEN monto ELSE 0 END), 0) as ingreso_bruto,
+                COALESCE(SUM(CASE WHEN tipo IN ('costo', 'gasto') THEN monto ELSE 0 END), 0) as costo_operativo
+             FROM contabilidad.v_estado_resultados
              WHERE restaurante_id = $1 AND fecha >= CURRENT_DATE - INTERVAL '7 days'`,
             [restaurantId]
         );
@@ -191,9 +191,9 @@ export class ReportsService {
         const chartData = await Conexion.query(
             `SELECT 
                 TO_CHAR(fecha, 'DD/MM') as date,
-                COALESCE(SUM(CASE WHEN tipo = 'venta' THEN debe ELSE 0 END), 0) as revenue,
-                COALESCE(SUM(CASE WHEN tipo IN ('costo_venta', 'gasto') THEN debe ELSE 0 END), 0) as cost
-             FROM contabilidad.libro_diario
+                COALESCE(SUM(CASE WHEN tipo = 'ingreso' THEN monto ELSE 0 END), 0) as revenue,
+                COALESCE(SUM(CASE WHEN tipo IN ('costo', 'gasto') THEN monto ELSE 0 END), 0) as cost
+             FROM contabilidad.v_estado_resultados
              WHERE restaurante_id = $1 AND fecha >= CURRENT_DATE - INTERVAL '6 days'
              GROUP BY fecha
              ORDER BY fecha ASC`,
