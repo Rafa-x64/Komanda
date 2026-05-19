@@ -14,7 +14,9 @@ const formData = ref({
   cantidad_minima: 5,
   unidad_id: 1,
   merma_teorica_porcentaje: 0,
-  unidades_por_paquete: 1,   // cuántas unidades de stock trae 1 unidad de compra
+  unidades_por_paquete: 1,
+  cantidad_disponible: 0,
+  costo_promedio: 0
 });
 
 watch(() => props.show, (newVal) => {
@@ -25,6 +27,8 @@ watch(() => props.show, (newVal) => {
       unidad_id: 1,
       merma_teorica_porcentaje: 0,
       unidades_por_paquete: 1,
+      cantidad_disponible: 0,
+      costo_promedio: 0
     };
   }
 });
@@ -100,12 +104,17 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown));
               <div class="form-text mt-2 small">Porcentaje estimado de pérdida natural (ej. descongelamiento).</div>
             </div>
 
-            <div class="alert alert-warning border-0 rounded-3 small d-flex align-items-start gap-2 mb-0" style="background-color: rgba(253,126,20,0.1); color: #d9534f;">
-              <span style="font-size: 1.1rem; line-height: 1;">💡</span>
-              <div>
-                <strong>Nota:</strong> Los insumos nuevos se crean con <strong>stock inicial 0</strong>.
-                Para añadir stock a este ingrediente, debes 
-                <a href="#" class="fw-bold text-decoration-underline" style="color: var(--KOrange);" @click.prevent="$emit('go-to-purchase')">Registrar una Compra</a>.
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold text-secondary small text-uppercase">Stock Inicial</label>
+                <input v-model.number="formData.cantidad_disponible" type="number" step="any" min="0" class="form-control form-control-lg rounded-3" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold text-secondary small text-uppercase">Costo Promedio (Opcional)</label>
+                <div class="input-group input-group-lg">
+                  <span class="input-group-text bg-light">$</span>
+                  <input v-model.number="formData.costo_promedio" type="number" step="any" min="0" class="form-control rounded-end-3" />
+                </div>
               </div>
             </div>
 

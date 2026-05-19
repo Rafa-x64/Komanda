@@ -11,6 +11,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'edit', recipe: Recipe): void;
   (e: 'delete', recipe: Recipe): void;
+  (e: 'toggle-status', recipe: Recipe): void;
 }>();
 
 const getCategoriaNombre = (id: number | null) => {
@@ -89,9 +90,9 @@ const formatCurrency = (value: number) => {
               </span>
             </td>
             <td class="text-center">
-              <div class="d-inline-flex align-items-center gap-2">
-                <span class="status-dot" :class="recipe.activo ? 'bg-success' : 'bg-secondary'"></span>
-                <span class="small fw-bold text-secondary-custom text-uppercase">{{ recipe.activo ? 'Activo' : 'Inactivo' }}</span>
+              <div class="d-inline-flex align-items-center gap-2 cursor-pointer status-toggle p-2 rounded-3" @click="emit('toggle-status', recipe)" title="Haz clic para cambiar el estado">
+                <span class="status-dot shadow-sm" :class="recipe.activo ? 'bg-success' : 'bg-secondary'"></span>
+                <span class="small fw-bold text-secondary-custom text-uppercase user-select-none">{{ recipe.activo ? 'Activo' : 'Inactivo' }}</span>
               </div>
             </td>
             <td class="text-end pe-4">
@@ -181,6 +182,16 @@ const formatCurrency = (value: number) => {
   height: 8px;
   border-radius: 50%;
   display: inline-block;
+}
+
+.status-toggle {
+  transition: background-color 0.2s;
+}
+.status-toggle:hover {
+  background-color: var(--border-color);
+}
+.cursor-pointer {
+  cursor: pointer;
 }
 
 .bg-success-soft {
