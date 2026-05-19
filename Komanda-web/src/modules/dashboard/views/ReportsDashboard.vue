@@ -93,7 +93,6 @@
                    <select v-model="selectedReportType" class="form-select form-select-sm border-color text-primary-custom" @change="generateReportData">
                      <option value="ventas">Ventas y Rentabilidad</option>
                      <option value="inventario">Estado de Inventario</option>
-                     <option value="empleados">Rendimiento por Empleado</option>
                      <option value="gastos">Gastos Operativos (Opex)</option>
                      <option value="contabilidad">Libro Diario Contable</option>
                      <option value="mermas">Control de Mermas</option>
@@ -138,12 +137,7 @@
                       <th>Punto de Reorden Configurado</th>
                       <th>Estado / Alerta</th>
                     </tr>
-                    <tr v-else-if="currentDisplayedReportType === 'empleados'">
-                      <th>Nombre del Empleado</th>
-                      <th>Cargo Actual</th>
-                      <th>Total Ventas Reportadas</th>
-                      <th>Horas Turno</th>
-                    </tr>
+
                     <tr v-else-if="currentDisplayedReportType === 'gastos'">
                       <th>Fecha</th>
                       <th>Categoría OpEx</th>
@@ -251,7 +245,7 @@ const haceSieteDiasStr = haceSieteDias.toISOString().split('T')[0]
 const todayString = hoyStr
 const dateFrom = ref(haceSieteDiasStr)
 const dateTo = ref(todayString)
-type ReportType = 'ventas' | 'inventario' | 'empleados' | 'gastos' | 'contabilidad' | 'mermas'
+type ReportType = 'ventas' | 'inventario' | 'gastos' | 'contabilidad' | 'mermas' | 'predicciones'
 const selectedReportType = ref<ReportType>('ventas')
 
 const currentDisplayedReportType = ref<ReportType | null>(null)
@@ -261,7 +255,6 @@ const isGeneratingPDF = ref(false)
 const reportTitle = computed(() => {
   if (currentDisplayedReportType.value === 'ventas') return 'Ventas y Rentabilidad de Órdenes'
   if (currentDisplayedReportType.value === 'inventario') return 'Alertas y Estado de Inventario'
-  if (currentDisplayedReportType.value === 'empleados') return 'Rendimiento y Productividad por Personal'
   if (currentDisplayedReportType.value === 'gastos') return 'Gastos Operativos y Administrativos'
   if (currentDisplayedReportType.value === 'contabilidad') return 'Libro Diario - Asientos Contables'
   if (currentDisplayedReportType.value === 'mermas') return 'Control de Mermas y Desperdicios'
