@@ -21,7 +21,7 @@ export const createMermaSchema = z.object({
     ingrediente_id: z.number().int().positive("ID de ingrediente inválido"),
     cantidad: z.number().positive("La cantidad debe ser mayor a 0"),
     tipo: z.enum(["desperdicio", "vencimiento", "rotura", "otro"], {
-        errorMap: () => ({ message: "Tipo de merma no válido" })
+        invalid_type_error: "Tipo de merma no válido"
     }),
     razon: z.string().min(3, "Debe especificar una razón").max(255).optional().nullable(),
 });

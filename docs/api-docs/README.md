@@ -411,21 +411,28 @@ JWT_SECRET=tu_clave_secreta     # Default: komanda_secret_key_2026
 
 ---
 
-## Como arrancar la API
+## Como arrancar la API y Compilar Releases
 
+### Desarrollo e Inicio Local
 ```bash
 # Instalar dependencias
 pnpm install
 
-# Modo desarrollo (hot-reload con ts-node)
-pnpm run dev
+# Modo desarrollo simultáneo (Frontend, Express API y PHP)
+pnpm run komanda
 
-# Compilar para produccion
-pnpm run build
-
-# Ejecutar build compilado
-pnpm start
+# Iniciar únicamente la API de Express en desarrollo (hot-reload con tsx)
+pnpm --filter komanda-api run dev
 ```
+
+### Empaquetado Automático y Compilación de Releases (Protegido)
+Para compilar tanto el Frontend como el Backend de forma segura (sin exponer código fuente) y transferir la build a la carpeta de releases pública:
+```bash
+# Otorgar permisos y ejecutar el empaquetador automático blindado
+chmod +x build-release.sh
+./build-release.sh
+```
+*(Para más detalles, consulta la [Guía de Compilación de Releases](../RELEASE_GUIDE.md)).*
 
 El servidor arranca en `http://localhost:3000` y muestra:
 

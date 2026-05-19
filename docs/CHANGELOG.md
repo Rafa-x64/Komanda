@@ -6,6 +6,22 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/
 
 ---
 
+## [v0.4.0] - 2026-05-19
+
+### 🚀 Novedades (Features)
+- **Empaquetado Automático y Obfuscado (`build-release.sh`):** Implementación de un script transpilador ultra-seguro, offline-first y blindado que empaqueta todo el monorepo (Frontend Vite + Backend tsc) libre de código fuente original (.ts, .vue) protegiendo al 100% la propiedad intelectual del software.
+- **Orquestador Monorepo de Producción:** Creación de un lanzador unificado en releases (`package.json` de producción) que levanta Frontend estático (`serve`), Backend Express y Servidor PHP concurrentemente con un solo comando `pnpm start`.
+- **Aislamiento Multi-Tenant y Códigos Scoped:** Corrección en el sistema de asignación de códigos secuenciales de pedidos aislados estrictamente por restaurante para erradicar colisiones entre tenants.
+- **Globalización de Métodos de Pago:** Transición de métodos de pago a configuraciones universales seguras a nivel de base de datos para todas las sucursales.
+
+### 🐛 Correcciones (Fixes)
+- **Cero Errores de Tipado TypeScript en Compilación:** Corrección de los 8 errores estrictos del backend en `get_schema.ts` (tipos de pg), `inventory.validator.ts` y `operations.validator.ts` (firma Zod para enums con invalid_type_error), `kitchen.service.ts` (entidad Pedido corregida) y `settings.controller.ts` (alineación de campos email y password_hash del modelo User).
+- **Estabilización de Dashboards y KPIs Reales:** Conexión estricta de las KPIs y gráficas contables en base a la vista real `contabilidad.v_estado_resultados` en lugar del obsoleto `libro_diario`.
+- **Navegación y Autenticación de Roles:** Solucionado el bug de redirección por sesión no autorizada de roles al ingresar a Inventario.
+- **Costo CPP de Recetas:** Resuelto el problema de valor en cero de las recetas en el reporte de rentabilidad calculando dinámicamente el Costo Promedio Ponderado real.
+
+---
+
 ## [v0.3.0] - 2026-05-03
 
 ### 🚀 Novedades (Features)

@@ -80,16 +80,16 @@ export class SettingsController {
         }
 
         userFound.nombre = validData.nombre;
-        userFound.correo = validData.email;
+        userFound.email = validData.email;
         
         if (validData.password && validData.password.trim() !== '') {
-            userFound.password = await bcrypt.hash(validData.password, 10);
+            userFound.password_hash = await bcrypt.hash(validData.password, 10);
         }
 
         await userRepo.save(userFound);
 
         // Retornamos sin exponer la contraseña
-        const { password, ...safeUser } = userFound;
+        const { password_hash, ...safeUser } = userFound;
         res.status(200).json({ status: "success", message: "Perfil actualizado exitosamente", data: safeUser });
       } catch (error: any) {
           if (error instanceof ZodError) {

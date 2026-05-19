@@ -31,26 +31,26 @@
 
 ### 🏪 Fase 2: Módulo — Almacén y Compras (`modules/warehouse`)
 
-- [ ] **Ingredientes**
-  - [ ] Vista listado con búsqueda, stock actual y alerta visual de stock crítico.
-  - [ ] Formulario CRUD de ingredientes (nombre, unidad de medida, stock mínimo).
-- [ ] **Compras**
-  - [ ] Formulario de registro de compra (ingrediente, cantidad, precio unitario, proveedor).
-  - [ ] Vista de historial de compras por proveedor.
-- [ ] **Proveedores**
-  - [ ] CRUD de proveedores con datos de contacto.
+- [x] **Ingredientes**
+  - [x] Vista listado con búsqueda, stock actual y alerta visual de stock crítico.
+  - [x] Formulario CRUD de ingredientes (nombre, unidad de medida, stock mínimo).
+- [x] **Compras**
+  - [x] Formulario de registro de compra (ingrediente, cantidad, precio unitario, proveedor).
+  - [x] Vista de historial de compras por proveedor.
+- [x] **Proveedores**
+  - [x] CRUD de proveedores con datos de contacto.
 
 ---
 
 ### 🍽️ Fase 3: Módulo — Menú y Recetas (`modules/menu`)
 
-- [ ] **Platos y Recetas**
-  - [ ] Listado de platos del menú con costo y precio actual.
-  - [ ] Formulario de creación/edición de receta (ingredientes + cantidades).
-  - [ ] Visualización del costo calculado en tiempo real al modificar ingredientes.
-  - [ ] Sugerencia de precio (costo + margen) con opción de ajuste manual.
-- [ ] **Categorías**
-  - [ ] CRUD de categorías de menú.
+- [x] **Platos y Recetas**
+  - [x] Listado de platos del menú con costo y precio actual.
+  - [x] Formulario de creación/edición de receta (ingredientes + cantidades).
+  - [x] Visualización del costo calculado en tiempo real al modificar ingredientes.
+  - [x] Sugerencia de precio (costo + margen) con opción de ajuste manual.
+- [x] **Categorías**
+  - [x] CRUD de categorías de menú.
 
 ---
 
@@ -127,26 +127,26 @@
 - [ ] **Lógica de Costo Promedio Ponderado (CPP)**
   - [ ] Definir la fórmula: `CPP_nuevo = (Stock_actual * CPP_anterior + Cant_comprada * Precio_compra) / (Stock_actual + Cant_comprada)`
   - [ ] Implementar en `WarehouseService.registerPurchase()`.
-- [ ] **Multi-tenant:** Todo query filtra por `restaurant_id`.
+- [x] **Multi-tenant:** Todo query filtra por `restaurant_id`.
 
 ---
 
 ### 🏪 Fase 2: Módulo Almacén y Compras (`modules/warehouse`)
 
-- [ ] CRUD de ingredientes con validación Zod.
-- [ ] CRUD de proveedores.
-- [ ] `POST /purchases`: Aumenta stock + recalcula CPP + genera asiento contable (Inventario vs. CxP).
-- [ ] Endpoint de ingredientes con stock crítico.
+- [x] CRUD de ingredientes con validación Zod.
+- [x] CRUD de proveedores.
+- [x] `POST /purchases`: Aumenta stock + recalcula CPP + genera asiento contable (Inventario vs. CxP).
+- [x] Endpoint de ingredientes con stock crítico.
 
 ---
 
 ### 🍽️ Fase 3: Módulo Menú y Recetas (`modules/menu`)
 
-- [ ] CRUD de platos y recetas (con ingredientes asociados).
-- [ ] CRUD de categorías de menú.
-- [ ] Endpoint `GET /menu-items/:id/cost`: Calcula costo dinámico de un plato al CPP actual.
-- [ ] Endpoint `GET /menu-items/:id/suggested-price`: Costo + margen configurado.
-- [ ] Endpoint `GET /menu-items/:id/stock-check`: Verifica si hay stock suficiente para preparar N unidades.
+- [x] CRUD de platos y recetas (con ingredientes asociados).
+- [x] CRUD de categorías de menú.
+- [x] Endpoint `GET /menu-items/:id/cost`: Calcula costo dinámico de un plato al CPP actual.
+- [x] Endpoint `GET /menu-items/:id/suggested-price`: Costo + margen configurado.
+- [x] Endpoint `GET /menu-items/:id/stock-check`: Verifica si hay stock suficiente para preparar N unidades.
 
 ---
 
@@ -161,9 +161,9 @@
 
 ### 💰 Fase 5: Módulo Contabilidad (`modules/accounting`)
 
-- [ ] Generación automática de asientos contables en cada evento de negocio.
-- [ ] `GET /balance-sheet?from=&to=`: Balance General.
-- [ ] `GET /income-statement?from=&to=`: Estado de Resultados.
+- [x] Generación automática de asientos contables en cada evento de negocio.
+- [x] `GET /balance-sheet?from=&to=`: Balance General.
+- [x] `GET /income-statement?from=&to=`: Estado de Resultados.
 - [x] `GET /profitability-report`: Rentabilidad por plato.
 - [x] `GET /journal?from=&to=`: Libro Diario (listado de asientos).
 
@@ -179,10 +179,10 @@
 
 ### 🛡️ Fase 7: Seguridad y RBAC
 
-- [ ] Autenticación JWT (login, refresh, logout).
-- [ ] Middleware global de validación de roles por endpoint.
-- [ ] Middleware de tenant (extrae `restaurant_id` del JWT y lo inyecta en los queries).
-- [ ] Gestión de usuarios (CRUD) con asignación de roles.
+- [x] Autenticación JWT (login, refresh, logout).
+- [x] Middleware global de validación de roles por endpoint.
+- [x] Middleware de tenant (extrae `restaurant_id` del JWT y lo inyecta en los queries).
+- [x] Gestión de usuarios (CRUD) con asignación de roles.
 
 ---
 
@@ -197,10 +197,10 @@
 
 ## 🔄 TRANSVERSAL Y DEVOPS
 
-- [ ] Variables de entorno documentadas en `.env.example`.
+- [x] Variables de entorno documentadas en `.env.example`.
 - [ ] Seeds (datos iniciales): ingredientes de ejemplo, recetas, usuarios de prueba.
 - [ ] Documentación de API (Swagger/OpenAPI).
 - [ ] Diagrama ER de la base de datos actualizado.
-- [ ] Manual de usuario por rol (Admin, Cajero).
-- [ ] CI/CD básico (linting + build automático).
+- [x] Manual de usuario por rol (Admin, Cajero) y Guía de Releases.
+- [x] CI/CD básico (empaquetado, transpiliación y build automático blindado).
 - [ ] Plan de migración para multi-tenant en producción.
