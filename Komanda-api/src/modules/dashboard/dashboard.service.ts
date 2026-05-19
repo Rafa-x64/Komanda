@@ -70,12 +70,12 @@ export class DashboardService {
             [restaurantId]
         );
 
-        // 6. Margen de utilidad del día (contabilidad.libro_diario)
+        // 6. Margen de utilidad del día (contabilidad.v_estado_resultados)
         const [contabilidad] = await Conexion.query(
             `SELECT 
-                COALESCE(SUM(CASE WHEN tipo = 'venta' AND debe > 0 THEN debe ELSE 0 END), 0) AS ingresos,
-                COALESCE(SUM(CASE WHEN tipo = 'costo_venta' AND debe > 0 THEN debe ELSE 0 END), 0) AS costos
-             FROM contabilidad.libro_diario
+                COALESCE(SUM(CASE WHEN tipo = 'ingreso' THEN monto ELSE 0 END), 0) AS ingresos,
+                COALESCE(SUM(CASE WHEN tipo = 'costo' THEN monto ELSE 0 END), 0) AS costos
+             FROM contabilidad.v_estado_resultados
              WHERE restaurante_id = $1
                AND fecha = CURRENT_DATE`,
             [restaurantId]
@@ -100,9 +100,9 @@ export class DashboardService {
         const semanal = await Conexion.query(
             `SELECT 
                 TO_CHAR(fecha, 'DD/MM') as dia,
-                COALESCE(SUM(CASE WHEN tipo = 'venta' AND debe > 0 THEN debe ELSE 0 END), 0) as ingresos,
-                COALESCE(SUM(CASE WHEN tipo IN ('costo_venta', 'gasto') AND debe > 0 THEN debe ELSE 0 END), 0) as egresos
-             FROM contabilidad.libro_diario
+                COALESCE(SUM(CASE WHEN tipo = 'ingreso' THEN monto ELSE 0 END), 0) as ingresos,
+                COALESCE(SUM(CASE WHEN tipo IN ('costo', 'gasto') THEN monto ELSE 0 END), 0) as egresos
+             FROM contabilidad.v_estado_resultados
              WHERE restaurante_id = $1
                AND fecha >= CURRENT_DATE - INTERVAL '6 days'
              GROUP BY fecha

@@ -4,6 +4,7 @@ import { Compra } from "./domain/compra.entity";
 import { CompraDetalle } from "./domain/compra-detalle.entity";
 import { GastoOperativo } from "./domain/gasto-operativo.entity";
 import { CreateProveedorInput, UpdateProveedorInput, CreateCompraInput, CreateGastoInput } from "./operations.validator";
+import { AccountingService } from "../accounting/accounting.service";
 
 export class OperationsService {
     // ==========================================
@@ -89,20 +90,29 @@ export class OperationsService {
             });
             await qr.manager.save(gasto);
 
-            // 2. Integración Contable (DEBE Gasto, HABER Caja/Banco)
-            await qr.manager.query(
-                `INSERT INTO contabilidad.libro_diario 
-                (fecha, descripcion, tipo, debe, haber, referencia_tipo, referencia_id, restaurante_id)
-                VALUES 
-                ($1, $2, 'gasto_operativo', $3, 0, 'gasto_operativo', $4, $5),
-                ($1, 'Pago de Gasto Operativo', 'gasto_operativo', 0, $3, 'gasto_operativo', $4, $5)`,
+            // Buscar cuenta de gasto (auxiliar) y cuenta de caja
+            let [cuentaGasto] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE tipo = 'gasto' AND es_auxiliar = true LIMIT 1`);
+            if (!cuentaGasto) [cuentaGasto] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE tipo = 'gasto' LIMIT 1`);
+            
+            let [cuentaCaja] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '1.1.01' LIMIT 1`);
+            if (!cuentaCaja) [cuentaCaja] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE nombre ILIKE '%caja%' LIMIT 1`);
+            
+            if (!cuentaGasto || !cuentaCaja) {
+                throw new Error("No se encontraron las cuentas contables necesarias (Gasto o Caja) para registrar el asiento.");
+            }
+
+            await AccountingService.registrarAsientoContable(
+                data.fecha,
+                `Gasto Operativo: ${data.categoria.toUpperCase()}${data.descripcion ? ' - ' + data.descripcion : ''}`,
+                'gasto_operativo',
                 [
-                    data.fecha,
-                    `Gasto Operativo: ${data.categoria.toUpperCase()}${data.descripcion ? ' - ' + data.descripcion : ''}`,
-                    data.monto,
-                    gasto.id,
-                    restaurantId
-                ]
+                    { cuenta_id: cuentaGasto.id, tipo_movimiento: 'debe', monto: data.monto, descripcion: 'Registro de Gasto' },
+                    { cuenta_id: cuentaCaja.id, tipo_movimiento: 'haber', monto: data.monto, descripcion: 'Pago de Gasto' }
+                ],
+                restaurantId,
+                gasto.id,
+                userId,
+                qr
             );
 
             await qr.commitTransaction();
@@ -215,20 +225,33 @@ export class OperationsService {
             const descripcionCompra = `Compra de mercancía${data.numero_factura_proveedor ? ' Fac: ' + data.numero_factura_proveedor : ''}`;
             const descripcionHaber = data.estado_pago === 'pendiente' ? 'Cuentas por Pagar Proveedores' : 'Salida de Caja/Bancos por Compra';
 
-            await qr.manager.query(
-                `INSERT INTO contabilidad.libro_diario 
-                (fecha, descripcion, tipo, debe, haber, referencia_tipo, referencia_id, restaurante_id)
-                VALUES 
-                ($1, $2, 'compra_insumo', $3, 0, 'compra', $4, $5),
-                ($1, $6, 'compra_insumo', 0, $3, 'compra', $4, $5)`,
+            let [cuentaInventario] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '1.1.03' LIMIT 1`);
+            if (!cuentaInventario) [cuentaInventario] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE nombre ILIKE '%inventario%' LIMIT 1`);
+            
+            let [cuentaCaja] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '1.1.01' LIMIT 1`);
+            if (!cuentaCaja) [cuentaCaja] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE nombre ILIKE '%caja%' LIMIT 1`);
+            
+            let [cuentaPorPagar] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE codigo = '2.1.01' LIMIT 1`);
+            if (!cuentaPorPagar) [cuentaPorPagar] = await qr.manager.query(`SELECT id FROM contabilidad.plan_cuentas WHERE nombre ILIKE '%pagar%' LIMIT 1`);
+
+            const cuentaHaber = data.estado_pago === 'pendiente' ? cuentaPorPagar : cuentaCaja;
+
+            if (!cuentaInventario || !cuentaHaber) {
+                throw new Error("No se encontraron las cuentas contables (Inventario, Caja o CxP) para registrar el asiento de la compra.");
+            }
+
+            await AccountingService.registrarAsientoContable(
+                data.fecha,
+                descripcionCompra,
+                'compra_insumo',
                 [
-                    data.fecha,
-                    descripcionCompra,
-                    totalCompra,
-                    compra.id,
-                    restaurantId,
-                    descripcionHaber
-                ]
+                    { cuenta_id: cuentaInventario.id, tipo_movimiento: 'debe', monto: totalCompra, descripcion: 'Ingreso al Inventario' },
+                    { cuenta_id: cuentaHaber.id, tipo_movimiento: 'haber', monto: totalCompra, descripcion: descripcionHaber }
+                ],
+                restaurantId,
+                compra.id,
+                undefined,
+                qr
             );
 
             await qr.commitTransaction();

@@ -1,0 +1,14 @@
+src/modules/dashboard/CajaDashboard.vue(41,7): error TS6133: 'formatTime' is declared but its value is never read.
+src/modules/pos/composables/useSocketPago.ts(3,31): error TS6133: 'onPagoCompletado' is declared but its value is never read.
+src/modules/pos/views/POSView.vue(3,54): error TS6133: 'UtensilsCrossed' is declared but its value is never read.
+src/modules/tables/views/TablesView.vue(3,35): error TS6133: 'Trash2' is declared but its value is never read.
+src/modules/tables/views/TablesView.vue(3,50): error TS6133: 'AlertCircle' is declared but its value is never read.
+src/modules/waiter/views/WaiterDashboardView.vue(4,25): error TS6133: 'UtensilsCrossed' is declared but its value is never read.
+src/modules/waiter/views/WaiterOrdersView.vue(2,36): error TS6133: 'watch' is declared but its value is never read.
+src/modules/waiter/views/WaiterOrdersView.vue(5,42): error TS6133: 'RefreshCw' is declared but its value is never read.
+src/modules/waiter/views/WaiterOrdersView.vue(6,12): error TS6133: 'CheckCircle2' is declared but its value is never read.
+src/modules/waiter/views/WaiterOrdersView.vue(6,26): error TS6133: 'Clock' is declared but its value is never read.
+src/modules/waiter/views/WaiterOrdersView.vue(6,33): error TS6133: 'XCircle' is declared but its value is never read.
+src/modules/waiter/views/WaiterOrdersView.vue(6,42): error TS6133: 'UtensilsCrossed' is declared but its value is never read.
+src/modules/waiter/views/WaiterOrdersView.vue(10,26): error TS6133: 'ActiveOrder' is declared but its value is never read.
+src/modules/waiter/views/WaiterOrdersView.vue(13,7): error TS6133: 'router' is declared but its value is never read.

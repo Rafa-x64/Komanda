@@ -17,13 +17,9 @@
 
         <!-- Filtros de Fecha y Reportes -->
         <div class="d-flex align-items-center gap-2 flex-wrap">
-          <div class="date-filter shadow-sm">
-            <i class="bi bi-calendar3 text-muted ms-2"></i>
-            <span class="ms-2 small fw-bold text-muted">Desde:</span>
-            <input type="date" v-model="filterDateFrom" class="form-control border-0 bg-transparent text-primary-custom shadow-none" title="Seleccionar fecha inicial">
-            <span class="mx-2 text-muted fw-bold">-</span>
-            <span class="small fw-bold text-muted">Hasta:</span>
-            <input type="date" v-model="filterDateTo" class="form-control border-0 bg-transparent text-primary-custom shadow-none" title="Seleccionar fecha final">
+          <div class="date-filter shadow-sm px-3 py-2 bg-light rounded-pill border">
+            <i class="bi bi-calendar-check text-success me-2"></i>
+            <span class="small fw-bold text-muted">A la fecha: {{ new Date().toLocaleDateString() }} (Acumulado)</span>
           </div>
           <button class="btn btn-outline-secondary fw-semibold shadow-sm d-flex align-items-center gap-2" @click="printReport" :disabled="loading">
             <i class="bi bi-file-earmark-pdf"></i> PDF
@@ -40,7 +36,7 @@
         <div class="text-center mb-5 border-bottom pb-4">
           <h2 class="fw-bold mb-1">{{ restaurantName }}</h2>
           <h4 class="text-uppercase mb-2">Estado de Situación Financiera (Balance General)</h4>
-          <p class="mb-0 text-muted">Período: {{ new Date(filterDateFrom).toLocaleDateString() }} - {{ new Date(filterDateTo).toLocaleDateString() }}</p>
+          <p class="mb-0 text-muted">Al {{ new Date().toLocaleDateString() }}</p>
           <p class="mb-0 text-muted">Expresado en Dólares Estadounidenses (USD)</p>
         </div>
 
@@ -113,11 +109,10 @@ import { ref, computed, onMounted } from 'vue'
 import html2pdf from 'html2pdf.js'
 import Sidebar from '../../../components/Sidebar.vue'
 import { useAuth } from '../../../core/composables/useAuth'
-import { fetchVBalanceGeneral } from '../accounting.api'
+import { fetchVBalanceGeneral, fetchVEstadoResultados } from '../accounting.api'
 
 const auth = useAuth()
-// @ts-ignore
-const restaurantName = computed(() => (auth.user.value as any)?.restaurantName || 'Komanda Restaurant')
+const restaurantName = computed(() => auth.restaurant.value?.nombre || 'Komanda Restaurant')
 const userName = computed(() => auth.user.value?.nombre || 'Contador')
 
 const today = new Date().toISOString().split('T')[0]
@@ -143,12 +138,14 @@ const formatCurrency = (val: number | string) => {
 
 const printReport = () => {
   const element = document.getElementById('balance-sheet-report')
+  if (!element) return
+
   const opt = {
     margin:       0.5,
     filename:     `balance_general_${filterDateFrom.value}_${filterDateTo.value}.pdf`,
-    image:        { type: 'jpeg', quality: 0.98 },
+    image:        { type: 'jpeg' as const, quality: 0.98 },
     html2canvas:  { scale: 2 },
-    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    jsPDF:        { unit: 'in' as const, format: 'letter' as const, orientation: 'portrait' as const }
   }
   html2pdf().set(opt).from(element).save()
 }
@@ -156,10 +153,26 @@ const printReport = () => {
 const fetchData = async () => {
   loading.value = true
   try {
-    const data = await fetchVBalanceGeneral(filterDateFrom.value, filterDateTo.value)
+    const data = await fetchVBalanceGeneral()
     activos.value = data.filter(d => d.tipo === 'activo')
     pasivos.value = data.filter(d => d.tipo === 'pasivo')
-    patrimonio.value = data.filter(d => d.tipo === 'patrimonio')
+    
+    // El balance general debe incluir la Utilidad del Ejercicio acumulada en el patrimonio
+    // para que Activo = Pasivo + Patrimonio
+    const erData = await fetchVEstadoResultados().catch(() => []) || []
+    let totalIngresos = 0
+    let totalCostosGastos = 0
+    erData.forEach(item => {
+      if (item.tipo === 'ingreso') totalIngresos += Number(item.total)
+      else totalCostosGastos += Number(item.total)
+    })
+    const utilidadAcumulada = totalIngresos - totalCostosGastos
+
+    const rawPatrimonio = (data || []).filter(d => d.tipo === 'patrimonio')
+    patrimonio.value = [
+      ...rawPatrimonio,
+      { codigo: '3.0.00', cuenta: 'Utilidad del Ejercicio (Acumulada)', saldo: utilidadAcumulada, tipo: 'patrimonio' }
+    ]
   } catch (error) {
     console.error('Error fetching balance sheet:', error)
   } finally {
